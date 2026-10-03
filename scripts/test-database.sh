@@ -13,8 +13,9 @@ for attempt in $(seq 1 60); do
 done
 docker exec "$container" psql -U postgres -v ON_ERROR_STOP=1 -c 'create database site_test' >/dev/null
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < tests/integration/local-bootstrap.sql
+docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < tests/integration/storage-bootstrap.sql
 for migration in supabase/migrations/*.sql; do docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < "$migration"; done
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < tests/integration/database.sql
-for test in pagination review; do
+for test in pagination review storage trigger-acl managed-grants; do
  if [[ -f "tests/integration/$test.sql" ]]; then docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < "tests/integration/$test.sql"; fi
 done

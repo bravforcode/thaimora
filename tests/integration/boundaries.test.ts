@@ -17,7 +17,7 @@ describe("data boundaries",()=>{
    expect(parsePropertyQuery(new URL("https://test/?transaction=rent&type=condo&minArea=25")).minArea).toBe(25);
  });
  it("requires real production launch criteria while allowing separate preview",()=>{
-   const e={domainVerified:true,legalApproved:true,integrationVerified:true,uatApproved:true,rightsApproved:true,backupRestoreVerified:true,freeTierConfirmed:true,providerEntitlementsVerified:true,fixtureCount:0,approvedPropertyCount:500,approvedPoiCount:20,approvedHotelCount:1,publicFileCount:150,monthlyBuildCount:100,backupDailyBytes:1024};
+   const e={hostingProvider:'cloudflare',hostingPlan:'free',hostingPlanVerified:true,commercialHostingAllowed:true,hostingUsageVerified:true,hostingUsageObservedAt:new Date().toISOString(),hostingUsageEvidence:'synthetic-test-receipt',domainVerified:true,legalApproved:true,integrationVerified:true,uatApproved:true,rightsApproved:true,backupRestoreVerified:true,freeTierConfirmed:true,providerEntitlementsVerified:true,fixtureCount:0,approvedPropertyCount:500,approvedPoiCount:20,approvedHotelCount:1,publicFileCount:150,monthlyBuildCount:100,backupDailyBytes:1024};
    expect(launchErrors(e,"thaimora")).toEqual([]);expect(launchErrors({...e,approvedPropertyCount:499,fixtureCount:30},"thaimora")).toEqual(expect.arrayContaining(["500_properties","fixtures"]));
    expect(launchErrors({...e,approvedPoiCount:19,providerEntitlementsVerified:false},"taotide")).toEqual(expect.arrayContaining(["20_pois","provider_entitlements"]));
  });

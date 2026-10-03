@@ -28,4 +28,5 @@
 
 <!-- Significant technical decisions with rationale. Why X was chosen over Y. -->
 
-- 2026-10-03: Separate Next static-export Cloudflare Pages and Supabase API; preview is noindex, live is gated by actual entitlements and data rights. User selected the map/property composition from PhuketLens with Inter/Noto Sans Thai.
+- 2026-10-03: Next static export and isolated Supabase API. User subsequently selected the existing Vercel account/default domain; commercial eligibility remains unresolved on Hobby. Preview is noindex; production gates require actual data rights and acceptance. PhuketLens map/property direction uses Inter/Noto Sans Thai.
+- 2026-10-03: User confirmed $0/month per Supabase project in bravforcode and explicitly authorized pausing graxia os and clothes-brand-production. New isolated projects are now active; old projects stay paused unless separately authorized and quota permits.

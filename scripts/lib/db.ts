@@ -4,7 +4,9 @@ export function need(key:string):string{const v=process.env[key];if(!v)throw new
 export async function rest(path:string,init:RequestInit={}):Promise<any>{
   const response=await fetch(need("SUPABASE_URL").replace(/\/$/,"")+"/rest/v1/"+path,{...init,headers:{"apikey":need("SUPABASE_SERVICE_ROLE_KEY"),"Authorization":"Bearer "+need("SUPABASE_SERVICE_ROLE_KEY"),"Content-Type":"application/json",...init.headers},signal:AbortSignal.timeout(30000)});
   if(!response.ok)throw new Error("Database request failed: "+response.status);
-  return response.status===204?null:response.json();
+  if(response.status===204)return null;
+  const payload=await response.text();
+  return payload.trim()?JSON.parse(payload):null;
 }
 export async function upsertPreserving(table:string,rows:any[]):Promise<number>{
   let written=0;

@@ -1,4 +1,5 @@
 # Actual SQL checks against a labeled disposable local container.
+param([ValidateSet('migrations','email-scheduler')][string]$Check='migrations')
 $ErrorActionPreference = 'Stop'
 $taskProjectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $taskSite = Split-Path $taskProjectRoot -Leaf
@@ -25,11 +26,21 @@ try {
   docker exec $taskContainer psql -q -U postgres -v ON_ERROR_STOP=1 -c 'create database site_test'
   if ($LASTEXITCODE -ne 0) { throw 'Test database creation failed' }
   Run-SqlFile (Join-Path $taskProjectRoot 'tests/integration/local-bootstrap.sql')
+  Run-SqlFile (Join-Path $taskProjectRoot 'tests/integration/storage-bootstrap.sql')
   Get-ChildItem -LiteralPath (Join-Path $taskProjectRoot 'supabase/migrations') -Filter '*.sql' |
     Sort-Object Name | ForEach-Object { Run-SqlFile $_.FullName }
-  foreach ($taskTestFile in @('database.sql','pagination.sql','review.sql')) {
+  foreach ($taskTestFile in @('database.sql','pagination.sql','review.sql','storage.sql','trigger-acl.sql','managed-grants.sql')) {
     $taskSqlPath=Join-Path $taskProjectRoot "tests/integration/$taskTestFile"
     if (Test-Path -LiteralPath $taskSqlPath) { Run-SqlFile $taskSqlPath }
+  }
+  if ($Check -eq 'email-scheduler') {
+    Run-SqlFile (Join-Path $taskProjectRoot 'tests/integration/email-scheduler-model.sql')
+    $taskSchedulerSql=Get-Content -LiteralPath (Join-Path $taskProjectRoot 'supabase/operations/email-scheduler.sql') -Raw -Encoding utf8
+    # Only extension installation is omitted: the interfaces above are explicitly synthetic.
+    $taskSchedulerSql=$taskSchedulerSql -replace '(?m)^create extension if not exists (pg_cron with schema pg_catalog|pg_net);\r?\n',''
+    $taskSchedulerSql | docker exec -i $taskContainer psql -q -U postgres -v ON_ERROR_STOP=1 -d site_test
+    if ($LASTEXITCODE -ne 0) { throw 'Scheduler SQL failed against modeled interfaces' }
+    Run-SqlFile (Join-Path $taskProjectRoot 'tests/integration/email-scheduler.sql')
   }
   Write-Output "PASS: $taskSite actual migrations, RLS and review regression SQL"
 } finally {

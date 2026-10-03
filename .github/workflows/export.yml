@@ -15,16 +15,19 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       EXPORT_MODE: production
+      HOSTING_PROVIDER: ${{ vars.HOSTING_PROVIDER }}
+      AUTOMATION_ENABLED: ${{ vars.AUTOMATION_ENABLED }}
+      GITHUB_DEPLOY_TOKEN: ${{ secrets.GITHUB_DEPLOY_TOKEN }}
+      GITHUB_DEPLOY_REF: ${{ vars.GITHUB_DEPLOY_REF }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_PROJECT_NAMES: thaimora,taotide
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_BUILD_HOOK: ${{ secrets.CLOUDFLARE_BUILD_HOOK }}
       GITHUB_BUDGET_TOKEN: ${{ secrets.GITHUB_BUDGET_TOKEN }}
       GITHUB_BUDGET_REPOSITORIES: ${{ vars.GITHUB_BUDGET_REPOSITORIES }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: {node-version: 22, cache: npm}
+        with: {node-version: 24, cache: npm}
       - run: npm ci
       - run: npx tsx scripts/check-actions-budget.ts
       - run: npx tsx scripts/export-public-content.ts

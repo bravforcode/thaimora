@@ -561,7 +561,7 @@ export function Admin({
                 Array.from(
                   new TextEncoder().encode(
                     JSON.stringify({
-                      rights_evidence: rightsEvidence,
+                      rights_confirmed: true,
                       sanitized: true,
                     }),
                   ),

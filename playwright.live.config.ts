@@ -13,6 +13,8 @@ export default defineConfig({
       NEXT_PUBLIC_DATA_MODE: "live",
       NEXT_PUBLIC_API_URL: "http://127.0.0.1:3102/mock-api",
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: "contract-test-site-key",
+      NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:3102/mock-storage",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock-public-anon-key",
       THAIMORA_SNAPSHOT_PATH: path.resolve("tests/fixtures/live-snapshot.json"),
     },
   },

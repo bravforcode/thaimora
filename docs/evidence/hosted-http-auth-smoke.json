@@ -1,0 +1,78 @@
+{
+  "site": "thaimora",
+  "projectRef": "hpjmttoxomdhxxsourih",
+  "testedAt": "2026-10-03T15:42:26.306Z",
+  "cases": [
+    {
+      "name": "anonymous-rest-public-surface",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "public-content",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "public-property-search",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "admin-missing-token",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "admin-invalid-token",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "foreign-origin-denied",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "name": "cors-preflight",
+      "status": 204,
+      "passed": true
+    },
+    {
+      "name": "public-denied-inquiries",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "public-denied-property_private_locations",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "public-denied-email_outbox",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "public-denied-admin_memberships",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "authenticated-nonstaff-denied",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "name": "authenticated-staff-read",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "failurePhase": null,
+  "cleanupRequired": true,
+  "cleanupConfirmed": true,
+  "cleanupFailed": false,
+  "scope": "Actual backend HTTP/Auth checks; no browser UI, Storage upload, inquiry delivery or hotel-provider UAT"
+}

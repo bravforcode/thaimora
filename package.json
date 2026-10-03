@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=24"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/fix-export-locale.mjs",
-    "build:production": "node scripts/production-gate.mjs && next build && node scripts/fix-export-locale.mjs && tsx scripts/launch-gate.ts scripts/launch-evidence.json",
+    "build:production": "node scripts/production-command.mjs build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
     "test:unit": "vitest run tests/unit tests/frontend",
@@ -16,31 +16,38 @@
     "test:backend": "vitest run tests/integration",
     "test:e2e": "playwright test",
     "test:e2e:live": "playwright test --config playwright.live.config.ts",
-    "test:e2e:material": "playwright test --config tests/frontend/playwright.config.ts"
+    "test:e2e:material": "playwright test --config tests/frontend/playwright.config.ts",
+    "production:check": "node scripts/production-command.mjs check",
+    "deploy:production": "node scripts/production-command.mjs deploy",
+    "test:deployment": "node --test scripts/production-command.test.mjs",
+    "deploy:cloudflare": "node scripts/production-command.mjs deploy:cloudflare",
+    "test:rebuild": "node --import tsx --test scripts/rebuild-target.test.ts",
+    "test:hosting": "node --import tsx --test scripts/hosting-gate.test.ts"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/noto-sans-thai": "^5.2.7",
+    "@phosphor-icons/react": "^2.1.10",
+    "maplibre-gl": "^6.11.2",
     "next": "^16.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "maplibre-gl": "^6.11.2",
-    "zod": "^4.1.0",
-    "@phosphor-icons/react": "^2.1.10",
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/noto-sans-thai": "^5.2.7",
-    "read-excel-file": "^6.0.1"
+    "read-excel-file": "^6.0.1",
+    "zod": "^4.1.0"
   },
   "devDependencies": {
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.0",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.0",
+    "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.0",
-    "@tailwindcss/postcss": "^4.1.0",
-    "vitest": "^5.0.3",
-    "@playwright/test": "^1.55.0",
-    "@axe-core/playwright": "^4.10.2",
     "eslint": "^9.37.0",
-    "eslint-config-next": "^16.0.0"
+    "eslint-config-next": "^16.0.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.3",
+    "wrangler": "4.147.0"
   }
 }

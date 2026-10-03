@@ -8,40 +8,39 @@ jobs:
   backup:
     if: vars.AUTOMATION_ENABLED == 'true' && github.event.repository.private == true
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       AGE_RECIPIENT: ${{ vars.AGE_RECIPIENT }}
-      RESTORE_TARGET_CONFIRMED: disposable
       AGE_IDENTITY_FILE: ${{ runner.temp }}/backup-age-identity
+      PG_BACKUP_IMAGE: ${{ vars.PG_BACKUP_IMAGE }}
+      GITHUB_BUDGET_TOKEN: ${{ secrets.GITHUB_BUDGET_TOKEN }}
+      GITHUB_BUDGET_REPOSITORIES: ${{ vars.GITHUB_BUDGET_REPOSITORIES }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install supported logical backup tooling
-        run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client age
-      - name: Create this job's disposable PostGIS restore target
-        shell: bash
-        run: |
-          docker run -d --name backup-restore-target -e POSTGRES_PASSWORD=local-restore-only -p 127.0.0.1:55432:5432 public.ecr.aws/supabase/postgres:15.8.1.085
-          for attempt in $(seq 1 60); do
-            if docker exec backup-restore-target pg_isready -U postgres; then break; fi
-            sleep 1
-          done
-          echo "RESTORE_DATABASE_URL=postgresql://postgres:local-restore-only@127.0.0.1:55432/postgres" >> "$GITHUB_ENV"
-      - name: Restore verification and encryption
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Verify shared account Actions reserve
+        run: npx tsx scripts/check-actions-budget.ts
+      - name: Require reviewed immutable PostgreSQL image
+        run: '[[ "$PG_BACKUP_IMAGE" =~ ^postgis/postgis:17-3\.5@sha256:[a-f0-9]{64}$ ]]'
+      - name: Install encryption tooling
+        run: sudo apt-get update -qq && sudo apt-get install -y age
+      - name: Verify compatible PostgreSQL17 encrypted recovery
         shell: bash
         env:
           AGE_IDENTITY: ${{ secrets.AGE_IDENTITY }}
         run: |
+          set -euo pipefail
           umask 077
+          test -n "$AGE_IDENTITY"
           printf '%s\n' "$AGE_IDENTITY" > "$AGE_IDENTITY_FILE"
           trap 'rm -f "$AGE_IDENTITY_FILE"' EXIT
           bash scripts/backup-db.sh
       - uses: actions/upload-artifact@v4
         with:
           name: encrypted-db-${{ github.run_id }}
-          path: scripts/output/backups/*.age
+          path: scripts/output/backups/*.dump.age
           retention-days: 7
           if-no-files-found: error
-      - name: Remove this job's disposable restore target
-        if: always()
-        run: docker rm -f backup-restore-target || true

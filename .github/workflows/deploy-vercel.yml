@@ -1,0 +1,55 @@
+name: Gated Vercel production
+on:
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency: {group: production-thaimora, cancel-in-progress: false}
+jobs:
+  deploy:
+    if: vars.AUTOMATION_ENABLED == 'true' && vars.HOSTING_PROVIDER == 'vercel' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HOSTING_PROVIDER: vercel
+      AUTOMATION_ENABLED: 'true'
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_CLI_PATH: ${{ github.workspace }}/scripts/output/vercel-cli/node_modules/vercel/dist/index.js
+      PRODUCTION_LEGAL_JSON: ${{ secrets.PRODUCTION_LEGAL_JSON }}
+      PRODUCTION_LAUNCH_EVIDENCE_JSON: ${{ secrets.PRODUCTION_LAUNCH_EVIDENCE_JSON }}
+      EXPORT_MODE: production
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      NEXT_PUBLIC_DATA_MODE: live
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_MAP_STYLE_URL: ${{ vars.NEXT_PUBLIC_MAP_STYLE_URL }}
+      NEXT_PUBLIC_ARCGIS_API_KEY: ${{ secrets.NEXT_PUBLIC_ARCGIS_API_KEY }}
+      ALLOWED_ORIGINS: ${{ vars.ALLOWED_ORIGINS }}
+      RATE_LIMIT_SALT: ${{ secrets.RATE_LIMIT_SALT }}
+      GEOAPIFY_API_KEY: ${{ secrets.GEOAPIFY_API_KEY }}
+      GEOAPIFY_RIGHTS_CONFIRMED: ${{ vars.GEOAPIFY_RIGHTS_CONFIRMED }}
+      THAIMORA_SNAPSHOT_PATH: scripts/output/public-content.json
+      THAIMORA_LEGAL_PATH: scripts/output/legal.json
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+      TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+      TURNSTILE_HOSTNAMES: ${{ vars.TURNSTILE_HOSTNAMES }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      INQUIRY_EMAIL_TO: ${{ secrets.INQUIRY_EMAIL_TO }}
+      INQUIRY_EMAIL_FROM: ${{ secrets.INQUIRY_EMAIL_FROM }}
+      EMAIL_WORKER_SECRET: ${{ secrets.EMAIL_WORKER_SECRET }}
+      GITHUB_BUDGET_TOKEN: ${{ secrets.GITHUB_BUDGET_TOKEN }}
+      GITHUB_BUDGET_REPOSITORIES: ${{ vars.GITHUB_BUDGET_REPOSITORIES }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 24, cache: npm}
+      - run: npm ci
+      - name: Check actual shared Actions budget
+        run: npx tsx scripts/check-actions-budget.ts
+      - name: Install pinned CI-only Vercel CLI into ignored workspace
+        run: npm install --prefix scripts/output/vercel-cli --ignore-scripts --no-package-lock vercel@50.38.3
+      - name: Private reviewed files, current sanitized export, gated prebuilt deployment
+        run: node scripts/vercel-ci.mjs

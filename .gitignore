@@ -13,3 +13,8 @@ playwright-report/
 test-results/
 .wolf/cache/
 .wolf/implementation-context.md
+.wrangler/
+.dev.vars*
+.vercel/
+supabase/.temp/
+.wolf/production-context.md

@@ -25,9 +25,9 @@ if(source==="all"||source==="poi")await runSync("geoapify",async()=>{
   return {rows_read:raw.features.length,rows_written:await upsertPreserving("pois",rows),error_count:errors,detail:{attribution:"Powered by Geoapify | © OpenStreetMap contributors"}};
 });
 if(source==="all"||source==="fx")await runSync("frankfurter",async()=>{
-  const raw=await fetchSource("https://api.frankfurter.dev/v2/rates?base=THB");
-  if(!Array.isArray(raw)||!raw.length||raw.some(r=>r.base!=="THB"||!r.quote||!Number.isFinite(r.rate)))throw new Error("Frankfurter v2 schema changed");
-  await rest("fx_rates?on_conflict=base",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({base:"THB",rates:Object.fromEntries(raw.map(r=>[r.quote,r.rate])),source:"Frankfurter v2",as_of:raw[0].date,fetched_at:new Date().toISOString()})});
+  const raw=await fetchSource("https://api.frankfurter.dev/v2/providers/ecb/rates?base=THB");
+  if(!Array.isArray(raw)||!raw.length||raw.some(r=>r.base!=="THB"||!/^[A-Z]{3}$/.test(r.quote)||!Number.isFinite(r.rate)||r.rate<=0||!/^\d{4}-\d{2}-\d{2}$/.test(r.date))||new Set(raw.map(r=>r.date)).size!==1||new Set(raw.map(r=>r.quote)).size!==raw.length)throw new Error("Frankfurter ECB schema changed");
+  await rest("fx_rates?on_conflict=base",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({base:"THB",rates:Object.fromEntries(raw.map(r=>[r.quote,r.rate])),source:"European Central Bank via Frankfurter v2",as_of:raw[0].date,fetched_at:new Date().toISOString()})});
   return {rows_read:raw.length,rows_written:1};
 });
 }

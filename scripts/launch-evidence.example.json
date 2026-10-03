@@ -7,6 +7,14 @@
   "backupRestoreVerified": false,
   "freeTierConfirmed": false,
   "providerEntitlementsVerified": false,
-  "monthlyBuildCount": 0,
-  "backupDailyBytes": 0
+  "monthlyBuildCount": null,
+  "backupDailyBytes": null,
+  "hostingProvider": "vercel",
+  "hostingPlan": null,
+  "hostingPlanVerified": false,
+  "commercialHostingAllowed": false,
+  "hostingUsageVerified": false,
+  "hostingUsageObservedAt": null,
+  "hostingUsageEvidence": null,
+  "observedMonthlyDeploymentCount": null
 }

@@ -23,10 +23,7 @@ export async function rate(req:Request,db:any,bucket:string,limit=10):Promise<vo
   const key=await sha256(env("RATE_LIMIT_SALT")+":"+bucket+":"+ip);
   if(checkDb(await db.rpc("take_rate_limit",{p_key:key,p_limit:limit,p_seconds:60}))!==true)throw new ApiError(429,"rate_limited");
 }
-export async function fetchJson(url:string,init:RequestInit={},timeout=8000):Promise<any>{
-  const response=await fetch(url,{...init,signal:AbortSignal.timeout(timeout)});
-  if(!response.ok)throw new ApiError(503,"upstream_unavailable");return response.json();
-}
+export { fetchJson } from "./http.ts";
 export function serve(handler:(req:Request)=>Promise<Response>):void{
   Deno.serve(async req=>{
     const origin=req.headers.get("Origin"),allowed=env("ALLOWED_ORIGINS").split(",").filter(Boolean);
@@ -42,10 +39,29 @@ export function serve(handler:(req:Request)=>Promise<Response>):void{
   });
 }
 export async function content(db:any):Promise<any>{
-  const [pois,events]=await Promise.all([
-    db.from("public_pois").select("*"),
-    db.from("public_events").select("*").gt("ends_at",new Date().toISOString())
-  ]);return {pois:checkDb(pois),events:checkDb(events)};
+  const pageSize=1000,maxRows=10000,cutoff=new Date().toISOString();
+  async function readView(view:"public_pois"|"public_events"):Promise<any[]>{
+    const rows:any[]=[];let expected=0;
+    for(let offset=0;offset<=maxRows;offset+=pageSize){
+      let query=db.from(view).select("*",offset===0?{count:"exact"}:undefined).order("id",{ascending:true}).range(offset,Math.min(offset+pageSize-1,maxRows));
+      if(view==="public_events")query=query.gt("ends_at",cutoff);
+      const result=await query,page=checkDb(result);
+      if(!Array.isArray(page))throw new ApiError(503,"database_unavailable");
+      if(offset===0){
+        if(!Number.isInteger(result.count)||result.count<0)throw new ApiError(503,"content_incomplete");
+        expected=result.count;if(expected>maxRows)throw new ApiError(503,"content_catalog_limit");
+      }
+      if(rows.length+page.length>maxRows)throw new ApiError(503,"content_catalog_limit");
+      rows.push(...page);
+      if(page.length<pageSize){
+        if(rows.length!==expected)throw new ApiError(503,"content_incomplete");
+        return rows;
+      }
+    }
+    throw new ApiError(503,"content_catalog_limit");
+  }
+  const [pois,events]=await Promise.all([readView("public_pois"),readView("public_events")]);
+  return {pois,events};
 }
 export async function fx(db:any,url:URL):Promise<any>{
   if((url.searchParams.get("base")??"THB")!=="THB")throw new ApiError(422,"base_must_be_thb");

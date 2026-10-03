@@ -10,9 +10,9 @@ Observed 2026-10-03: Docker daemon 28.3.2, existing Supabase CLI 2.118.0. Full l
 
 Deno type checks passed with scoped npm resolution. Vitest checks use fake transports and reserved example.test URLs. The database tests roll back their fixtures.
 
-## Hosted setup after client approval
+## Hosted setup
 
-The client creates a Supabase Free project and a Cloudflare Pages Free project in client-owned accounts. Confirm the actual free entitlement and account quotas before enabling workflows. Do not add a card, automatic upgrade, paid routing tier, or PAYG. These instructions are a runbook; they are not authorization to deploy.
+The user has requested production deployment and selected Vercel *.vercel.app for the initial frontend host. Use the selected client-owned Supabase and Vercel projects after verifying permitted hosting terms, actual free entitlement and account quotas. Vercel Hobby is restricted to noncommercial personal use; do not treat these commercial sites as eligible or add a card, automatic upgrade, paid routing tier or PAYG. Cloudflare support remains optional. This runbook does not prove deployment occurred; current account selection, real data and live test evidence must be recorded. See docs/deployment.md for the secure local environment loader and explicit gated build/deployment commands.
 
 1. Copy .env.example to an ignored local environment file and populate only client-approved values.
 2. Link the existing Supabase CLI to the client project, review migrations, then apply with supabase db push. No CLI upgrade is required.
@@ -41,7 +41,7 @@ All jobs keep admin_override rows and their rights/publication decisions, use id
 
 verify.yml runs helper tests, Deno checks, SQL/RLS tests, lint and preview build. content.yml is opt-in via AUTOMATION_ENABLED=true: TAT/FX daily and POIs weekly. catalog.yml is manually dispatched for authorized catalog imports. export.yml follows a successful source/catalog sync or a manual request; this avoids continual idle 30-minute GitHub runs. A queued changed public dataset requests a rebuild immediately, targeting completion within 30 minutes where provider/build capacity permits. This is a target, not a measured SLA.
 
-request-rebuild.ts compares snapshot hashes, reads actual current-month Cloudflare deployment records for all declared account projects, and refuses to request another build at 480 observed builds, reserving 20 under the shared 500/month account cap. It also refuses an account with undeclared projects. A deployment-record count is the available audit signal; retries/concurrent builds and other account use still require client monitoring. It does not infer provider usage or savings.
+request-rebuild.ts supports the explicitly enabled, gated Vercel workflow. An accepted dispatch stays running/deployed:false, expires for retry after 30 minutes, and is completed only after the deployment succeeds for its captured snapshot hash. Legacy Cloudflare build-hook automation stops before any hook request because accepting a hook does not prove deployment completion. Gated manual deploy:cloudflare remains supported. See docs/deployment.md for current host observations, internal reserve caps and actual entitlement requirements; deployment-record counts do not prove billable usage or savings.
 
 check-actions-budget.ts reads actual billable timing and unexpired artifact bytes for every explicitly configured repository. It stops scheduled content/export work at 1,800 observed minutes or 450 MiB artifact storage, reserving 200 minutes/50 MiB under the client's shared GitHub Free allowance. The configured repository list must include all usage in that client account; the script cannot discover hidden repositories or replace the owner's billing page. Initial audit/setup job time itself consumes minutes.
 

@@ -10,3 +10,7 @@ create or replace function auth.uid() returns uuid language sql stable as $$
 select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid; $$;
 grant usage on schema public,auth,extensions to anon,authenticated,service_role;
 grant execute on function auth.uid() to anon,authenticated,service_role;
+-- Model managed Supabase public defaults, not a least-privilege bare PostgreSQL.
+-- Migrations must remove these extra grants while preserving intended reads/DML.
+alter default privileges in schema public grant all privileges on tables to anon,authenticated,service_role;
+alter default privileges in schema public grant all privileges on sequences to anon,authenticated,service_role;

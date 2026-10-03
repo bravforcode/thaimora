@@ -25,6 +25,11 @@
         ".vercel",
         ".netlify",
         ".output",
+        "output",
+        "out",
+        "test-results",
+        "playwright-report",
+        "tsconfig.tsbuildinfo",
         "*.min.js",
         "*.min.css"
       ]

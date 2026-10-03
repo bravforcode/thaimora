@@ -1,3 +1,4 @@
+import {hostingErrors} from './hosting.ts';
 export class ApiError extends Error { constructor(public status:number,public code:string,message=code){super(message);} }
 export const text = (value:unknown,min=1,max=500):string => {
   if(typeof value!=="string" || value.trim().length<min || value.trim().length>max) throw new ApiError(422,"invalid_text");
@@ -149,11 +150,10 @@ export function importRows(rows:string[][]):{rows:any[],errors:any[]} {
 }
 export async function sha256(input:string):Promise<string>{return [...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(input)))].map(v=>v.toString(16).padStart(2,"0")).join("");}
 export function launchErrors(e:any,site:"thaimora"|"taotide"):string[]{
-  const issues:string[]=[];
+  const issues:string[]=hostingErrors(e);
   for(const key of ["domainVerified","legalApproved","integrationVerified","uatApproved","rightsApproved","backupRestoreVerified","freeTierConfirmed"])if(e[key]!==true)issues.push(key);
   if(e.fixtureCount!==0)issues.push("fixtures");
-  if(!Number.isInteger(e.publicFileCount)||e.publicFileCount>20000)issues.push("cloudflare_file_limit");
-  if(!Number.isInteger(e.monthlyBuildCount)||e.monthlyBuildCount>500)issues.push("cloudflare_build_limit");
+  if(!Number.isInteger(e.publicFileCount)||e.publicFileCount<0||e.publicFileCount>20000)issues.push(e.hostingProvider==='cloudflare'?'cloudflare_file_limit':'internal_public_file_cap');
   if(e.backupDailyBytes>30*1024*1024||!Number.isFinite(e.backupDailyBytes))issues.push("backup_budget");
   if(site==="thaimora"&&e.approvedPropertyCount<500)issues.push("500_properties");
   if(site==="taotide"){if(e.approvedPoiCount<20)issues.push("20_pois");if(e.providerEntitlementsVerified!==true)issues.push("provider_entitlements");if(e.approvedHotelCount<1)issues.push("hotel_catalog");}

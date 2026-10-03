@@ -2,6 +2,89 @@
   "version": 1,
   "bugs": [
     {
+      "id": "TH-PROD-SMOKE-CLEANUP",
+      "error": "Smoke harness had CJS top-level await, undeclared SDK, expected403 for anonymous SQL42501 and uncertain Auth create could report no cleanup needed",
+      "file": "scripts/smoke-hosted.ts; scripts/smoke-hosted.test.ts",
+      "root_cause": "Harness runtime/HTTP assumptions differed from actual project and PostgREST; create fixture identity recorded only after successful response",
+      "fix": "Async main/native bounded fetch; public key probe plus401/403 AND42501; exact-email-bound cleanup ID and explicit reconciliation after uncertain creation;6offline failure/cleanup regressions/site passed; actual hosted13case smoke before final uncertainty hardening passed and DBconfirmszero fixtures",
+      "tags": [
+        "auth",
+        "test-harness",
+        "cleanup"
+      ],
+      "related_bugs": [],
+      "evidence": "b306b7fa509e71d7,b48b3b,9c533b,ca31b9; docs/evidence/hosted-http-auth-smoke.json",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T16:08:56.761Z"
+    },
+    {
+      "id": "TH-PROD-CONTENT-PAGES",
+      "error": "Actual Phuket public content API returned1000 POIs after1868-row import",
+      "file": "supabase/functions/_shared/runtime.ts; tests/integration/content-pagination.deno.ts",
+      "root_cause": "Unpaginated public view SELECT hit managed PostgREST max-row cap",
+      "fix": "Ordered1000-row pages with exact counts,10000-row ceiling and incomplete-read errors;6offline Deno cases/site passed; APIs redeployed and actual unique public counts1868/234 verified",
+      "tags": [
+        "api",
+        "pagination"
+      ],
+      "related_bugs": [],
+      "evidence": "f44fe7,5d9abd; docs/evidence/hosted-import-counts.json; current HTTP count verification",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T15:56:19.548Z"
+    },
+    {
+      "id": "TH-PROD-GRANTS",
+      "error": "Hosted database.sql: P0001 Anon inquiry PII leaked (test expected permission denial; RLS actually returned no rows)",
+      "file": "supabase/migrations/*_harden_managed_public_grants.sql; tests/integration/managed-grants.sql",
+      "root_cause": "Managed Supabase default table grants differed from the local SQL model; RLS denial alone did not deny SELECT privilege",
+      "fix": "Revoke anonymous private table/writes; preserve exact public column surfaces, staff RLS DML/service access; revoke TRUNCATE/MAINTAIN and owner-scoped future defaults; hosted rollback DML assertions passed",
+      "tags": [
+        "postgres",
+        "privileges",
+        "hosted"
+      ],
+      "related_bugs": [],
+      "evidence": "docs/evidence/hosted-database-verification.json",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T15:35:10.837Z"
+    },
+    {
+      "id": "TH-PROD-REST",
+      "error": "Actual FX sync: Unexpected end of JSON input after a successful database write",
+      "file": "scripts/lib/db.ts; tests/integration/rest-response.test.ts",
+      "root_cause": "PostgREST Prefer return=minimal returned HTTP201 with empty body rather than204",
+      "fix": "Read body text and parse only nonblank bodies;5response regressions/site passed and actual sync reruns completed; older failed runs retained",
+      "tags": [
+        "sync",
+        "rest"
+      ],
+      "related_bugs": [],
+      "evidence": "ae9ec926913eabc8,1e0823e439748de4,6825b661e8f59fb5",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T15:35:10.837Z"
+    },
+    {
+      "id": "TH-PROD-CONFIG",
+      "error": "Hosted allowed-origin request403; Set-Acl privilege error; Tao live mode key was initially incorrect",
+      "file": "scripts/configure-backend.ps1",
+      "root_cause": "PowerShell array concatenation joined origin/salt into one secret line; generic ACL persistence requested audit privilege; sites use distinct mode variables",
+      "fix": "Group string expressions and validate each secret line; protect before secret writes using owner-only Access DACL and idempotent verification; correct mode per site; actual secret upload and Thaimora CORS200 verified",
+      "tags": [
+        "powershell",
+        "secrets",
+        "cors"
+      ],
+      "related_bugs": [],
+      "evidence": "42d050,1ca6e9,40d325,ba318d,d17589",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T15:35:10.837Z"
+    },
+    {
       "id": "TH-001",
       "error": "Review finding: nullable consent evidence/private-location deletion could retain unsafe public eligibility",
       "file": "supabase/migrations/202610030010_review_fixes.sql",
@@ -86,6 +169,57 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-03T11:26:39Z"
+    },
+    {
+      "id": "TH-PROD-BACKUP",
+      "error": "PGDATABASE URI-only client attempted a local Unix socket; initial backup lacked PG17/owned-target safety",
+      "file": "scripts/backup-db.sh; scripts/test-backup.sh; .github/workflows/backup.yml",
+      "root_cause": "Connection URI was not expanded from the libpq environment; earlier backup assumed PG15 and accepted external reset targets",
+      "fix": "Use explicit database URI, same-major PG17 client/target, actual TLS, owned-labelled disposable container, private-schema encrypted archive and immutable CI image; executed local restore and version rejection",
+      "tags": [
+        "backup",
+        "recovery",
+        "postgres"
+      ],
+      "evidence": "085313977c3db548,6e640c280b5bf6c7,bddbeb50ac8235a1",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T13:40:00Z",
+      "related_bugs": []
+    },
+    {
+      "id": "TH-PROD-STORAGE",
+      "error": "Public Storage object-info could expose private rights evidence from user_metadata",
+      "file": "src/components/admin.tsx; supabase/migrations/20261003124252_safe_public_image_metadata.sql",
+      "root_cause": "Private proof was uploaded as publicly readable Storage user metadata; first scrub draft did not preserve orphan proof",
+      "fix": "Safe public flags only; preserve exact legacy proof in revoked/RLS private archive before scrub; exact metadata policy; modeled RLS and browser boundary verified",
+      "tags": [
+        "privacy",
+        "storage",
+        "rights"
+      ],
+      "evidence": "06ad7415ede1057f,90051345ae2e4817",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T13:40:00Z",
+      "related_bugs": []
+    },
+    {
+      "id": "TH-PROD-EMAIL",
+      "error": "Missing persistent outbox trigger; 5-second scheduler deadline below sequential batch time; invalid PostgreSQL regex repetition {32,256}",
+      "file": "supabase/operations/email-scheduler.sql; supabase/functions/deliver-email/index.ts",
+      "root_cause": "Fire-and-forget initial invocation lacked scheduled retries; unbounded sequential20-task path and regex upper repetition exceeded PostgreSQL255 limit",
+      "fix": "Owner-only private Cron/Vault routines,5concurrent tasks,8s database/provider deadlines,60s scheduler deadline, length+character secret checks; due/stale/private SQL model and delayed/timeout retry tests",
+      "tags": [
+        "email",
+        "scheduler",
+        "retry"
+      ],
+      "evidence": "6ce4f1486a0d9e9e,9b164256552cbbff",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T13:40:00Z",
+      "related_bugs": []
     }
   ]
 }

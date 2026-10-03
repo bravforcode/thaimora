@@ -1,6 +1,6 @@
 # Thaimora
 
-เว็บค้นหาอสังหาริมทรัพย์ผ่านแผนที่ แยกโปรเจกต์จาก TaoTide ใช้ Next.js static export และ Supabase API
+เว็บค้นหาอสังหาริมทรัพย์ผ่านแผนที่ แยกโปรเจกต์จาก TaoTide ใช้ Next.js static export บน Vercel และ Supabase API
 
 ตัวอย่างบนเครื่องใช้ประกาศสมมติและภาพประกอบพื้นที่ ไม่มีการส่งอีเมลจริงหรือเปิดใช้งานระบบ live โดยอัตโนมัติ ก่อนเปิดใช้งานจริงต้องมีสิทธิ์ข้อมูลและภาพ 500 รายการ บัญชีบริการ และผล UAT ตามแผน
 
@@ -40,5 +40,8 @@ npm run test:e2e
 - ภาพและใบอนุญาต: `docs/assets-provenance.json` และหน้าภาพเครดิตในเว็บ
 - Design ที่ส่งจริง: `DESIGN.md` และ `.impeccable/design.json`
 - Environment template: `.env.example` — secret keys อยู่ server เท่านั้น อย่า commit `.env.local`
+- Production configuration/build/deploy: `docs/deployment.md`; เริ่มด้วย `npm run production:check`
+- Actual rollout status and remaining inputs: [production-status.md](docs/production-status.md)
+- Executed local recovery evidence and hosted recovery procedure: [production-recovery.md](docs/production-recovery.md)
 
 Live build ใช้ sanitized snapshot และ mode ที่กำหนดใน backend runbook; production gate ต้องทำงานหลัง export อย่า deploy preview เป็นระบบที่อ้างว่าพร้อมเปิดใช้จริง
