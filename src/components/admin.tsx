@@ -16,6 +16,7 @@ import {
   DownloadSimple,
 } from "@phosphor-icons/react";
 import { useSettings } from "./context";
+import { ContentAutomation } from "./content-automation";
 import { newProperty } from "@/lib/new-property";
 import {
   propertySchema,
@@ -799,6 +800,7 @@ export function Admin({
           ["properties", "Listings", "รายการ"],
           ["inquiries", "Inquiries", "คำถาม"],
           ["imports", "Import & export", "นำเข้าและส่งออก"],
+          ...(liveMode ? [["content-updates", "Content updates", "อัปเดตเนื้อหา"]] : []),
         ].map(([id, en, th]) => (
           <button
             key={id}
@@ -821,6 +823,7 @@ export function Admin({
         </p>
       )}
       {busy && <p role="status">{tr("Working…", "กำลังดำเนินการ…")}</p>}
+      {tab === "content-updates" && <ContentAutomation token={token} />}
       {tab === "properties" && (
         <>
           <div className="admin-toolbar">

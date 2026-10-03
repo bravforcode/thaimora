@@ -21,7 +21,8 @@ import {
   parsePolygonText,
 } from "@/lib/property";
 import { useSettings } from "./context";
-import { mapPOIs, type POI } from "@/lib/pois";
+import { useLiveContent } from "@/lib/live-content";
+import type { POI } from "@/lib/pois";
 import { liveMode } from "@/lib/api";
 type Props = {
   properties: PublicProperty[];
@@ -33,6 +34,7 @@ type Props = {
   poi?: boolean;
   areaPoints?: Point[];
 };
+const EMPTY_POIS: POI[] = [];
 export function PropertyMap({
   properties,
   selectedId,
@@ -44,24 +46,8 @@ export function PropertyMap({
   areaPoints = [],
 }: Props) {
   const { locale, tr } = useSettings();
-  const [pois, setPOIs] = useState<POI[]>([]);
-  useEffect(() => {
-    if (!poi) {
-      setPOIs([]);
-      return;
-    }
-    let disposed = false;
-    mapPOIs()
-      .then((rows) => {
-        if (!disposed) setPOIs(rows);
-      })
-      .catch(() => {
-        if (!disposed) setPOIs([]);
-      });
-    return () => {
-      disposed = true;
-    };
-  }, [poi]);
+  const content = useLiveContent(poi);
+  const pois = poi ? content.data.pois : EMPTY_POIS;
   const container = useRef<HTMLDivElement>(null),
     map = useRef<LibreMap | null>(null),
     props = useRef({ properties, selectedId, onSelect, onMove, onPolygon }),

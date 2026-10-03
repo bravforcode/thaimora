@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { api, liveMode } from "./api";
+import { createPublicContentClient } from "./public-content-client";
 export type POI = {
   id: string;
   name: { en: string; th: string };
@@ -89,6 +90,8 @@ export type LocalEvent = {
   id: string;
   title: { en: string; th: string };
   date: string;
+  startsAt?: string;
+  endsAt?: string;
   sourceUrl?: string;
   sourceId?: string;
   license?: string;
@@ -97,10 +100,11 @@ export type LocalEvent = {
   fetchedAt?: string;
   sourceUpdatedAt?: string;
 };
-export async function localContent() {
-  if (!liveMode)
-    return { pois: await previewPOIs(), events: [] as LocalEvent[] };
-  const result = await api<{
+const localEvent = point.omit({ name: true, category: true, lat: true, lng: true, distanceMeters: true }).extend({
+  title: point.shape.name, date: z.string(), startsAt: z.string().optional(), endsAt: z.string().optional(),
+});
+export function decodeLocalContent(body: unknown) {
+  const result = body as {
     pois: RawPOI[];
     events: {
       id: string;
@@ -108,6 +112,8 @@ export async function localContent() {
       name?: { en: string; th: string };
       date?: string;
       startsAt?: string;
+      endsAt?: string;
+      ends_at?: string;
       sourceUrl?: string;
       source_url?: string;
       sourceId?: string;
@@ -121,22 +127,34 @@ export async function localContent() {
       sourceUpdatedAt?: string;
       source_updated_at?: string;
     }[];
-  }>("/v1/content");
+  };
+  if (!result || !Array.isArray(result.pois) || !Array.isArray(result.events) || result.pois.length > 10_000 || result.events.length > 10_000)
+    throw new Error("Local content response is invalid.");
   return {
     pois: result.pois.map(normalizePOI),
     events: result.events
       .filter((e) => (e.title || e.name) && (e.date || e.startsAt))
-      .map((e) => ({
+      .map((e) => localEvent.parse({
         id: e.id,
         title: (e.title || e.name)!,
         date: (e.date || e.startsAt)!,
-        sourceUrl: e.sourceUrl ?? e.source_url,
-        sourceId: e.sourceId ?? e.source_id,
-        license: e.license,
-        licenseUrl: e.licenseUrl ?? e.license_url,
-        attribution: e.attribution,
-        fetchedAt: e.fetchedAt ?? e.fetched_at,
-        sourceUpdatedAt: e.sourceUpdatedAt ?? e.source_updated_at,
+        startsAt: e.startsAt ?? e.date,
+        endsAt: e.endsAt ?? e.ends_at,
+        sourceUrl: e.sourceUrl ?? e.source_url ?? undefined,
+        sourceId: e.sourceId ?? e.source_id ?? undefined,
+        license: e.license ?? undefined,
+        licenseUrl: e.licenseUrl ?? e.license_url ?? undefined,
+        attribution: e.attribution ?? undefined,
+        fetchedAt: e.fetchedAt ?? e.fetched_at ?? undefined,
+        sourceUpdatedAt: e.sourceUpdatedAt ?? e.source_updated_at ?? undefined,
       })),
   };
+}
+export const localContentClient = createPublicContentClient(
+  process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")}/v1/content` : undefined,
+  decodeLocalContent,
+);
+export async function localContent() {
+  if (!liveMode) return { pois: await previewPOIs(), events: [] as LocalEvent[] };
+  return decodeLocalContent(await api<unknown>("/v1/content"));
 }

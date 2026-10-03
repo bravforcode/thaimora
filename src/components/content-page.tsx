@@ -1,9 +1,13 @@
 "use client";
 import { LocaleLink as Link } from "./context";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, MapPin, Waves, Buildings } from "@phosphor-icons/react";
 import { useSettings } from "./context";
-import { localContent, type POI, type LocalEvent } from "@/lib/pois";
+import { useLiveContent } from "@/lib/live-content";
+import { currentEvents } from "@/lib/public-content-client";
+import { useEventClock } from "@/lib/use-public-content";
+import { ContentFreshness } from "./content-freshness";
+import { paginate } from "@/lib/pagination";
 import { SourceNotes } from "./source-notes";
 import { liveMode } from "@/lib/api";
 type Kind = "privacy" | "terms" | "guide" | "credits";
@@ -15,17 +19,13 @@ export function ContentPage({
   approvedCopy?: { en: string; th: string };
 }) {
   const { locale, tr } = useSettings();
-  const [content, setContent] = useState<{
-      pois: POI[];
-      events: LocalEvent[];
-    }>({ pois: [], events: [] }),
-    [error, setError] = useState("");
-  useEffect(() => {
-    if (kind === "guide")
-      localContent()
-        .then(setContent)
-        .catch(() => setError("Current local content is unavailable."));
-  }, [kind]);
+  const state = useLiveContent(kind === "guide");
+  const content = state.data;
+  const [page, setPage] = useState(0);
+  useEffect(() => { setPage(0); }, [content.pois]);
+  const directory = paginate(content.pois, page);
+  const now = useEventClock(content.events);
+  const events = now ? currentEvents(content.events, now) : [];
   if (approvedCopy && (kind === "terms" || kind === "privacy"))
     return (
       <main id="main" className="content-page">
@@ -78,11 +78,12 @@ export function ContentPage({
               )}
             </p>
           )}
-          {error && (
+          {state.error && !liveMode && (
             <p role="alert" className="notice error">
-              {error}
+              {state.error}
             </p>
           )}
+          <ContentFreshness state={state} />
           {!liveMode && (
             <p className="data-credit">
               {tr(
@@ -102,7 +103,7 @@ export function ContentPage({
             </p>
           )}
           <div className="guide-places">
-            {content.pois.map((p) => (
+            {directory.items.map((p) => (
               <article key={p.id}>
                 <div className="guide-icon">
                   {p.category === "Beach" ? (
@@ -127,9 +128,14 @@ export function ContentPage({
               </article>
             ))}
           </div>
+          <nav aria-label={tr("Place directory pages", "หน้ารายการสถานที่")}>
+            <p role="status">{directory.start}–{directory.end} {tr("of", "จาก")} {directory.total} {tr("places", "สถานที่")}</p>
+            <button className="button secondary" disabled={directory.page === 0} onClick={() => setPage(directory.page - 1)}>{tr("Previous page", "หน้าก่อนหน้า")}</button>{" "}
+            <button className="button secondary" disabled={directory.page + 1 >= directory.pageCount} onClick={() => setPage(directory.page + 1)}>{tr("Next page", "หน้าถัดไป")}</button>
+          </nav>
           <h2>{tr("What’s happening nearby", "กิจกรรมในพื้นที่")}</h2>
-          {content.events.length ? (
-            content.events.map((e) => (
+          {events.length ? (
+            events.map((e) => (
               <div key={e.id}>
                 <p>
                   {e.title[locale]} · {e.date}
