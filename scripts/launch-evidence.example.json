@@ -1,0 +1,12 @@
+{
+  "domainVerified": false,
+  "legalApproved": false,
+  "integrationVerified": false,
+  "uatApproved": false,
+  "rightsApproved": false,
+  "backupRestoreVerified": false,
+  "freeTierConfirmed": false,
+  "providerEntitlementsVerified": false,
+  "monthlyBuildCount": 0,
+  "backupDailyBytes": 0
+}

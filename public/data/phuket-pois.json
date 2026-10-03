@@ -1,0 +1,1346 @@
+[
+  {
+    "id": "osm:node:265689795",
+    "name": {
+      "en": "Phromthep Cape",
+      "th": "แหลมพรหมเทพ"
+    },
+    "category": "viewpoint",
+    "lat": 7.7588691,
+    "lng": 98.3033923,
+    "sourceUrl": "https://www.openstreetmap.org/node/265689795",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:571499896",
+    "name": {
+      "en": "Chalong Pier Restaurant",
+      "th": "Chalong Pier Restaurant"
+    },
+    "category": "restaurant",
+    "lat": 7.821508,
+    "lng": 98.3447484,
+    "sourceUrl": "https://www.openstreetmap.org/node/571499896",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:571502575",
+    "name": {
+      "en": "Kasikornbank",
+      "th": "ธนาคารกสิกรไทย"
+    },
+    "category": "atm",
+    "lat": 7.82326,
+    "lng": 98.341583,
+    "sourceUrl": "https://www.openstreetmap.org/node/571502575",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:573263225",
+    "name": {
+      "en": "coconutbar",
+      "th": "coconutbar"
+    },
+    "category": "bar",
+    "lat": 7.8218278,
+    "lng": 98.3416736,
+    "sourceUrl": "https://www.openstreetmap.org/node/573263225",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:660134618",
+    "name": {
+      "en": "On the Beach Restaurant",
+      "th": "On the Beach Restaurant"
+    },
+    "category": "restaurant",
+    "lat": 7.8975004,
+    "lng": 98.296197,
+    "sourceUrl": "https://www.openstreetmap.org/node/660134618",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:663334457",
+    "name": {
+      "en": "Mangmoon-Bar",
+      "th": "Mangmoon-Bar"
+    },
+    "category": "bar",
+    "lat": 7.8967668,
+    "lng": 98.3089061,
+    "sourceUrl": "https://www.openstreetmap.org/node/663334457",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:663334526",
+    "name": {
+      "en": "Freedom Bar",
+      "th": "Freedom Bar"
+    },
+    "category": "bar",
+    "lat": 7.922809,
+    "lng": 98.2777509,
+    "sourceUrl": "https://www.openstreetmap.org/node/663334526",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:672352911",
+    "name": {
+      "en": "Eff & Gap Bar & Restaurant",
+      "th": "Eff & Gap Bar & Restaurant"
+    },
+    "category": "restaurant",
+    "lat": 8.0612378,
+    "lng": 98.2774675,
+    "sourceUrl": "https://www.openstreetmap.org/node/672352911",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:672582341",
+    "name": {
+      "en": "Seaview Bar",
+      "th": "Seaview Bar"
+    },
+    "category": "bar",
+    "lat": 8.0603867,
+    "lng": 98.2778525,
+    "sourceUrl": "https://www.openstreetmap.org/node/672582341",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:701508449",
+    "name": {
+      "en": "Garden Cottage",
+      "th": "Garden Cottage"
+    },
+    "category": "restaurant",
+    "lat": 8.0910912,
+    "lng": 98.3051733,
+    "sourceUrl": "https://www.openstreetmap.org/node/701508449",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:701603366",
+    "name": {
+      "en": "Go Benz Rice Porridge Phuket",
+      "th": "Gobenz Phuket"
+    },
+    "category": "restaurant",
+    "lat": 7.8847086,
+    "lng": 98.3824761,
+    "sourceUrl": "https://www.openstreetmap.org/node/701603366",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:702197105",
+    "name": {
+      "en": "Shell",
+      "th": "เชลล์"
+    },
+    "category": "fuel",
+    "lat": 7.8859755,
+    "lng": 98.3886457,
+    "sourceUrl": "https://www.openstreetmap.org/node/702197105",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:778084219",
+    "name": {
+      "en": "Jame Bar",
+      "th": "Jame Bar"
+    },
+    "category": "pub",
+    "lat": 7.8977841,
+    "lng": 98.301892,
+    "sourceUrl": "https://www.openstreetmap.org/node/778084219",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:785748432",
+    "name": {
+      "en": "Baantong BBQ",
+      "th": "Baantong BBQ"
+    },
+    "category": "restaurant",
+    "lat": 7.9016689,
+    "lng": 98.3100774,
+    "sourceUrl": "https://www.openstreetmap.org/node/785748432",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:792596131",
+    "name": {
+      "en": "The Corner",
+      "th": "The Corner"
+    },
+    "category": "restaurant",
+    "lat": 7.8872497,
+    "lng": 98.3029843,
+    "sourceUrl": "https://www.openstreetmap.org/node/792596131",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:792876614",
+    "name": {
+      "en": "Acqua",
+      "th": "Acqua"
+    },
+    "category": "restaurant",
+    "lat": 7.9166191,
+    "lng": 98.291105,
+    "sourceUrl": "https://www.openstreetmap.org/node/792876614",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:793092174",
+    "name": {
+      "en": "Banana",
+      "th": "Banana"
+    },
+    "category": "pub",
+    "lat": 7.8930862,
+    "lng": 98.2948909,
+    "sourceUrl": "https://www.openstreetmap.org/node/793092174",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:794346489",
+    "name": {
+      "en": "Patong Health Care",
+      "th": "Patong Health Care"
+    },
+    "category": "pharmacy",
+    "lat": 7.8969901,
+    "lng": 98.300091,
+    "sourceUrl": "https://www.openstreetmap.org/node/794346489",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:795685946",
+    "name": {
+      "en": "Bangkok Bank",
+      "th": "ธนาคารกรุงเทพ"
+    },
+    "category": "atm",
+    "lat": 7.890615,
+    "lng": 98.3021228,
+    "sourceUrl": "https://www.openstreetmap.org/node/795685946",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:803993092",
+    "name": {
+      "en": "Bangkok Bank",
+      "th": "ธนาคารกรุงเทพ"
+    },
+    "category": "atm",
+    "lat": 7.8871607,
+    "lng": 98.291493,
+    "sourceUrl": "https://www.openstreetmap.org/node/803993092",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:804002240",
+    "name": {
+      "en": "Coffee World",
+      "th": "Coffee World"
+    },
+    "category": "cafe",
+    "lat": 7.8878531,
+    "lng": 98.2921164,
+    "sourceUrl": "https://www.openstreetmap.org/node/804002240",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:804033308",
+    "name": {
+      "en": "RX",
+      "th": "RX"
+    },
+    "category": "pharmacy",
+    "lat": 7.8894033,
+    "lng": 98.2929012,
+    "sourceUrl": "https://www.openstreetmap.org/node/804033308",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:938167557",
+    "name": {
+      "en": "Shell",
+      "th": "เชลล์"
+    },
+    "category": "fuel",
+    "lat": 7.9822446,
+    "lng": 98.362087,
+    "sourceUrl": "https://www.openstreetmap.org/node/938167557",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:975625692",
+    "name": {
+      "en": "Coconut",
+      "th": "Coconut"
+    },
+    "category": "restaurant",
+    "lat": 8.172519,
+    "lng": 98.3370417,
+    "sourceUrl": "https://www.openstreetmap.org/node/975625692",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1034807295",
+    "name": {
+      "en": "Reggae Bar",
+      "th": "Reggae Bar"
+    },
+    "category": "bar",
+    "lat": 8.0147336,
+    "lng": 98.2918024,
+    "sourceUrl": "https://www.openstreetmap.org/node/1034807295",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1036882374",
+    "name": {
+      "en": "Ton Sai Waterfall",
+      "th": "น้ำตก"
+    },
+    "category": "attraction",
+    "lat": 8.0281835,
+    "lng": 98.3653337,
+    "sourceUrl": "https://www.openstreetmap.org/node/1036882374",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1059034625",
+    "name": {
+      "en": "Pimwilai",
+      "th": "Pimwilai"
+    },
+    "category": "restaurant",
+    "lat": 7.8255732,
+    "lng": 98.297336,
+    "sourceUrl": "https://www.openstreetmap.org/node/1059034625",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1284444931",
+    "name": {
+      "en": "Banzaan Fresh Market (Night)",
+      "th": "ตลาดสดบันซ้าน"
+    },
+    "category": "attraction",
+    "lat": 7.8913509,
+    "lng": 98.3014978,
+    "sourceUrl": "https://www.openstreetmap.org/node/1284444931",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1408226061",
+    "name": {
+      "en": "Why Not Bar",
+      "th": "Why Not Bar"
+    },
+    "category": "bar",
+    "lat": 7.774422,
+    "lng": 98.3254481,
+    "sourceUrl": "https://www.openstreetmap.org/node/1408226061",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1432553302",
+    "name": {
+      "en": "Tiffany Restaurant and Coffee Shop",
+      "th": "Tiffany Restaurant and Coffee Shop"
+    },
+    "category": "restaurant",
+    "lat": 7.7917578,
+    "lng": 98.3303823,
+    "sourceUrl": "https://www.openstreetmap.org/node/1432553302",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1473224853",
+    "name": {
+      "en": "Esso",
+      "th": "เอสโซ่"
+    },
+    "category": "fuel",
+    "lat": 7.90331,
+    "lng": 98.3058377,
+    "sourceUrl": "https://www.openstreetmap.org/node/1473224853",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1487434821",
+    "name": {
+      "en": "Shell",
+      "th": "เชลล์"
+    },
+    "category": "fuel",
+    "lat": 7.82332,
+    "lng": 98.3347017,
+    "sourceUrl": "https://www.openstreetmap.org/node/1487434821",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1563390237",
+    "name": {
+      "en": "Shell",
+      "th": "Shell"
+    },
+    "category": "fuel",
+    "lat": 7.9417067,
+    "lng": 98.3946513,
+    "sourceUrl": "https://www.openstreetmap.org/node/1563390237",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1626497319",
+    "name": {
+      "en": "PTT",
+      "th": "ป.ต.ท."
+    },
+    "category": "fuel",
+    "lat": 7.8198561,
+    "lng": 98.350533,
+    "sourceUrl": "https://www.openstreetmap.org/node/1626497319",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1760859846",
+    "name": {
+      "en": "The Grapevine",
+      "th": "The Grapevine"
+    },
+    "category": "restaurant",
+    "lat": 8.0077158,
+    "lng": 98.3150655,
+    "sourceUrl": "https://www.openstreetmap.org/node/1760859846",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1868627830",
+    "name": {
+      "en": "Bar Funk",
+      "th": "Bar Funk"
+    },
+    "category": "bar",
+    "lat": 7.8937575,
+    "lng": 98.2963487,
+    "sourceUrl": "https://www.openstreetmap.org/node/1868627830",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:1957082023",
+    "name": {
+      "en": "Kaokard Viewpoint Tower",
+      "th": "จุดชมวิวเขาขาด"
+    },
+    "category": "viewpoint",
+    "lat": 7.8346837,
+    "lng": 98.3835499,
+    "sourceUrl": "https://www.openstreetmap.org/node/1957082023",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2082853932",
+    "name": {
+      "en": "Black Canyon Coffee",
+      "th": "Black Canyon Coffee"
+    },
+    "category": "cafe",
+    "lat": 7.8155355,
+    "lng": 98.300322,
+    "sourceUrl": "https://www.openstreetmap.org/node/2082853932",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2082867401",
+    "name": {
+      "en": "Starbucks Coffee",
+      "th": "สตาร์บัคส์"
+    },
+    "category": "cafe",
+    "lat": 7.826578,
+    "lng": 98.2968652,
+    "sourceUrl": "https://www.openstreetmap.org/node/2082867401",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2209604172",
+    "name": {
+      "en": "Nok & Jo's",
+      "th": "Nok & Jo's"
+    },
+    "category": "restaurant",
+    "lat": 7.9838937,
+    "lng": 98.285325,
+    "sourceUrl": "https://www.openstreetmap.org/node/2209604172",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2509041384",
+    "name": {
+      "en": "Rockin' Angels Blues Cafe",
+      "th": "Angels live blues bar"
+    },
+    "category": "pub",
+    "lat": 7.884685,
+    "lng": 98.387353,
+    "sourceUrl": "https://www.openstreetmap.org/node/2509041384",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2696092426",
+    "name": {
+      "en": "PTT Station",
+      "th": "พีทีที สเตชั่น"
+    },
+    "category": "fuel",
+    "lat": 8.0048497,
+    "lng": 98.3434975,
+    "sourceUrl": "https://www.openstreetmap.org/node/2696092426",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2822617946",
+    "name": {
+      "en": "Bangchak",
+      "th": "บางจาก"
+    },
+    "category": "fuel",
+    "lat": 7.9999258,
+    "lng": 98.3487539,
+    "sourceUrl": "https://www.openstreetmap.org/node/2822617946",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:2835558850",
+    "name": {
+      "en": "Khao Rang Viewpoint",
+      "th": "จุดชมวิวเขารัง"
+    },
+    "category": "viewpoint",
+    "lat": 7.8923831,
+    "lng": 98.380192,
+    "sourceUrl": "https://www.openstreetmap.org/node/2835558850",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3014367766",
+    "name": {
+      "en": "Catch Beach Club",
+      "th": "Catch Beach Club"
+    },
+    "category": "bar",
+    "lat": 7.9885765,
+    "lng": 98.2891798,
+    "sourceUrl": "https://www.openstreetmap.org/node/3014367766",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3208681218",
+    "name": {
+      "en": "Starbucks Coffee",
+      "th": "สตาร์บัคส์"
+    },
+    "category": "cafe",
+    "lat": 7.8903393,
+    "lng": 98.3005071,
+    "sourceUrl": "https://www.openstreetmap.org/node/3208681218",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3612232918",
+    "name": {
+      "en": "World Wide Pharmacy",
+      "th": "World Wide Pharmacy"
+    },
+    "category": "pharmacy",
+    "lat": 7.8241927,
+    "lng": 98.2977116,
+    "sourceUrl": "https://www.openstreetmap.org/node/3612232918",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3878739094",
+    "name": {
+      "en": "Patak Pharmacy",
+      "th": "Patak Pharmacy"
+    },
+    "category": "pharmacy",
+    "lat": 7.8268876,
+    "lng": 98.3016807,
+    "sourceUrl": "https://www.openstreetmap.org/node/3878739094",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3891153450",
+    "name": {
+      "en": "Dino Bar and Dino Park",
+      "th": "Dino Bar and Dino Park"
+    },
+    "category": "bar",
+    "lat": 7.828247,
+    "lng": 98.2956484,
+    "sourceUrl": "https://www.openstreetmap.org/node/3891153450",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3891224590",
+    "name": {
+      "en": "Sub Aqua",
+      "th": "Sub Aqua"
+    },
+    "category": "diving",
+    "lat": 7.8377674,
+    "lng": 98.2950659,
+    "sourceUrl": "https://www.openstreetmap.org/node/3891224590",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3921117235",
+    "name": {
+      "en": "PTT",
+      "th": "ป.ต.ท."
+    },
+    "category": "fuel",
+    "lat": 8.0748269,
+    "lng": 98.3443386,
+    "sourceUrl": "https://www.openstreetmap.org/node/3921117235",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3964570323",
+    "name": {
+      "en": "Tom N Toms",
+      "th": "Tom N Toms"
+    },
+    "category": "cafe",
+    "lat": 7.8862755,
+    "lng": 98.3919605,
+    "sourceUrl": "https://www.openstreetmap.org/node/3964570323",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3966577221",
+    "name": {
+      "en": "Siam Commercial Bank",
+      "th": "ธนาคารไทยพาณิชย์"
+    },
+    "category": "atm",
+    "lat": 7.8829841,
+    "lng": 98.3896903,
+    "sourceUrl": "https://www.openstreetmap.org/node/3966577221",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:3983421103",
+    "name": {
+      "en": "Laem Singh viewpoint",
+      "th": "แหลมสิงห์"
+    },
+    "category": "viewpoint",
+    "lat": 7.9700561,
+    "lng": 98.2793891,
+    "sourceUrl": "https://www.openstreetmap.org/node/3983421103",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4101009906",
+    "name": {
+      "en": "502",
+      "th": "502"
+    },
+    "category": "cafe",
+    "lat": 7.7823831,
+    "lng": 98.3152817,
+    "sourceUrl": "https://www.openstreetmap.org/node/4101009906",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4109201913",
+    "name": {
+      "en": "Anteka",
+      "th": "Anteka"
+    },
+    "category": "pharmacy",
+    "lat": 7.9851124,
+    "lng": 98.2870455,
+    "sourceUrl": "https://www.openstreetmap.org/node/4109201913",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4109226690",
+    "name": {
+      "en": "Beer Garden",
+      "th": "Beer Garden"
+    },
+    "category": "cafe",
+    "lat": 7.9853405,
+    "lng": 98.2873797,
+    "sourceUrl": "https://www.openstreetmap.org/node/4109226690",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4125363940",
+    "name": {
+      "en": "Super Cheap Pharmacy Naka",
+      "th": "Super Cheap Pharmacy Naka"
+    },
+    "category": "pharmacy",
+    "lat": 7.8807254,
+    "lng": 98.3674203,
+    "sourceUrl": "https://www.openstreetmap.org/node/4125363940",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4144223791",
+    "name": {
+      "en": "Airplane Viewpoint at Maikhao Beach",
+      "th": "จุดอันซีนภูเก็ต เครื่องบินแลนดิ้งติดหาดไม้ขาว"
+    },
+    "category": "viewpoint",
+    "lat": 8.1136478,
+    "lng": 98.3022091,
+    "sourceUrl": "https://www.openstreetmap.org/node/4144223791",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4150248189",
+    "name": {
+      "en": "Bang Pae Seafood",
+      "th": "Bang Pae Seafood"
+    },
+    "category": "restaurant",
+    "lat": 8.0365886,
+    "lng": 98.4153086,
+    "sourceUrl": "https://www.openstreetmap.org/node/4150248189",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4173551699",
+    "name": {
+      "en": "Peang-Prai Restaurant",
+      "th": "Peang-Prai Restaurant"
+    },
+    "category": "restaurant",
+    "lat": 8.0414538,
+    "lng": 98.395381,
+    "sourceUrl": "https://www.openstreetmap.org/node/4173551699",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4178887521",
+    "name": {
+      "en": "Upside down house",
+      "th": "บ้านตีลังกา"
+    },
+    "category": "attraction",
+    "lat": 7.9384404,
+    "lng": 98.3796245,
+    "sourceUrl": "https://www.openstreetmap.org/node/4178887521",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4179814015",
+    "name": {
+      "en": "Mor Mu Dong Restaurant",
+      "th": "ร้านอาหารหมอมูดง"
+    },
+    "category": "restaurant",
+    "lat": 7.8431373,
+    "lng": 98.3719927,
+    "sourceUrl": "https://www.openstreetmap.org/node/4179814015",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4200384408",
+    "name": {
+      "en": "Radar hill",
+      "th": "Radar hill"
+    },
+    "category": "viewpoint",
+    "lat": 7.874235,
+    "lng": 98.3135107,
+    "sourceUrl": "https://www.openstreetmap.org/node/4200384408",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4205168991",
+    "name": {
+      "en": "ท่าเรืออ่าวมะขาม",
+      "th": "ท่าเรืออ่าวมะขาม"
+    },
+    "category": "viewpoint",
+    "lat": 7.8297548,
+    "lng": 98.4052589,
+    "sourceUrl": "https://www.openstreetmap.org/node/4205168991",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4205169392",
+    "name": {
+      "en": "Wat Chalong Temple",
+      "th": "วัดฉลอง"
+    },
+    "category": "viewpoint",
+    "lat": 7.8463829,
+    "lng": 98.3361268,
+    "sourceUrl": "https://www.openstreetmap.org/node/4205169392",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4205169690",
+    "name": {
+      "en": "Laem Hin Seafood",
+      "th": "แหลมหินซีฟู้ด"
+    },
+    "category": "restaurant",
+    "lat": 7.9357245,
+    "lng": 98.4073717,
+    "sourceUrl": "https://www.openstreetmap.org/node/4205169690",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4205170191",
+    "name": {
+      "en": "Nok's house",
+      "th": "Nok's house"
+    },
+    "category": "attraction",
+    "lat": 7.9109946,
+    "lng": 98.3361384,
+    "sourceUrl": "https://www.openstreetmap.org/node/4205170191",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4219176696",
+    "name": {
+      "en": "Phuket Marathon",
+      "th": "Phuket Marathon"
+    },
+    "category": "attraction",
+    "lat": 7.9983667,
+    "lng": 98.298279,
+    "sourceUrl": "https://www.openstreetmap.org/node/4219176696",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4223066592",
+    "name": {
+      "en": "Bouddha couché",
+      "th": "Bouddha couché"
+    },
+    "category": "viewpoint",
+    "lat": 7.8804006,
+    "lng": 98.4258378,
+    "sourceUrl": "https://www.openstreetmap.org/node/4223066592",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4279381889",
+    "name": {
+      "en": "Sabai Corner sea view restaurant & bar",
+      "th": "Sabai Corner sea view restaurant & bar"
+    },
+    "category": "restaurant",
+    "lat": 7.7913805,
+    "lng": 98.2924645,
+    "sourceUrl": "https://www.openstreetmap.org/node/4279381889",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4281419694",
+    "name": {
+      "en": "Jam rock",
+      "th": "Jam rock"
+    },
+    "category": "bar",
+    "lat": 7.7921704,
+    "lng": 98.2939487,
+    "sourceUrl": "https://www.openstreetmap.org/node/4281419694",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4337973695",
+    "name": {
+      "en": "The Panwa Café",
+      "th": "The Panwa Café"
+    },
+    "category": "restaurant",
+    "lat": 7.8095839,
+    "lng": 98.4022386,
+    "sourceUrl": "https://www.openstreetmap.org/node/4337973695",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4395955589",
+    "name": {
+      "en": "Phuket Old Town",
+      "th": "เมืองเก่าภูเก็ต"
+    },
+    "category": "attraction",
+    "lat": 7.8847774,
+    "lng": 98.3892206,
+    "sourceUrl": "https://www.openstreetmap.org/node/4395955589",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4442662030",
+    "name": {
+      "en": "Siam Supper Club",
+      "th": "Siam Supper Club"
+    },
+    "category": "restaurant",
+    "lat": 7.9951302,
+    "lng": 98.3057146,
+    "sourceUrl": "https://www.openstreetmap.org/node/4442662030",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4547196689",
+    "name": {
+      "en": "Monkey Seeing",
+      "th": "Monkeys"
+    },
+    "category": "attraction",
+    "lat": 7.8858187,
+    "lng": 98.4208421,
+    "sourceUrl": "https://www.openstreetmap.org/node/4547196689",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4613249290",
+    "name": {
+      "en": "Starbucks",
+      "th": "Starbucks"
+    },
+    "category": "cafe",
+    "lat": 8.1049227,
+    "lng": 98.3055727,
+    "sourceUrl": "https://www.openstreetmap.org/node/4613249290",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4628471097",
+    "name": {
+      "en": "Karon Temple Market",
+      "th": "Karon Temple Market"
+    },
+    "category": "attraction",
+    "lat": 7.8480156,
+    "lng": 98.2978062,
+    "sourceUrl": "https://www.openstreetmap.org/node/4628471097",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4661759789",
+    "name": {
+      "en": "Layan beach Restaurant",
+      "th": "Layan beach Restaurant"
+    },
+    "category": "restaurant",
+    "lat": 8.0279337,
+    "lng": 98.2894028,
+    "sourceUrl": "https://www.openstreetmap.org/node/4661759789",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4662867089",
+    "name": {
+      "en": "NOI.thaifood",
+      "th": "เจ้น้อย สุรินทร์"
+    },
+    "category": "cafe",
+    "lat": 7.8249455,
+    "lng": 98.4005901,
+    "sourceUrl": "https://www.openstreetmap.org/node/4662867089",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4676434988",
+    "name": {
+      "en": "ATM กสิกรไทย กะตะน้อย ภูเก็ต",
+      "th": "ATM กสิกรไทย กะตะน้อย ภูเก็ต"
+    },
+    "category": "atm",
+    "lat": 7.8034128,
+    "lng": 98.2998588,
+    "sourceUrl": "https://www.openstreetmap.org/node/4676434988",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4716257190",
+    "name": {
+      "en": "The ship inn bar",
+      "th": "The ship inn bar"
+    },
+    "category": "bar",
+    "lat": 7.8141707,
+    "lng": 98.3962679,
+    "sourceUrl": "https://www.openstreetmap.org/node/4716257190",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4717623789",
+    "name": {
+      "en": "007 bar",
+      "th": "007 bar"
+    },
+    "category": "bar",
+    "lat": 7.8804295,
+    "lng": 98.3931808,
+    "sourceUrl": "https://www.openstreetmap.org/node/4717623789",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4719532191",
+    "name": {
+      "en": "Kamala Clinic",
+      "th": "Kamala Clinic"
+    },
+    "category": "pharmacy",
+    "lat": 7.9481525,
+    "lng": 98.2831839,
+    "sourceUrl": "https://www.openstreetmap.org/node/4719532191",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4738025522",
+    "name": {
+      "en": "ribs",
+      "th": "ribs"
+    },
+    "category": "cafe",
+    "lat": 7.8430034,
+    "lng": 98.3510625,
+    "sourceUrl": "https://www.openstreetmap.org/node/4738025522",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4779401621",
+    "name": {
+      "en": "Ton Ao Yon Waterfall",
+      "th": "น้ำตกโตนอ่าวยน"
+    },
+    "category": "attraction",
+    "lat": 7.8235939,
+    "lng": 98.3899932,
+    "sourceUrl": "https://www.openstreetmap.org/node/4779401621",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4850515561",
+    "name": {
+      "en": "Rock Pharmacy",
+      "th": "Rock Pharmacy"
+    },
+    "category": "pharmacy",
+    "lat": 8.0054014,
+    "lng": 98.3439915,
+    "sourceUrl": "https://www.openstreetmap.org/node/4850515561",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4905066121",
+    "name": {
+      "en": "Jina2Bar",
+      "th": "Jina2 Bar"
+    },
+    "category": "bar",
+    "lat": 7.9090051,
+    "lng": 98.3479526,
+    "sourceUrl": "https://www.openstreetmap.org/node/4905066121",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:4961120521",
+    "name": {
+      "en": "Memorial boat",
+      "th": "Memorial boat"
+    },
+    "category": "attraction",
+    "lat": 7.8521904,
+    "lng": 98.292577,
+    "sourceUrl": "https://www.openstreetmap.org/node/4961120521",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5113113421",
+    "name": {
+      "en": "Kyoodai",
+      "th": "Kyoodai"
+    },
+    "category": "restaurant",
+    "lat": 7.9175022,
+    "lng": 98.3700959,
+    "sourceUrl": "https://www.openstreetmap.org/node/5113113421",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5224191922",
+    "name": {
+      "en": "3ch",
+      "th": "3ch"
+    },
+    "category": "cafe",
+    "lat": 7.9007725,
+    "lng": 98.3042624,
+    "sourceUrl": "https://www.openstreetmap.org/node/5224191922",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5225590925",
+    "name": {
+      "en": "Baba Nest",
+      "th": "Baba Nest"
+    },
+    "category": "bar",
+    "lat": 7.8012173,
+    "lng": 98.4113533,
+    "sourceUrl": "https://www.openstreetmap.org/node/5225590925",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5226008622",
+    "name": {
+      "en": "Hillmyna",
+      "th": "Hillmyna"
+    },
+    "category": "cafe",
+    "lat": 7.9846125,
+    "lng": 98.3005176,
+    "sourceUrl": "https://www.openstreetmap.org/node/5226008622",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5259193421",
+    "name": {
+      "en": "Water forest Chulang",
+      "th": "Water forest Chulang"
+    },
+    "category": "attraction",
+    "lat": 8.0210139,
+    "lng": 98.4101463,
+    "sourceUrl": "https://www.openstreetmap.org/node/5259193421",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5321637521",
+    "name": {
+      "en": "Café Amazon",
+      "th": "คาเฟ่ อเมซอน"
+    },
+    "category": "cafe",
+    "lat": 8.0046765,
+    "lng": 98.3429533,
+    "sourceUrl": "https://www.openstreetmap.org/node/5321637521",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  {
+    "id": "osm:node:5398566523",
+    "name": {
+      "en": "Sainamyen International Clinic",
+      "th": "Sainamyen International Clinic"
+    },
+    "category": "clinic",
+    "lat": 7.8970668,
+    "lng": 98.3008673,
+    "sourceUrl": "https://www.openstreetmap.org/node/5398566523",
+    "license": "ODbL 1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "attribution": "© OpenStreetMap contributors"
+  }
+]

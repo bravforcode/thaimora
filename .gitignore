@@ -1,0 +1,15 @@
+node_modules/
+public/maplibre/
+.next/
+out/
+.env*
+!.env.example
+*.log
+*.tsbuildinfo
+scripts/output/
+scripts/launch-evidence.json
+backups/
+playwright-report/
+test-results/
+.wolf/cache/
+.wolf/implementation-context.md

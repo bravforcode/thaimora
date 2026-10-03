@@ -1,0 +1,71 @@
+{
+  "project": "thaimora",
+  "baseUrl": "http://127.0.0.1:4100/",
+  "capturedAt": "2026-10-03T11:10:06.974Z",
+  "captures": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "url": "http://127.0.0.1:4100/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\desktop.png",
+      "documentLanguage": "en",
+      "overflow": false
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:4100/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\mobile.png",
+      "documentLanguage": "en",
+      "overflow": false
+    },
+    {
+      "name": "user-360",
+      "width": 360,
+      "height": 800,
+      "url": "http://127.0.0.1:4100/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\user-360.png",
+      "documentLanguage": "en",
+      "overflow": false
+    },
+    {
+      "name": "thai-mobile",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:4100/th/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\thai-mobile.png",
+      "documentLanguage": "th",
+      "overflow": false
+    },
+    {
+      "name": "detail-desktop",
+      "width": 1440,
+      "height": 1000,
+      "url": "http://127.0.0.1:4100/property/villa-chalong-6/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\detail-desktop.png",
+      "documentLanguage": "en",
+      "overflow": false
+    },
+    {
+      "name": "detail-mobile",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:4100/property/villa-chalong-6/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\detail-mobile.png",
+      "documentLanguage": "en",
+      "overflow": false
+    },
+    {
+      "name": "admin-desktop",
+      "width": 1440,
+      "height": 1000,
+      "url": "http://127.0.0.1:4100/admin/",
+      "filename": "C:\\Users\\menum\\Projects\\thaimora\\.impeccable\\review\\admin-desktop.png",
+      "documentLanguage": "en",
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

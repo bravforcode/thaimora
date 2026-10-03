@@ -1,0 +1,24 @@
+name: Authorized catalog sync
+on:
+  workflow_dispatch:
+    inputs:
+      catalog_path:
+        description: Committed client-authorized catalog JSON path (never private coordinates)
+        type: string
+        required: true
+permissions: {contents: read}
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      CATALOG_RIGHTS_CONFIRMED: ${{ vars.CATALOG_RIGHTS_CONFIRMED }}
+      CATALOG_PATH: ${{ inputs.catalog_path }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm}
+      - run: npm ci
+      - run: test -f "$CATALOG_PATH" && npx tsx scripts/sync-hotel-catalog.ts "$CATALOG_PATH"

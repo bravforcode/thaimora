@@ -1,0 +1,316 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-03T11:05:30.523Z",
+  "title": "Design System: Thaimora",
+  "extensions": {
+    "colorMeta": {
+      "navy": {
+        "role": "neutral",
+        "displayName": "navy",
+        "canonical": "#082b46",
+        "tonalRamp": [
+          "oklch(15% 0.0632 246.38)",
+          "oklch(26% 0.0632 246.38)",
+          "oklch(37% 0.0632 246.38)",
+          "oklch(49% 0.0632 246.38)",
+          "oklch(60% 0.0632 246.38)",
+          "oklch(72% 0.0632 246.38)",
+          "oklch(84% 0.0632 246.38)",
+          "oklch(95% 0.0632 246.38)"
+        ]
+      },
+      "blue": {
+        "role": "primary",
+        "displayName": "blue",
+        "canonical": "#1264e8",
+        "tonalRamp": [
+          "oklch(15% 0.2133 260.52)",
+          "oklch(26% 0.2133 260.52)",
+          "oklch(37% 0.2133 260.52)",
+          "oklch(49% 0.2133 260.52)",
+          "oklch(60% 0.2133 260.52)",
+          "oklch(72% 0.2133 260.52)",
+          "oklch(84% 0.2133 260.52)",
+          "oklch(95% 0.2133 260.52)"
+        ]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "green",
+        "canonical": "#11866f",
+        "tonalRamp": [
+          "oklch(15% 0.1015 174.48)",
+          "oklch(26% 0.1015 174.48)",
+          "oklch(37% 0.1015 174.48)",
+          "oklch(49% 0.1015 174.48)",
+          "oklch(60% 0.1015 174.48)",
+          "oklch(72% 0.1015 174.48)",
+          "oklch(84% 0.1015 174.48)",
+          "oklch(95% 0.1015 174.48)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "muted",
+        "canonical": "#597082",
+        "tonalRamp": [
+          "oklch(15% 0.0393 242.02)",
+          "oklch(26% 0.0393 242.02)",
+          "oklch(37% 0.0393 242.02)",
+          "oklch(49% 0.0393 242.02)",
+          "oklch(60% 0.0393 242.02)",
+          "oklch(72% 0.0393 242.02)",
+          "oklch(84% 0.0393 242.02)",
+          "oklch(95% 0.0393 242.02)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "line",
+        "canonical": "#e2e9ed",
+        "tonalRamp": [
+          "oklch(15% 0.0093 232.37)",
+          "oklch(26% 0.0093 232.37)",
+          "oklch(37% 0.0093 232.37)",
+          "oklch(49% 0.0093 232.37)",
+          "oklch(60% 0.0093 232.37)",
+          "oklch(72% 0.0093 232.37)",
+          "oklch(84% 0.0093 232.37)",
+          "oklch(95% 0.0093 232.37)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "surface",
+        "canonical": "#f5f8fa",
+        "tonalRamp": [
+          "oklch(15% 0.0042 236.50)",
+          "oklch(26% 0.0042 236.50)",
+          "oklch(37% 0.0042 236.50)",
+          "oklch(49% 0.0042 236.50)",
+          "oklch(60% 0.0042 236.50)",
+          "oklch(72% 0.0042 236.50)",
+          "oklch(84% 0.0042 236.50)",
+          "oklch(95% 0.0042 236.50)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "white",
+        "canonical": "#fff",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(37% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(60% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "blue-hover": {
+        "role": "neutral",
+        "displayName": "blue hover",
+        "canonical": "#074fc5",
+        "tonalRamp": [
+          "oklch(15% 0.1951 260.98)",
+          "oklch(26% 0.1951 260.98)",
+          "oklch(37% 0.1951 260.98)",
+          "oklch(49% 0.1951 260.98)",
+          "oklch(60% 0.1951 260.98)",
+          "oklch(72% 0.1951 260.98)",
+          "oklch(84% 0.1951 260.98)",
+          "oklch(95% 0.1951 260.98)"
+        ]
+      },
+      "field-border": {
+        "role": "neutral",
+        "displayName": "field border",
+        "canonical": "#cbd8df",
+        "tonalRamp": [
+          "oklch(15% 0.0171 230.94)",
+          "oklch(26% 0.0171 230.94)",
+          "oklch(37% 0.0171 230.94)",
+          "oklch(49% 0.0171 230.94)",
+          "oklch(60% 0.0171 230.94)",
+          "oklch(72% 0.0171 230.94)",
+          "oklch(84% 0.0171 230.94)",
+          "oklch(95% 0.0171 230.94)"
+        ]
+      },
+      "secondary-hover": {
+        "role": "neutral",
+        "displayName": "secondary hover",
+        "canonical": "#f1f6fa",
+        "tonalRamp": [
+          "oklch(15% 0.0076 241.66)",
+          "oklch(26% 0.0076 241.66)",
+          "oklch(37% 0.0076 241.66)",
+          "oklch(49% 0.0076 241.66)",
+          "oklch(60% 0.0076 241.66)",
+          "oklch(72% 0.0076 241.66)",
+          "oklch(84% 0.0076 241.66)",
+          "oklch(95% 0.0076 241.66)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "headline",
+        "purpose": "Observed headline role from current global CSS."
+      },
+      "explorer-heading": {
+        "displayName": "explorer-heading",
+        "purpose": "Observed explorer-heading role from current global CSS."
+      },
+      "title": {
+        "displayName": "title",
+        "purpose": "Observed title role from current global CSS."
+      },
+      "body": {
+        "displayName": "body",
+        "purpose": "Observed body role from current global CSS."
+      },
+      "label": {
+        "displayName": "label",
+        "purpose": "Observed label role from current global CSS."
+      }
+    },
+    "shadows": [
+      {
+        "name": "map-control",
+        "value": "0 3px 8px #082b461a",
+        "purpose": "Observed map-control elevation."
+      },
+      {
+        "name": "pin",
+        "value": "0 2px 8px #082b4630",
+        "purpose": "Observed pin elevation."
+      },
+      {
+        "name": "dialog",
+        "value": "0 15px 60px #082b4638",
+        "purpose": "Observed dialog elevation."
+      },
+      {
+        "name": "phone-sheet",
+        "value": "0 -8px 32px #082b4636",
+        "purpose": "Observed phone-sheet elevation."
+      }
+    ],
+    "motion": [
+      {
+        "name": "action-background",
+        "value": "background 0.15s",
+        "purpose": "Observed action-background transition or animation."
+      },
+      {
+        "name": "card-image",
+        "value": "transform 0.3s",
+        "purpose": "Observed card-image transition or animation."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1500px"
+      },
+      {
+        "name": "tablet-upper",
+        "value": "1100px"
+      },
+      {
+        "name": "phone",
+        "value": "767px"
+      }
+    ],
+    "evidence": {
+      "mode": "source-derived",
+      "captureStatus": "Final round 2 capture report (2026-10-03T11:10:06.974Z) records 7 captures, no capture errors and no detected horizontal overflow in those samples. Visual inspection of all final samples was reported by the finish pass; this documenter checked the capture report. Archive identifier: 2313e1cc5c89969b.",
+      "qualityCardStatus": "No quality-card artifact present under .impeccable; capture evidence is not a substitute.",
+      "notCanonized": "Not canonized: remaining content-page and inquiry eyebrows, and 8–11px factual/credit text. These are craft defects or readability risks, not durable typography rules. This source record makes no full-surface WCAG, performance or live-data certification.",
+      "tonalRampStatus": "Synthesized OKLCH panel previews; these are not shipped CSS tokens."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action with observed hover and focus.",
+      "html": "<button class=\"ds-button\">Find property</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--blue,#1264e8);color:#fff;min-height:44px;border-radius:8px;padding:11px 18px;font-family:Inter, Noto Sans Thai, sans-serif;font-size:13px;font-weight:600;border:1px solid var(--blue,#1264e8);transition:background 0.15s;cursor:pointer}.ds-button:hover{background:#074fc5;color:#fff;}.ds-button:focus-visible{outline:3px solid var(--blue,#1264e8);outline-offset:3px}.ds-button:disabled{opacity:.45;cursor:not-allowed}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined alternative action.",
+      "html": "<button class=\"ds-secondary\">Compare</button>",
+      "css": ".ds-secondary{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--blue,#1264e8);color:#fff;min-height:44px;border-radius:8px;padding:11px 18px;font-family:Inter, Noto Sans Thai, sans-serif;font-size:13px;font-weight:600;border:1px solid var(--blue,#1264e8);transition:background 0.15s;cursor:pointer;background:#fff;color:var(--navy,#082b46);border:1px solid #cbd8df}.ds-secondary:hover{background:#f1f6fa}.ds-secondary:focus-visible{outline:3px solid var(--blue,#1264e8);outline-offset:3px}.ds-secondary:disabled{opacity:.45;cursor:not-allowed}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Ordinary field outside compact search overrides.",
+      "html": "<label class=\"ds-label\">Location<input class=\"ds-field\" type=\"text\" placeholder=\"Phuket\"></label>",
+      "css": ".ds-label{display:flex;flex-direction:column;gap:5px;font-family:Inter, Noto Sans Thai, sans-serif;font-size:12px;font-weight:600;color:var(--navy,#082b46)}.ds-field{font-family:Inter, Noto Sans Thai, sans-serif;font-size:16px;min-height:44px;padding:10px 12px;border:1px solid #cbd8df;border-radius:8px;background:#fff;color:var(--navy,#082b46)}.ds-field:focus-visible{outline:3px solid var(--blue,#1264e8);outline-offset:3px}"
+    },
+    {
+      "name": "Factual Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Bordered factual card typography excerpt; imagery omitted from panel preview.",
+      "html": "<article class=\"ds-card\"><h3>Garden pool villa</h3><p>Bang Tao · Phuket</p><a class=\"ds-link\" href=\"#details\">View details</a></article>",
+      "css": ".ds-card{font-family:Inter, Noto Sans Thai, sans-serif;border:1px solid #dce5eb;border-radius:9px;background:#fff;color:var(--navy,#082b46)}.ds-card h3{font-size:16px;font-weight:600;line-height:1.35;margin:0 0 8px}.ds-card p{font-size:14px;color:var(--muted,#597082);line-height:1.65;margin:0}.ds-link{display:inline-flex;min-height:44px;align-items:center;color:var(--blue,#1264e8);font-size:13px}.ds-link:hover{text-decoration:underline}.ds-link:focus-visible{outline:3px solid var(--blue,#1264e8);outline-offset:3px}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Source text navigation, with hover and focus.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><a href=\"#find\">Buy</a><a href=\"#explore\">Explore Phuket</a></nav>",
+      "css": ".ds-nav{display:flex;gap:31px;background:#fff;color:var(--navy,#082b46);font-family:Inter, Noto Sans Thai, sans-serif;font-size:13px;font-weight:500}.ds-nav a{display:flex;align-items:center;min-height:44px;padding:12px 0;text-decoration:none;color:inherit}.ds-nav a:hover{color:var(--blue,#1264e8)}.ds-nav a:focus-visible{outline:3px solid var(--blue,#1264e8);outline-offset:3px}"
+    },
+    {
+      "name": "Price Pin",
+      "kind": "custom",
+      "description": "Selected map price, with accessible pressed state.",
+      "html": "<button class=\"ds-pin\" aria-pressed=\"true\">฿3.2m</button>",
+      "css": ".ds-pin{background:var(--blue,#1264e8);color:#fff;border:1px solid var(--blue,#1264e8);min-height:44px;min-width:52px;padding:8px 11px;border-radius:22px;font-family:Inter, Noto Sans Thai, sans-serif;font-size:11px;font-weight:700;box-shadow:0 2px 8px #082b4630}.ds-pin:hover{background:var(--blue,#1264e8)}.ds-pin:focus-visible{outline:3px solid var(--blue,#1264e8);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Phuket Property Desk",
+    "overview": "Bright, bounded listing panels sit beside a working geographic surface. Navy carries factual text and map chrome, blue marks actions and selection, and green accompanies sale or availability text. The loaded Inter and Noto Sans Thai stacks keep English and Thai within the same practical vocabulary.\n\nDensity changes by context: the explorer condenses facts for comparison, while full property and editorial pages open up the same system. Borders define resting surfaces; modest shadows identify floating controls, dialogs and the phone selection sheet. The selected source world is retained without treating a preview basemap as configured satellite imagery.",
+    "keyCharacteristics": [
+      "Shared blue selection across pins, cards and detail.",
+      "White factual surfaces with navy text and fine borders.",
+      "Compact discovery; more generous standalone detail."
+    ],
+    "rules": [
+      {
+        "name": "Shared Selection",
+        "body": "Use blue for the selected property across its pin and card; retain textual and programmatic state alongside color.",
+        "section": "colors"
+      },
+      {
+        "name": "Quiet Surface",
+        "body": "Resting cards and panels use borders; reserve the observed soft shadows for floating controls and overlays.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use navy for primary facts, blue for actions and selection, and green with status text.",
+      "Do retain 44px control heights and visible blue focus treatment when extending existing controls.",
+      "Do pair specific SVG amenity symbols with their text labels."
+    ],
+    "donts": [
+      "Don't substitute system display fonts or text glyphs for the loaded fonts and SVG icons.",
+      "Don't remove source credits, illustrative labels, preview notices or text accompanying status colors.",
+      "Don't introduce decorative kickers or eyebrows."
+    ]
+  }
+}

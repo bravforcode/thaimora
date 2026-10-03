@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "bugs": [
+    {
+      "id": "TH-001",
+      "error": "Review finding: nullable consent evidence/private-location deletion could retain unsafe public eligibility",
+      "file": "supabase/migrations/202610030010_review_fixes.sql",
+      "root_cause": "SQL NULL semantics and missing deletion handling",
+      "fix": "Reject NULL/blank evidence, demote stale consent, clear projection and unpublish on private-point deletion",
+      "tags": [
+        "privacy",
+        "sql"
+      ],
+      "related_bugs": [
+        "TH-002"
+      ],
+      "evidence": "29697133c833d66e",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T11:26:39Z"
+    },
+    {
+      "id": "TH-002",
+      "error": "Review finding: field/gallery edits could partially alter an existing published property",
+      "file": "supabase/migrations/202610030011_atomic_admin.sql",
+      "root_cause": "Independent REST writes lacked one publication transaction",
+      "fix": "Service-only atomic admin_save_property, draft-first validation, gallery reconciliation and actor audit; failure rolls back",
+      "tags": [
+        "transaction",
+        "admin"
+      ],
+      "related_bugs": [
+        "TH-001"
+      ],
+      "evidence": "29697133c833d66e",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T11:26:39Z"
+    },
+    {
+      "id": "TH-003",
+      "error": "Review finding: blanket private-field regex rejects legitimate admin bundle identifiers",
+      "file": "scripts/lib/export-safety.ts",
+      "root_cause": "Identifiers mistaken for data; early JSON return could skip JWT checks",
+      "fix": "Separate private JSON/snapshot, actual secret values and service-role JWT detection; JSON continues to JWT scan",
+      "tags": [
+        "export",
+        "security"
+      ],
+      "related_bugs": [],
+      "evidence": "7b008be1edc04591,3e092b2cbeadf9ab",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T11:26:39Z"
+    },
+    {
+      "id": "TH-004",
+      "error": "Review finding: import aliases, skipped rows and blank optional fields diverged between UI/server",
+      "file": "supabase/functions/api/index.ts; src/components/admin.tsx",
+      "root_cause": "Mixed raw XLSX parsing and mismatched DTOs",
+      "fix": "Normalize client XLSX to CSV; evidence aliases, duplicate policies, original row mapping and preserve omitted optional updates",
+      "tags": [
+        "import",
+        "data-preservation"
+      ],
+      "related_bugs": [
+        "TH-002"
+      ],
+      "evidence": "800d3ec15740719d,29697133c833d66e",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T11:26:39Z"
+    },
+    {
+      "id": "TH-005",
+      "error": "SQL harness readiness failed during PostgreSQL init-server shutdown",
+      "file": "scripts/test-database.ps1; scripts/test-database.sh",
+      "root_cause": "Unix socket readiness saw temporary server",
+      "fix": "Wait on TCP 127.0.0.1; remove only owned labelled container",
+      "tags": [
+        "docker",
+        "test-harness"
+      ],
+      "related_bugs": [],
+      "evidence": "6e094226b58f5c6c,29697133c833d66e",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T11:26:39Z"
+    }
+  ]
+}

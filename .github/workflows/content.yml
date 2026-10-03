@@ -1,0 +1,44 @@
+name: Content sync
+on:
+  schedule:
+    - cron: '17 2 * * *'
+    - cron: '23 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      source:
+        type: choice
+        options: [tat, poi, fx, all]
+        default: tat
+permissions:
+  contents: read
+concurrency:
+  group: content-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: vars.AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      GEOAPIFY_API_KEY: ${{ secrets.GEOAPIFY_API_KEY }}
+      GEOAPIFY_RIGHTS_CONFIRMED: ${{ vars.GEOAPIFY_RIGHTS_CONFIRMED }}
+      CONTENT_BBOX: ${{ vars.CONTENT_BBOX }}
+      GITHUB_BUDGET_TOKEN: ${{ secrets.GITHUB_BUDGET_TOKEN }}
+      GITHUB_BUDGET_REPOSITORIES: ${{ vars.GITHUB_BUDGET_REPOSITORIES }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm}
+      - run: npm ci
+      - run: npx tsx scripts/check-actions-budget.ts
+      - name: Sync selected sources
+        shell: bash
+        env:
+          SELECTED_SOURCE: ${{ inputs.source }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [[ -n "$SELECTED_SOURCE" ]]; then npx tsx scripts/sync-content.ts "$SELECTED_SOURCE";
+          elif [[ "$SCHEDULE" == '23 3 * * 1' ]]; then npx tsx scripts/sync-content.ts poi;
+          else npx tsx scripts/sync-content.ts tat; npx tsx scripts/sync-content.ts fx; fi

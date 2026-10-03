@@ -1,0 +1,26 @@
+name: Verify
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:backend
+      - run: npx deno check --config supabase/functions/deno.json supabase/functions/api/index.ts supabase/functions/deliver-email/index.ts
+      - run: bash scripts/test-database.sh
+      - run: npm run lint
+      - run: npm run build

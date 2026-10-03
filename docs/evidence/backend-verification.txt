@@ -1,0 +1,56 @@
+BACKEND VERIFICATION — 2026-10-03
+
+Commands:
+  npm run test:backend (each project)
+  npx deno check --config supabase/functions/deno.json supabase/functions/api/index.ts
+  Thaimora also: supabase/functions/deliver-email/index.ts
+  Local Docker: public.ecr.aws/supabase/postgres:15.8.1.085,
+  container sites-backend-test-pg, databases thaimora_test/taotide_test.
+  psql -U postgres -v ON_ERROR_STOP=1: local-bootstrap.sql, sorted migrations,
+  database.sql, Thaimora pagination.sql.
+  Encrypted drill ran actual scripts/backup-db.sh inside that owned container,
+  with separate thaimora_restore/taotide_restore targets and synthetic-only data.
+  Age v1.2.1 from official FiloSottile/age release executed only in that container.
+
+Observed:
+  Thaimora Vitest: 13 tests passed (3 test files).
+  TaoTide Vitest: 18 tests passed (4 test files).
+  Deno entrypoint checks passed.
+  PASS anonymous public browsing, private coordinate/inquiry RLS,
+  protected ownership/gallery evidence columns, admin access, consent revocation,
+  public-coordinate spatial filtering, inquiry/outbox atomicity/idempotency/retry,
+  expiry, provider entitlement consistency, private affiliate metadata.
+  PASS 500 synthetic SQL fixtures fully traversed without skipped/duplicate cursors;
+  q/ownership/furnishing/amenities/relevance/distance tested; all fixtures rolled back.
+  Actual OSM source validation: 1868 Phuket records, 234 Koh Tao records;
+  unique IDs, licensing gate, normalized-source allowlist, no added email/phone fields.
+  BACKUP_DRILL=thaimora
+  Verified encrypted logical dump and restore: 81689 bytes; image objects excluded
+  BACKUP_DRILL=taotide
+  Verified encrypted logical dump and restore: 60523 bytes; image objects excluded
+  Restored Thaimora: private_points=1, inquiries=1, outbox=1 (synthetic records only).
+  Restored TaoTide: provider_settings=2.
+  PASS decrypted restore retains anonymous column/view/search grants, private RLS,
+  admin access and inquiry/outbox idempotency.
+  PASS restored hotel public/private policies and provider entitlement constraints.
+
+Observed failures corrected/limited:
+  Full local Supabase start timed out downloading images; retry raced old startup.
+  Scoped Deno npm resolution initially required functions/deno.json.
+  Supabase image apt repository had no age package; used official release in container.
+  pg_restore --clean policy drop fails on absent table; changed confirmed-disposable
+  schema reset followed by restore.
+  Scoped dump omits extension creation; target explicitly installs PostGIS/pgcrypto.
+  Managed spatial_ref_sys INSERT denied to postgres; excludes builtin extension
+  table data from restore (app uses standard EPSG4326; custom SRID recovery excluded).
+  --no-acl would drop app privileges; source ACLs are now preserved and role-tested.
+  PowerShell pipeline emitted a trailing CRLF; test harness normalized input before Bash.
+  Vite config emits ESM/CommonJS warning; helper tests still pass.
+
+Not verified:
+  Hosted Supabase Auth/Storage, actual production RLS deployment, Turnstile/Resend,
+  live Booking.com/Agoda keys/rights/schema/end-to-end redirect, routing, hosted source
+  sync, DNS/domain/legal/UAT/500 client properties/real hotel catalog, GitHub workflow
+  execution/account budgets, hosted daily backup recovery/platform ownership.
+  Local source tests are not a physical survey or a hosted inventory import.
+  No real provider request, payment, card, deployment, or external message was sent.

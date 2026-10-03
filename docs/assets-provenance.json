@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-10-03",
+  "purpose": "Licensed destination photographs for the preview. These are not photographs of listed properties.",
+  "assets": [
+    {
+      "path": "public/images/phuket-coast.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Banana_beach_Phuket_2017_-_01.jpg/1920px-Banana_beach_Phuket_2017_-_01.jpg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Banana_beach_Phuket_2017_-_01.jpg",
+      "author": "Anton Zelenov",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "credit": "Photo: Anton Zelenov · CC BY-SA 4.0",
+      "alt": {"en": "Banana Beach in Phuket; destination photograph", "th": "หาดบานาน่า ภูเก็ต ภาพประกอบพื้นที่"},
+      "changes": "Wikimedia supplied thumbnail; original composition retained; CSS may crop presentation."
+    },
+    {
+      "path": "public/images/phuket-building.jpg",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Phuket%2C_Thailand_December_2021_-_House_with_shrine.jpg/1280px-Phuket%2C_Thailand_December_2021_-_House_with_shrine.jpg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Phuket,_Thailand_December_2021_-_House_with_shrine.jpg",
+      "author": "Sharon Hahn Darlin",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "credit": "Photo: Sharon Hahn Darlin · CC BY 2.0",
+      "alt": {"en": "A house with a shrine in Phuket; illustrative destination photograph", "th": "บ้านและศาลในภูเก็ต ภาพประกอบพื้นที่ ไม่ใช่ภาพทรัพย์ที่ประกาศ"},
+      "changes": "Wikimedia supplied thumbnail; original composition retained; CSS may crop presentation."
+    }
+  ]
+}

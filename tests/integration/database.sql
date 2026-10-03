@@ -1,0 +1,51 @@
+begin;
+insert into auth.users(id)values('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+insert into admin_memberships(user_id,role)values('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','admin');
+insert into properties(id,slug,title,description,transaction,type,price_thb,area_m2,ownership,furnishing,zone,province,rights_status,ownership_evidence)
+values('11111111-1111-1111-1111-111111111111','sql-test','{"en":"Home","th":"บ้าน"}','{"en":"Description","th":"รายละเอียด"}','sale','villa',1000000,100,'freehold','furnished','Phuket','Phuket','approved','test owner proof');
+insert into property_private_locations(property_id,lat,lng)values('11111111-1111-1111-1111-111111111111',7.912345,98.312345);
+insert into property_images(property_id,url,alt,rights_status,rights_evidence)values('11111111-1111-1111-1111-111111111111','https://example.test/test.jpg','{"en":"Home","th":"บ้าน"}','approved','test image proof');
+update properties set source_url='https://example.test/authorized-synthetic-test',published=true where slug='sql-test';
+set local role anon;
+do $$begin
+ if(select count(*)from public_properties)<>1 then raise exception 'Anonymous public property browsing failed';end if;
+ if(select (public_location->>'radiusMeters')::int from public_properties limit 1)<300 then raise exception 'Approximation guard failed';end if;
+ if(select (public_location->>'lat')::float from public_properties limit 1)=7.912345 then raise exception 'Exact coordinate leak';end if;
+ begin perform * from property_private_locations;raise exception 'Anon private coordinates leaked';exception when insufficient_privilege then null;end;
+ begin perform * from inquiries;raise exception 'Anon inquiry PII leaked';exception when insufficient_privilege then null;end;
+ begin perform ownership_evidence from properties;raise exception 'Anon ownership evidence leaked';exception when insufficient_privilege then null;end;
+ begin perform rights_evidence from property_images;raise exception 'Anon gallery rights evidence leaked';exception when insufficient_privilege then null;end;
+end $$;
+reset role;
+update property_private_locations set exact_publication_consent=true,consent_evidence='test consent' where property_id='11111111-1111-1111-1111-111111111111';
+update property_private_locations set exact_publication_consent=false where property_id='11111111-1111-1111-1111-111111111111';
+set local role anon;
+do $$begin
+ if(select public_location->>'accuracy' from public_properties limit 1)<>'approximate' then raise exception 'Consent revocation failed';end if;
+ if(select count(*)from search_properties_v2('{"sort":"newest","limit":10,"bbox":[98.31234,7.91234,98.31235,7.91235]}'::jsonb))<>0 then raise exception 'Spatial filter leaked exact private point';end if;
+end $$;
+reset role;
+set local role authenticated;
+do $$begin if(select count(*)from property_private_locations)<>0 then raise exception 'Unaffiliated JWT private coordinate leak';end if;end $$;
+select set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',true);
+do $$begin if(select count(*)from property_private_locations)<>1 then raise exception 'Admin private access failed';end if;end $$;
+reset role;
+set local role service_role;
+select submit_inquiry('11111111-1111-1111-1111-111111111111','Test','test@example.test','TH','Test inquiry message','idempotency-test','same-payload');
+select submit_inquiry('11111111-1111-1111-1111-111111111111','Test','test@example.test','TH','Test inquiry message','idempotency-test','same-payload');
+do $$begin
+ if(select count(*)from inquiries)<>1 or(select count(*)from email_outbox)<>1 then raise exception 'Duplicate inquiry/outbox';end if;
+ if(select sum(inquiries)from daily_property_stats)<>1 then raise exception 'Duplicate inquiry statistics';end if;
+ begin perform submit_inquiry('11111111-1111-1111-1111-111111111111','Changed','test@example.test','TH','message','idempotency-test','changed-payload');raise exception 'Idempotency conflict accepted';exception when others then if SQLERRM<>'Idempotency conflict' then raise;end if;end;
+end $$;
+select count(*) from claim_email_batch(20);
+update email_outbox set status='failed',last_error='simulated_resend_outage',next_attempt_at=now();
+do $$begin if(select count(*)from inquiries)<>1 then raise exception 'Email failure lost inquiry';end if;end $$;
+select count(*) from claim_email_batch(20);
+reset role;
+update properties set expires_at=now()-interval '1 minute' where slug='sql-test';
+set local role anon;
+do $$begin if(select count(*)from public_properties)<>0 then raise exception 'Expired property publicly visible';end if;end $$;
+reset role;
+rollback;
+select 'PASS: anonymous public browsing, private RLS, admin access, inquiry atomicity/idempotency, failed email retry, expiry' as result;
