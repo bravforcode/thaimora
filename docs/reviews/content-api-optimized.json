@@ -1,0 +1,174 @@
+{
+  "measuredAt": "2026-10-03T18:53:44.528Z",
+  "baseline": false,
+  "apiOrigin": "https://hpjmttoxomdhxxsourih.supabase.co",
+  "client": "Single sequential Node fetch process on this Windows machine; connection warmness not controlled; body bytes are decoded bytes, not measured network transfer; no user-device or production frontend measurement",
+  "samples": [
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 868.8,
+      "bodyBytes": 1043553,
+      "contentEncoding": "gzip",
+      "contentLength": "121942",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-full-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 481.6,
+      "bodyBytes": 1043553,
+      "contentEncoding": "gzip",
+      "contentLength": "121942",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-full-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 464.8,
+      "bodyBytes": 1043553,
+      "contentEncoding": "gzip",
+      "contentLength": "121942",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-full-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 491.7,
+      "bodyBytes": 1043553,
+      "contentEncoding": "gzip",
+      "contentLength": "121942",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-full-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 481.4,
+      "bodyBytes": 1043553,
+      "contentEncoding": "gzip",
+      "contentLength": "121942",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-full-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "events",
+      "conditional": false,
+      "status": 200,
+      "ms": 293.3,
+      "bodyBytes": 839,
+      "contentEncoding": "gzip",
+      "contentLength": "407",
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-events-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": null,
+      "events": 0
+    },
+    {
+      "scope": "events",
+      "conditional": true,
+      "status": 304,
+      "ms": 266.5,
+      "bodyBytes": 0,
+      "contentEncoding": null,
+      "contentLength": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-events-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": null,
+      "events": null
+    },
+    {
+      "scope": "events",
+      "conditional": true,
+      "status": 304,
+      "ms": 312.7,
+      "bodyBytes": 0,
+      "contentEncoding": null,
+      "contentLength": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-events-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": null,
+      "events": null
+    },
+    {
+      "scope": "events",
+      "conditional": true,
+      "status": 304,
+      "ms": 273.9,
+      "bodyBytes": 0,
+      "contentEncoding": null,
+      "contentLength": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-events-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": null,
+      "events": null
+    },
+    {
+      "scope": "events",
+      "conditional": true,
+      "status": 304,
+      "ms": 262.3,
+      "bodyBytes": 0,
+      "contentEncoding": null,
+      "contentLength": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-events-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": null,
+      "events": null
+    },
+    {
+      "scope": "events",
+      "conditional": true,
+      "status": 304,
+      "ms": 258.8,
+      "bodyBytes": 0,
+      "contentEncoding": null,
+      "contentLength": null,
+      "cacheControl": "public, max-age=0, must-revalidate",
+      "etag": "W/\"content-v2-events-392a0c14e99e15da86a4c761e5378e7fb8fea0da6744983c453cab928f5ef436\"",
+      "pois": null,
+      "events": null
+    }
+  ],
+  "groups": [
+    {
+      "group": "full",
+      "samples": 5,
+      "p50Ms": 481.6,
+      "p95Ms": 868.8,
+      "bodyBytes": 1043553
+    },
+    {
+      "group": "events",
+      "samples": 1,
+      "p50Ms": 293.3,
+      "p95Ms": 293.3,
+      "bodyBytes": 839
+    },
+    {
+      "group": "conditional-events",
+      "samples": 5,
+      "p50Ms": 266.5,
+      "p95Ms": 312.7,
+      "bodyBytes": 0
+    }
+  ]
+}

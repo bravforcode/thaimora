@@ -1,0 +1,34 @@
+{
+  "site": "thaimora",
+  "projectRef": "hpjmttoxomdhxxsourih",
+  "testedAt": "2026-10-03T18:52:34.952Z",
+  "passed": true,
+  "cases": [
+    {
+      "name": "anonymous-rejected",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "bad-signature-rejected",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "expired-signature-rejected",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "valid-signed-no-due-work",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "signed-nonce-replay-rejected",
+      "status": 401,
+      "passed": true
+    }
+  ],
+  "scope": "Actual private signed worker authorization and replay; no credentials, signature, nonce, request headers or upstream data retained"
+}

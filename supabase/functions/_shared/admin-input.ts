@@ -17,6 +17,6 @@ export function licensedContent(row:any):boolean{
  return row.demo===false&&row.rights_status==='approved'&&typeof row.source==='string'&&!!row.source.trim()&&typeof row.license==='string'&&!!row.license.trim()&&typeof row.source_url==='string'&&/^https:\/\/\S+$/.test(row.source_url);
 }
 export async function auditMutation(db:any,actor:string,table:string,id:string,operation:string,fields:string[]):Promise<void>{
- const result=await db.rpc('record_admin_audit',{p_actor:actor,p_table:text(table,1,80),p_id:text(id,1,100),p_operation:operation,p_fields:fields});
+ const result=await db.rpc('record_admin_audit',{p_actor:actor,p_table:text(table,1,80),p_id:text(id,1,200),p_operation:operation,p_fields:fields});
  if(result.error)throw new ApiError(503,'audit_not_recorded');
 }

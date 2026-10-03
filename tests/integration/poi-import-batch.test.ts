@@ -8,7 +8,8 @@ const record=(id:number)=>({
  location:{lat:7.9,lng:98.3},source:'osm',source_url:'https://www.openstreetmap.org/node/'+id,
  license:'ODbL 1.0',demo:false,admin_override:false,
 });
-type Request={table:string;method:string;body:any;prefer:string|null};
+type SourceWrite={id:string;payload:ReturnType<typeof record>&{fetched_at:string};source_url:string;license:string;fetched_at:string};
+type Request={table:string;method:string;body:unknown;prefer:string|null};
 
 beforeEach(()=>{
  vi.stubEnv('SUPABASE_URL','https://synthetic-db.invalid');
@@ -47,9 +48,9 @@ describe('licensed POI import writes',()=>{
   database(requests);
   await importPois({records,fetchedAt},true);
   const sourceWrites=requests.filter(r=>r.table==='osm_pois'&&r.method==='POST');
-  expect(sourceWrites.map(r=>r.body.length)).toEqual([100,100,1]);
+  expect(sourceWrites.map(r=>(r.body as unknown[]).length)).toEqual([100,100,1]);
   expect(sourceWrites.every(r=>r.prefer==='resolution=merge-duplicates,return=minimal')).toBe(true);
-  const sources=sourceWrites.flatMap(r=>r.body);
+  const sources=sourceWrites.flatMap(r=>r.body as SourceWrite[]);
   expect(new Set(sources.map(r=>r.id)).size).toBe(201);
   for(const row of sources){
    expect(row.source_url).toBe(row.payload.source_url);
@@ -57,7 +58,7 @@ describe('licensed POI import writes',()=>{
    expect(row.fetched_at).toBe(fetchedAt);expect(row.payload.fetched_at).toBe(fetchedAt);
   }
   expect(sources[0].payload).not.toHaveProperty('email');expect(sources[0].payload).not.toHaveProperty('raw');
-  const publicRows=requests.filter(r=>r.table==='pois'&&r.method==='POST').flatMap(r=>r.body);
+  const publicRows=requests.filter(r=>r.table==='pois'&&r.method==='POST').flatMap(r=>r.body as ReturnType<typeof record>[]);
   expect(publicRows).toHaveLength(200);expect(publicRows.some(r=>r.id==='osm:node:1')).toBe(false);
   expect(publicRows.find(r=>r.id==='osm:node:2')).toMatchObject({rights_status:'pending',published:false});
   expect(requests.at(-1)).toMatchObject({table:'sync_runs',method:'PATCH',body:{status:'completed',rows_read:201,rows_written:200}});

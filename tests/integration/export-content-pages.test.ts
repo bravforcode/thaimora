@@ -10,7 +10,7 @@ beforeEach(()=>{
 });
 afterEach(()=>{vi.unstubAllEnvs();vi.restoreAllMocks();});
 
-function database(records:any[],requests:URL[],cap=1000,failOffset=-1){
+function database(records:Record<string,unknown>[],requests:URL[],cap=1000,failOffset=-1){
  return vi.spyOn(globalThis,'fetch').mockImplementation(async(input)=>{
   const url=new URL(String(input));requests.push(url);
   const offset=Number(url.searchParams.get('offset')),limit=Number(url.searchParams.get('limit'));

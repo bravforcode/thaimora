@@ -1,0 +1,90 @@
+{
+  "measuredAt": "2026-10-03T17:47:12.666Z",
+  "baseline": true,
+  "apiOrigin": "https://hpjmttoxomdhxxsourih.supabase.co",
+  "client": "Single sequential Node fetch process on this Windows machine; connection warmness not controlled; body bytes are decoded bytes, not measured network transfer; no user-device or production frontend measurement",
+  "samples": [
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 2033.5,
+      "bodyBytes": 1042727,
+      "contentEncoding": "gzip",
+      "contentLength": "121585",
+      "cacheControl": "no-store",
+      "etag": null,
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 650.3,
+      "bodyBytes": 1042727,
+      "contentEncoding": "gzip",
+      "contentLength": "121585",
+      "cacheControl": "no-store",
+      "etag": null,
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 596.7,
+      "bodyBytes": 1042727,
+      "contentEncoding": "gzip",
+      "contentLength": "121585",
+      "cacheControl": "no-store",
+      "etag": null,
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 682.3,
+      "bodyBytes": 1042727,
+      "contentEncoding": "gzip",
+      "contentLength": "121585",
+      "cacheControl": "no-store",
+      "etag": null,
+      "pois": 1868,
+      "events": 0
+    },
+    {
+      "scope": "full",
+      "conditional": false,
+      "status": 200,
+      "ms": 581.6,
+      "bodyBytes": 1042727,
+      "contentEncoding": "gzip",
+      "contentLength": "121585",
+      "cacheControl": "no-store",
+      "etag": null,
+      "pois": 1868,
+      "events": 0
+    }
+  ],
+  "groups": [
+    {
+      "group": "full",
+      "samples": 5,
+      "p50Ms": 650.3,
+      "p95Ms": 2033.5,
+      "bodyBytes": 1042727
+    },
+    {
+      "group": "events",
+      "samples": 0
+    },
+    {
+      "group": "conditional-events",
+      "samples": 0
+    }
+  ]
+}

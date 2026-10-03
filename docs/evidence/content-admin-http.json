@@ -1,0 +1,59 @@
+{
+  "finalSqlCounts": {
+    "authUsers": 0,
+    "adminMemberships": 0,
+    "syntheticEvents": 0,
+    "syntheticTombstones": 0
+  },
+  "cleanupConfirmed": true,
+  "cases": [
+    {
+      "name": "create-forces-manual-override",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "patch-forces-manual-override",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "implicit-release-refused",
+      "status": 422,
+      "passed": true
+    },
+    {
+      "name": "explicit-automation-release",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "release-keeps-unpublished-pending-demo",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "release-audit-verified",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "public-content-excludes-draft-demo",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "projectRef": "hpjmttoxomdhxxsourih",
+  "fixtureIdentifiers": "Omitted; retained only in ignored private smoke report and private audit",
+  "site": "thaimora",
+  "cleanup": {
+    "event": true,
+    "membership": true,
+    "auth": true,
+    "reconciledCreate": false
+  },
+  "exactSyntheticTombstonesRemoved": 1,
+  "passed": true,
+  "scope": "Actual HTTP/Auth/admin override release; synthetic unpublished demo only; no source/provider/email calls",
+  "testedAt": "2026-10-03T18:49:59.188Z"
+}

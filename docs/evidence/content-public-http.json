@@ -1,0 +1,34 @@
+{
+  "site": "thaimora",
+  "projectRef": "hpjmttoxomdhxxsourih",
+  "testedAt": "2026-10-03T18:56:10.679Z",
+  "passed": true,
+  "cases": [
+    {
+      "name": "conditional-request-preflight",
+      "status": 204,
+      "passed": true
+    },
+    {
+      "name": "full-public-count-and-unique-ids",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "validator-is-visible-to-browser",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "full-conditional-is-empty-and-cors-visible",
+      "status": 304,
+      "passed": true
+    },
+    {
+      "name": "unapproved-origin-denied",
+      "status": 403,
+      "passed": true
+    }
+  ],
+  "scope": "Actual public API CORS, validator and complete-count verification; assigned frontend origin is not evidence of frontend deployment"
+}

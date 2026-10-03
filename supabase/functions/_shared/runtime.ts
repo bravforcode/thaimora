@@ -33,12 +33,13 @@ export function serve(handler:(req:Request)=>Promise<Response>):void{
     else try{response=await handler(req);}catch(e){const error=e instanceof ApiError?e:new ApiError(503,"dependency_unavailable");response=json({error:{code:error.code}},error.status);}
     if(origin)response.headers.set("Access-Control-Allow-Origin",origin);
     response.headers.set("Vary","Origin");
-    response.headers.set("Access-Control-Allow-Headers","Authorization,Content-Type,Idempotency-Key");
+    response.headers.set("Access-Control-Allow-Headers","Authorization,Content-Type,Idempotency-Key,If-None-Match");
+    response.headers.set("Access-Control-Expose-Headers","ETag,Cache-Control");
     response.headers.set("Access-Control-Allow-Methods","GET,POST,PATCH,DELETE,OPTIONS");
     return response;
   });
 }
-export async function content(db:any):Promise<any>{
+export async function content(db:any,scope:"full"|"events"="full"):Promise<any>{
   const pageSize=1000,maxRows=10000,cutoff=new Date().toISOString();
   async function readView(view:"public_pois"|"public_events"):Promise<any[]>{
     const rows:any[]=[];let expected=0;
@@ -60,6 +61,7 @@ export async function content(db:any):Promise<any>{
     }
     throw new ApiError(503,"content_catalog_limit");
   }
+  if(scope==="events")return {events:await readView("public_events")};
   const [pois,events]=await Promise.all([readView("public_pois"),readView("public_events")]);
   return {pois,events};
 }

@@ -12,3 +12,5 @@ major_version = 17
 verify_jwt = false
 [functions.deliver-email]
 verify_jwt = false
+[functions.sync-content]
+verify_jwt = false

@@ -220,6 +220,107 @@
       "occurrences": 1,
       "last_seen": "2026-10-03T13:40:00Z",
       "related_bugs": []
+    },
+    {
+      "id": "TH-AUTO-SAFEUPDATE",
+      "error": "Actual scheduled worker HTTP503; REST claim RPC21000 UPDATE requires a WHERE clause; admin event create also503",
+      "file": "supabase/migrations/202610040005_content_revision_safeupdate.sql",
+      "root_cause": "Revision trigger updated its singleton without WHERE; PostgREST enforces pg-safeupdate but direct SQL test sessions did not",
+      "fix": "Forward migration restricts UPDATE to singleton=true; actual natural cron2/2 and admin7/7 passed per site after the fix",
+      "tags": [
+        "postgres",
+        "hosted",
+        "safeupdate"
+      ],
+      "related_bugs": [],
+      "evidence": "docs/evidence/content-automation-hosted.json; docs/evidence/content-admin-http.json; failed probe43a5a4",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T02:03:56.5609887+07:00"
+    },
+    {
+      "id": "TH-AUTO-RECONCILIATION",
+      "error": "Hosted rollback assertion42702 column reference r is ambiguous; review found withdrawn approved records could not reappear and cancellation/manual changes needed protection",
+      "file": "supabase/migrations/202610040002_content_reconciliation.sql",
+      "root_cause": "PLpgSQL record variable collided with JSON expansion alias; conflict/reconciliation predicates omitted approved reappearance and explicit cancellation",
+      "fix": "Distinct incoming alias, complete snapshot withdrawals/cancellations, approved reappearance, rejected/deleted/manual protections and explicit atomic staff release; rollback SQL passed both after05",
+      "tags": [
+        "ingestion",
+        "sql",
+        "data-preservation"
+      ],
+      "related_bugs": [],
+      "evidence": "tests/integration/content-automation.sql; docs/reviews/content-automation-review.md",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T02:03:56.5609887+07:00"
+    },
+    {
+      "id": "TH-AUTO-QUEUE-ACL",
+      "error": "Managed pg_net queue remains SELECT-readable to anon through SQL despite attempted tenant revocation",
+      "file": "supabase/migrations/202610040003_signed_content_scheduler.sql",
+      "root_cause": "Queue is owned by supabase_admin and tenant postgres cannot remove managed PUBLIC grants",
+      "fix": "Never queue a permanent bearer; bind project URL to60-second HMAC and private atomic nonce replay guard; actual401 replay verified; queue availability risk remains and is documented",
+      "tags": [
+        "scheduler",
+        "authorization",
+        "managed-grants"
+      ],
+      "related_bugs": [],
+      "evidence": "docs/evidence/content-automation-hosted.json; docs/evidence/content-worker-http.json",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T02:03:56.5609887+07:00"
+    },
+    {
+      "id": "TH-AUTO-ID-BOUNDARY",
+      "error": "Review found encoded source IDs stayed URL-encoded and audit helper100-character limit rejected115-character organizer IDs",
+      "file": "supabase/functions/_shared/api-path.ts; supabase/functions/_shared/admin-input.ts",
+      "root_cause": "Route split lacked decode-once boundary and API audit limit differed from SQL200-character contract",
+      "fix": "Decode each original segment once, reject controls/malformed/oversized IDs, align audit200;4Deno boundary cases and actual115-character colon CRUD/release passed",
+      "tags": [
+        "api",
+        "audit",
+        "validation"
+      ],
+      "related_bugs": [],
+      "evidence": "tests/integration/api-path.deno.ts; docs/evidence/content-admin-http.json",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T02:03:56.5609887+07:00"
+    },
+    {
+      "id": "TH-AUTO-SNAPSHOT-NULL",
+      "error": "Tao snapshot assertion said Homepage snapshot differs when SQLNULL and JSONnull represented the same missing homepage",
+      "file": "tests/integration/content-snapshot.sql",
+      "root_cause": "Test compared JSONBnull with SQLNULL using IS DISTINCT FROM",
+      "fix": "Coalesce expected missing value to JSONBnull; anonymous rollback snapshot assertions passed; no application behavior changed",
+      "tags": [
+        "test-harness",
+        "snapshot"
+      ],
+      "related_bugs": [],
+      "evidence": "tests/integration/content-snapshot.sql; docs/reviews/content-automation-review.md",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T02:03:56.5609887+07:00"
+    },
+    {
+      "id": "TH-OPS-STAGED-CHECK",
+      "error": "Session staged-check probe printed null-valued method errors; corrected fail-closed probe then rejected incomplete salt selection",
+      "file": "session PowerShell staged-check harness",
+      "root_cause": "Successive -match operations overwrote Matches groups; initial selection omitted SALT and missing ErrorAction Stop allowed an invalid pass line",
+      "fix": "Use explicit Regex.Match groups, require three actual private inputs, include SALT, stop on errors and inspect exact staged blobs; both final scans passed without logging values",
+      "tags": [
+        "operations",
+        "test-harness",
+        "powershell"
+      ],
+      "related_bugs": [],
+      "evidence": "invalid84fc0f; fail-closedfe50a8; valid6d911a",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-03T19:14:46.1040572+00:00"
     }
   ]
 }

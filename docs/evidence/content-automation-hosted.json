@@ -1,0 +1,75 @@
+{
+  "site": "thaimora",
+  "scope": "Actual cron delivery, source registry and counts after forward safeupdate fix; source checks are daily; organizer and OSM disabled",
+  "pois": 1868,
+  "events": 0,
+  "receipt": {
+    "id": 5,
+    "result": {
+      "failed": 0,
+      "claimed": 2,
+      "completed": 2
+    },
+    "status": 200,
+    "createdAt": "2026-10-04T01:50:00.083552+07:00"
+  },
+  "sources": [
+    {
+      "id": "frankfurter",
+      "status": "ready",
+      "enabled": true,
+      "checkedAt": "2026-10-04T01:50:00.697184+07:00",
+      "errorCode": null,
+      "nextDueAt": "2026-10-05T01:50:00.697184+07:00",
+      "lastSuccessAt": "2026-10-04T01:50:00.697184+07:00",
+      "sourceVersion": "2026-10-02"
+    },
+    {
+      "id": "organizer-json",
+      "status": "awaiting_source",
+      "enabled": false,
+      "checkedAt": null,
+      "errorCode": null,
+      "nextDueAt": "2026-10-04T00:55:45.586049+07:00",
+      "lastSuccessAt": null,
+      "sourceVersion": null
+    },
+    {
+      "id": "osm-overpass",
+      "status": "awaiting_source",
+      "enabled": false,
+      "checkedAt": null,
+      "errorCode": null,
+      "nextDueAt": "2026-10-04T00:55:45.586049+07:00",
+      "lastSuccessAt": null,
+      "sourceVersion": null
+    },
+    {
+      "id": "tat-metadata",
+      "status": "license_pending",
+      "enabled": true,
+      "checkedAt": "2026-10-04T01:50:00.987601+07:00",
+      "errorCode": null,
+      "nextDueAt": "2026-10-05T01:50:00.987601+07:00",
+      "lastSuccessAt": "2026-10-04T01:50:00.987601+07:00",
+      "sourceVersion": "2026-06-11T10:23:55.995195"
+    }
+  ],
+  "authUsers": 0,
+  "cronLatest": {
+    "status": "succeeded",
+    "endedAt": "2026-10-04T01:50:00.083511+07:00",
+    "startedAt": "2026-10-04T01:50:00.050232+07:00"
+  },
+  "migrations": 19,
+  "scheduledJob": {
+    "id": 2,
+    "active": true,
+    "schedule": "*/5 * * * *"
+  },
+  "adminMemberships": 0,
+  "nonceAnonExecute": false,
+  "nonceServiceExecute": true,
+  "managedQueueAnonSelect": true,
+  "recordedAt": "2026-10-03T19:03:56.5609887+00:00"
+}

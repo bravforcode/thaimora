@@ -1,6 +1,8 @@
-import { ApiError,publicProperty,publicContent,parsePropertyQuery,text,sha256,importRows,parseCsv,safeCsvCell,coordinate } from "../_shared/domain.ts";
-import { serve,client,env,body,json,checkDb,admin,rate,fetchJson,content,fx } from "../_shared/runtime.ts";
+import { ApiError,publicProperty,parsePropertyQuery,text,sha256,importRows,parseCsv,safeCsvCell,coordinate } from "../_shared/domain.ts";
+import { serve,client,env,body,json,checkDb,admin,rate,fetchJson,fx } from "../_shared/runtime.ts";
 import {auditMutation,reportRange} from "../_shared/admin-input.ts";
+import {publicContentResponse} from "../_shared/public-content.ts";
+import {apiParts} from "../_shared/api-path.ts";
 const propertiesFields=["slug","title","description","transaction","type","price_thb","area_m2","land_area_m2","beds","baths","floor","built_year","ownership","furnishing","status","zone","province","amenities","published","demo","source_id","source_url","rights_status","ownership_evidence","expires_at"];
 function safeFields(raw:any,allowed:string[]):any{return Object.fromEntries(Object.entries(raw).filter(([k])=>allowed.includes(k)));}
 async function writeProperty(db:any,raw:any,id?:string,actor?:string):Promise<any>{
@@ -11,9 +13,13 @@ async function writeProperty(db:any,raw:any,id?:string,actor?:string):Promise<an
   return checkDb(await db.rpc("admin_save_property",{p_id:id??null,p_fields:fields,p_private:raw.privateLocation?safeFields(raw.privateLocation,["lat","lng","exact_publication_consent","consent_evidence"]):null,p_images:images??null,p_actor:actor}));
 }
 serve(async req=>{
-  const url=new URL(req.url),parts=url.pathname.slice(url.pathname.indexOf("/v1/")+4).split("/").filter(Boolean),db=client();
+  const url=new URL(req.url),parts=apiParts(url),db=client();
   if(parts[0]==="admin"){
     const userId=await admin(req,db),kind=parts[1],id=parts[2];
+    if(["pois","events"].includes(kind)&&id&&parts[3]==="automation"&&req.method==="POST"){
+      if((await body(req)).enabled!==true)throw new ApiError(422,"explicit_automation_release_required");
+      return json({item:checkDb(await db.rpc("admin_release_content_override",{p_table:kind,p_id:id,p_actor:userId}))});
+    }
     if(kind==="inquiries"&&id==="export"&&req.method==="GET"){
       const rows=checkDb(await db.from("inquiries").select("id,property_id,name,email,country,message,created_at,status").order("created_at").limit(1000));
       const keys=["id","property_id","name","email","country","message","created_at","status"];
@@ -50,6 +56,7 @@ serve(async req=>{
         return json({items:checkDb(await db.rpc("property_stats_range",{p_from:range.from,p_to:range.to}))});
       }
       let query=db.from(tables[kind]).select(kind==="properties"?"*,property_private_locations(*),property_images(*)":"*").limit(1000);
+      if(["pois","events"].includes(kind)&&url.searchParams.get("protected")==="true")query=query.eq("admin_override",true);
       if(id)query=query.eq("id",id);const rows=checkDb(await query);
       if(kind==="properties")return json({items:rows.map((r:any)=>({...publicProperty({...r,images:r.property_images?.map((i:any)=>({url:i.url,alt:i.alt,credit:i.credit,sourceUrl:i.source_url}))}),publication:{published:r.published,demo:r.demo,rightsStatus:r.rights_status,ownershipEvidence:r.ownership_evidence,sourceUrl:r.source_url,sourceId:r.source_id},privateLocation:r.property_private_locations?.[0]??r.property_private_locations,gallery:r.property_images}))});
       return json({items:rows});
@@ -60,6 +67,7 @@ serve(async req=>{
     if(["pois","events","zones","settings"].includes(kind)&&["POST","PATCH","DELETE"].includes(req.method)){
       if(req.method==="DELETE"){checkDb(await db.from(tables[kind]).delete().eq("id",id));await auditMutation(db,userId,tables[kind],id,"DELETE",[]);return json({deleted:true});}
       const raw=await body(req);delete raw.source_quarantine;
+      if(["pois","events"].includes(kind))raw.admin_override=true;
       const item=checkDb(id?await db.from(tables[kind]).update(raw).eq("id",id).select().single():await db.from(tables[kind]).insert(raw).select().single());
       await auditMutation(db,userId,tables[kind],String(item.id),id?"UPDATE":"INSERT",Object.keys(raw));return json({item});
     }
@@ -84,7 +92,7 @@ serve(async req=>{
     const data=await fetchJson("https://api.geoapify.com/v1/geocode/autocomplete?text="+encodeURIComponent(q)+"&lang="+locale+"&filter=countrycode:th&limit=8&apiKey="+env("GEOAPIFY_API_KEY"));
     return json({items:data.features.map((x:any)=>({id:x.properties.place_id,name:x.properties.formatted,location:{lat:x.properties.lat,lng:x.properties.lon}})),attribution:"Powered by Geoapify | © OpenStreetMap contributors"});
   }
-  if(req.method==="GET"&&parts[0]==="content"){const data=await content(db);return json({pois:data.pois.map(publicContent),events:data.events.map(publicContent)});}
+  if(req.method==="GET"&&parts[0]==="content")return publicContentResponse(req,db);
   if(req.method==="GET"&&parts[0]==="fx")return json(await fx(db,url));
   if(req.method==="POST"&&parts[0]==="analytics"&&parts[1]==="events"){
     const raw=await body(req);

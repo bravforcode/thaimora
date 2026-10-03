@@ -79,12 +79,15 @@ Set-EnvValue 'CONTENT_BBOX' $(if($Site -eq 'thaimora'){'98.2,7.7,98.5,8.2'}else{
 $salt=Read-EnvValue 'RATE_LIMIT_SALT'
 if(-not $salt){$salt=New-PrivateRandom;Set-EnvValue 'RATE_LIMIT_SALT' $salt}
 $secretLines=@(('ALLOWED_ORIGINS='+$origin),('RATE_LIMIT_SALT='+$salt))
+$contentWorker=Read-EnvValue 'CONTENT_SYNC_SECRET'
+if(-not $contentWorker){$contentWorker=New-PrivateRandom;Set-EnvValue 'CONTENT_SYNC_SECRET' $contentWorker}
+$secretLines+=('CONTENT_SYNC_SECRET='+$contentWorker)
 if($Site -eq 'thaimora'){
   $worker=Read-EnvValue 'EMAIL_WORKER_SECRET'
   if(-not $worker){$worker=New-PrivateRandom;Set-EnvValue 'EMAIL_WORKER_SECRET' $worker}
   $secretLines+=('EMAIL_WORKER_SECRET='+$worker)
 }
-if($secretLines.Count -ne $(if($Site -eq 'thaimora'){3}else{2}) -or $secretLines[0] -ne ('ALLOWED_ORIGINS='+$origin) -or $secretLines[1] -notmatch '^RATE_LIMIT_SALT=[a-f0-9]{64}$'){
+if($secretLines.Count -ne $(if($Site -eq 'thaimora'){4}else{3}) -or $secretLines[0] -ne ('ALLOWED_ORIGINS='+$origin) -or $secretLines[1] -notmatch '^RATE_LIMIT_SALT=[a-f0-9]{64}$' -or $secretLines[2] -notmatch '^CONTENT_SYNC_SECRET=[a-f0-9]{64}$'){
   throw 'Edge secret file validation failed before upload'
 }
 $utf8=[System.Text.UTF8Encoding]::new($false)

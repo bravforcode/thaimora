@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-10-03T16:19:41.594Z
-> Files: 195 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-10-03T19:14:46.513Z
+> Files: 241 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -11,7 +11,7 @@
 - `DESIGN.md` — Design System: Thaimora (~2458 tok)
 - `eslint.config.mjs` — ESLint flat configuration (~139 tok)
 - `GEMINI.md` — OpenWolf (~8 tok)
-- `next-env.d.ts` — / <reference types="next" /> (~87 tok)
+- `next-env.d.ts` — / <reference types="next" /> (~85 tok)
 - `next.config.ts` — Next.js configuration (~291 tok)
 - `package-lock.json` — npm lock file (~100122 tok)
 - `package.json` — Node.js package manifest (~541 tok)
@@ -37,7 +37,7 @@
 
 - `backup.yml` — CI: Encrypted logical backup (~518 tok)
 - `catalog.yml` — CI: Authorized catalog sync (~232 tok)
-- `content.yml` — CI: Content sync (~432 tok)
+- `content.yml` — CI: Manual content sync (~318 tok)
 - `deploy-vercel.yml` — CI: Gated Vercel production (~831 tok)
 - `export.yml` — CI: Snapshot and optional rebuild (~440 tok)
 - `verify.yml` — CI: Verify (~191 tok)
@@ -62,19 +62,25 @@
 - `backend.md` — Backend implementation and operating runbook (~4525 tok)
 - `build-preview-pois.mjs` — Declares project (~495 tok)
 - `capture-review.mjs` — Capture a single batched visual-review round from the exported preview. (~820 tok)
+- `content-automation.md` — Thaimora content automation — 2026-10-04 (~3445 tok)
 - `deployment.md` — Production deployment — thaimora (~3485 tok)
 - `fetch-assets.ps1` (~324 tok)
 - `fetch-open-pois.mjs` — One bounded manual import. Never call public Overpass from visitor requests. (~1056 tok)
-- `free-data.md` — Free source review — Phuket property project (~618 tok)
+- `free-data.md` — Free source review — Phuket property project (~843 tok)
 - `handover.md` — คู่มือส่งมอบ — Thaimora (~2014 tok)
 - `open-data.md` — ข้อมูลสถานที่จาก OpenStreetMap (~369 tok)
 - `production-recovery.md` — Production recovery (~2092 tok)
-- `production-status.md` — Production rollout status — 2026-10-03 (~1461 tok)
+- `production-status.md` — Production rollout status — 2026-10-04 (~1930 tok)
 - `verification.md` — Verification record — Thaimora (~1914 tok)
 
 ## docs/evidence/
 
 - `backend-verification.txt` (~869 tok)
+- `content-admin-http.json` (~412 tok)
+- `content-automation-hosted.json` (~606 tok)
+- `content-public-http.json` (~232 tok)
+- `content-scheduler-configured.json` (~66 tok)
+- `content-worker-http.json` (~220 tok)
 - `hosted-database-verification.json` — Declares to (~3958 tok)
 - `hosted-http-auth-smoke.json` (~464 tok)
 - `hosted-import-counts.json` (~344 tok)
@@ -85,6 +91,10 @@
 
 ## docs/reviews/
 
+- `content-api-baseline.json` (~598 tok)
+- `content-api-measured.json` (~1469 tok)
+- `content-api-optimized.json` (~1470 tok)
+- `content-automation-review.md` — Thaimora automation review — 2026-10-04 (~2040 tok)
 - `finish-review.md` — Final visual review — 2026-10-03 (~531 tok)
 - `production-source-review.md` — Production source review — 2026-10-03 (~744 tok)
 - `ruflo-constraints.md` — Bounded Ruflo review (~226 tok)
@@ -111,7 +121,8 @@
 
 - `backup-db.sh` (~2001 tok)
 - `check-actions-budget.ts` — Declares main (~678 tok)
-- `configure-backend.ps1` — Declares Protect (~1965 tok)
+- `configure-backend.ps1` — Declares Protect (~2040 tok)
+- `configure-content-scheduler.ps1` (~625 tok)
 - `export-public-content.ts` — Declares main (~652 tok)
 - `fix-export-locale.mjs` — Static exports share a root layout; emit the correct language before hosting. (~278 tok)
 - `hosting-gate.test.ts` — Declares now (~619 tok)
@@ -119,15 +130,20 @@
 - `launch-evidence.example.json` (~162 tok)
 - `launch-gate.ts` — files: main (~605 tok)
 - `prepare-production-build.mjs` — root: parsed (~370 tok)
+- `probe-content-api.ts` — API routes: GET (4 endpoints) (~910 tok)
 - `production-command.mjs` — Exports site, configurationErrors, main (~2490 tok)
 - `production-command.test.mjs` — Declares base (~1372 tok)
 - `production-gate.mjs` — Declares live (~552 tok)
 - `rebuild-target.test.ts` — Declares r (~1067 tok)
 - `record-vercel-deployment.ts` — Declares main (~210 tok)
 - `request-rebuild.ts` — Declares main (~463 tok)
+- `smoke-content-admin.test.ts` — site: run (~2634 tok)
+- `smoke-content-admin.ts` — Bounded actual HTTP/Auth verification. Synthetic draft fixtures never become public. (~2924 tok)
+- `smoke-content-http.ts` — API routes: GET (8 endpoints) (~833 tok)
+- `smoke-content-worker.ts` — main: signed, probe (~735 tok)
 - `smoke-hosted.test.ts` — API routes: GET (3 endpoints) (~2065 tok)
 - `smoke-hosted.ts` — Real HTTP checks against the explicitly selected backend. No provider/email calls. (~2692 tok)
-- `sync-content.ts` — Declares main (~1150 tok)
+- `sync-content.ts` — CLI and scheduler use the same private leases and atomic writes. (~318 tok)
 - `sync-hotel-catalog.ts` — Declares main (~581 tok)
 - `test-backup.sh` — Actual PG17 synthetic encrypted recovery; no hosted credentials or published ports. (~970 tok)
 - `test-database.ps1` — Actual SQL checks against a labeled disposable local container. (~924 tok)
@@ -205,13 +221,15 @@
 ## src/components/
 
 - `admin-map.tsx` — AdminMap — renders map — uses useRef, useState, useEffect (~848 tok)
-- `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17315 tok)
-- `content-page.tsx` — ContentPage — renders map — uses useState, useEffect (~3214 tok)
+- `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17378 tok)
+- `content-automation.tsx` — ContentAutomation — renders table — uses useState, useEffect (~1407 tok)
+- `content-freshness.tsx` — ContentFreshness (~509 tok)
+- `content-page.tsx` — ContentPage — renders map — uses useState, useEffect (~3453 tok)
 - `context.tsx` — Context — uses useContext, useRouter, useState, useEffect (~1768 tok)
 - `explorer.tsx` — PropertyMap (~9051 tok)
 - `header.tsx` — Header — renders map (~1037 tok)
 - `inquiry.tsx` — InquiryButton — renders form, modal — uses useRef, useState, useEffect (~2848 tok)
-- `map.tsx` — PropertyMap — renders map — uses useEffect, useRef, useState (~4765 tok)
+- `map.tsx` — EMPTY_POIS — renders map — uses useRef, useState, useEffect (~4709 tok)
 - `property-card.tsx` — PropertyCard (~954 tok)
 - `property-detail.tsx` — amenityIcons — renders map — uses useEffect, useState (~3198 tok)
 - `property-page.tsx` — PropertyPage — uses useState, useEffect (~585 tok)
@@ -220,19 +238,25 @@
 ## src/lib/
 
 - `api.ts` — Exports liveMode, SearchScope, api, propertyQuery + 10 more (~1760 tok)
+- `content-automation.ts` — Exports protectedSourceRecord (~79 tok)
 - `demo.ts` — Exports demoPlaces, demoProperties, previewFX, demoPOIs (~1650 tok)
 - `import.ts` — Exports parseCSV, parseImportRows, DuplicatePolicy, applyPreviewImport + 2 more (~2513 tok)
 - `legal.ts` — Zod schemas: legalSchema (~184 tok)
+- `live-content.ts` — Exports useLiveContent (~310 tok)
 - `new-property.ts` — Exports newProperty (~216 tok)
+- `pagination.ts` — Exports paginate (~130 tok)
 - `performance.ts` — Exports markerFixtures (~183 tok)
-- `pois.ts` — Zod schemas: point (~1220 tok)
+- `pois.ts` — Zod schemas: point (~1526 tok)
 - `preview.ts` — Exports previewFX, demoPlaces, demoPOIs (~398 tok)
 - `property.ts` — API routes: GET (1 endpoints) (~3113 tok)
+- `public-content-client.ts` — A tab-local cache for public editorial content only. Never use for offers or PII. (~2121 tok)
 - `snapshot.ts` — Exports snapshots (~187 tok)
+- `source-health.ts` — Upstream freshness is independent of a successful read of our public API. (~254 tok)
+- `use-public-content.ts` — Expire events locally at their exclusive end time, including after a tab resumes. (~366 tok)
 
 ## supabase/
 
-- `config.toml` (~79 tok)
+- `config.toml` (~92 tok)
 
 ## supabase/.temp/
 
@@ -246,19 +270,26 @@
 ## supabase/functions/_shared/
 
 - `admin-input.ts` — API routes: GET (2 endpoints) (~524 tok)
+- `api-path.ts` — Exports apiParts (~137 tok)
+- `content-sync.ts` — Visitor routes never fetch upstream data. Only leased, fixed registry sources run here. (~3845 tok)
 - `domain.ts` — API routes: GET (13 endpoints) (~4642 tok)
 - `hosting.ts` — Reviewed observations only. Do not infer billing, rights or usage from a key. (~401 tok)
 - `http.ts` — Exports fetchJson (~94 tok)
-- `runtime.ts` — API routes: GET (6 endpoints) (~1429 tok)
+- `public-content.ts` — API routes: GET (2 endpoints) (~1270 tok)
+- `runtime.ts` — API routes: GET (6 endpoints) (~1485 tok)
 - `sources.ts` — Exports tatRows, normalizeTat, inBbox, normalizePoi, licensedOsmRecords (~886 tok)
 
 ## supabase/functions/api/
 
-- `index.ts` — API routes: GET (3 endpoints) (~3297 tok)
+- `index.ts` — API routes: GET (4 endpoints) (~3430 tok)
 
 ## supabase/functions/deliver-email/
 
 - `index.ts` — API routes: GET (1 endpoints) (~558 tok)
+
+## supabase/functions/sync-content/
+
+- `index.ts` — API routes: GET (2 endpoints) (~514 tok)
 
 ## supabase/migrations/
 
@@ -276,9 +307,15 @@
 - `20261003124252_safe_public_image_metadata.sql` — Public Storage object-info returns user_metadata. Never put private rights evidence there. (~764 tok)
 - `20261003142657_revoke_internal_trigger_execute.sql` — Trigger functions are invoked by table triggers, never through the public RPC API. (~138 tok)
 - `20261003145239_harden_managed_public_grants.sql` — Managed Supabase defaults can grant ALL before the application's grants. (~593 tok)
+- `202610040001_content_automation.sql` — Private bounded ingestion; public clocks exclude expired events without deleting history. (~6147 tok)
+- `202610040002_content_reconciliation.sql` — Correct source snapshot withdrawal, restore approved reappearances and atomic admin automation release. (~2246 tok)
+- `202610040003_signed_content_scheduler.sql` — Managed pg_net queue grants cannot be changed by the tenant owner. Never queue a permanent bearer. (~800 tok)
+- `202610040004_content_snapshot.sql` — One stable database statement keeps public data and revision coherent. (~507 tok)
+- `202610040005_content_revision_safeupdate.sql` — PostgREST sessions enforce pg-safeupdate; update only the singleton revision row. (~248 tok)
 
 ## supabase/operations/
 
+- `content-scheduler.sql` — Configured through service-role-only configure_content_scheduler after worker deployment. (~183 tok)
 - `email-scheduler.sql` — SQL: tables: private, 1 alter(s), 3 function(s) (~1273 tok)
 
 ## tests/e2e/
@@ -293,27 +330,34 @@
 
 ## tests/frontend/
 
+- `content-freshness.config.ts` (~197 tok)
+- `content-freshness.spec.ts` — ", async route => { (~1446 tok)
 - `material-fixes.spec.ts` — ", async (route) => { (~3710 tok)
 - `material-fixes.test.ts` — Declares id (~1711 tok)
 - `playwright.config.ts` — Playwright test configuration (~224 tok)
 
 ## tests/integration/
 
+- `api-path.deno.ts` — Declares equal (~460 tok)
 - `backup-fixture.sql` (~264 tok)
 - `boundaries.test.ts` — Declares row (~1577 tok)
-- `content-pagination.deno.ts` — equal: database, rejects (~1376 tok)
+- `content-automation.sql` — Safe on the hosted database: all named fixtures/configuration changes roll back. (~3477 tok)
+- `content-pagination.deno.ts` — equal: database, rejects (~1493 tok)
+- `content-snapshot.sql` — Read-only assertions inside a rollback transaction; no production fixture writes. (~550 tok)
+- `content-sync.deno.ts` — API routes: GET (2 endpoints) (~2840 tok)
 - `database.sql` (~1357 tok)
 - `email-scheduler-model.sql` — Synthetic interfaces only: NOT real Vault encryption, Cron or pg_net HTTP execution. (~382 tok)
 - `email-scheduler.sql` (~1159 tok)
 - `email-worker.test.ts` — API routes: GET (2 endpoints) (~1532 tok)
-- `export-content-pages.test.ts` — API routes: GET (15 endpoints) (~1222 tok)
+- `export-content-pages.test.ts` — API routes: GET (15 endpoints) (~1227 tok)
 - `export-safety.test.ts` — Declares token (~344 tok)
 - `gates.test.ts` — Declares script (~321 tok)
 - `local-bootstrap.sql` — SQL: tables: auth, 1 function(s) (~338 tok)
 - `managed-grants.sql` — Synthetic privilege regression against managed-default ALL grants. (~2105 tok)
 - `osm-source.test.ts` — Declares extract (~322 tok)
 - `pagination.sql` (~804 tok)
-- `poi-import-batch.test.ts` — API routes: GET (2 endpoints) (~1369 tok)
+- `poi-import-batch.test.ts` — API routes: GET (2 endpoints) (~1427 tok)
+- `public-content-http.deno.ts` — API routes: GET (7 endpoints) (~1743 tok)
 - `recovery.sql` — Only synthetic recovery: verifies archived private evidence and its actual restored grants. (~267 tok)
 - `rest-response.test.ts` (~455 tok)
 - `restore-verification.sql` — Declares grants (~551 tok)
@@ -332,6 +376,11 @@
 ## tests/unit/
 
 - `api.test.ts` — API routes: GET (6 endpoints) (~1286 tok)
+- `content-automation.test.ts` (~202 tok)
+- `live-content.test.ts` — Declares event (~226 tok)
+- `pagination.test.ts` — Declares rows (~238 tok)
 - `property.test.ts` — Declares rows (~1437 tok)
+- `public-content-client.test.ts` — meta: client (~2853 tok)
 - `review-contracts.test.ts` — API routes: GET (1 endpoints) (~1686 tok)
 - `snapshot-compatibility.test.ts` — Declares row (~679 tok)
+- `source-health.test.ts` — Declares source (~648 tok)

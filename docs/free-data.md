@@ -19,3 +19,9 @@ Frankfurter v2 supplies 30 THB quote currencies from the ECB-specific endpoint w
 Public Nominatim permits at most one request per second and prohibits autocomplete/systematic extraction. Community tiles have no production SLA and prohibit bulk downloading. Geoapify offers a free commercial tier requiring registration, key and attribution; none is configured.
 
 Findings describe checked sources, not every possible future supplier. Actual inventory, image/coordinate publication permission and user acceptance remain required.
+
+## Event automation decision — 2026-10-04
+
+No inspected free source established current event coverage plus commercial publication rights. User has no organizer feed and accepted preparing the adapter first. The organizer JSON connection and recurring OSM slot remain disabled. Existing ODbL POI extracts are historical licensed data, not a real-time status feed.
+
+TAT package metadata is checked daily without downloading the roughly60MB annual event resource. The actual scheduled check succeeded, but its source version is2026-06-11 and licensing remains pending; no event records are published from it. DASTA's anonymous endpoint returned401, Eventbrite requires organizer/token access, and Ticketmaster coverage/terms did not establish eligibility for this scope. Retain source-specific rights evidence before enabling a feed. See [automation configuration and limits](content-automation.md).

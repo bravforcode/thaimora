@@ -5,7 +5,9 @@ function equal(actual:unknown,expected:unknown):void{
 }
 type Page={view:string;columns:string;count?:string;order?:string;ascending?:boolean;start:number;end:number;filter?:{column:string;cutoff:string}};
 const rows=(length:number)=>Array.from({length},(_,i)=>({id:'synthetic-'+String(i).padStart(6,'0')}));
-function database(pois:any[],events:any[]=[],respond?:(page:Page,records:any[])=>any){
+type Row=Record<string,unknown>;
+type DatabasePage={data:Row[]|null;error:unknown;count:number|null};
+function database(pois:Row[],events:Row[]=[],respond?:(page:Page,records:Row[])=>DatabasePage){
  const requests:Page[]=[];
  return {requests,from(view:string){
   const page:Page={view,columns:'',start:0,end:0},records=view==='public_pois'?pois:events;
@@ -14,7 +16,7 @@ function database(pois:any[],events:any[]=[],respond?:(page:Page,records:any[])=
    order(column:string,options:{ascending:boolean}){page.order=column;page.ascending=options.ascending;return query;},
    range(start:number,end:number){page.start=start;page.end=end;return query;},
    gt(column:string,cutoff:string){page.filter={column,cutoff};return query;},
-   then(resolve:any,reject:any){
+   then(resolve:(page:DatabasePage)=>unknown,reject?:(reason:unknown)=>unknown){
     requests.push({...page});
     const result=respond?respond(page,records):{data:records.slice(page.start,page.end+1),error:null,count:page.count==='exact'?records.length:null};
     return Promise.resolve(result).then(resolve,reject);
@@ -22,7 +24,7 @@ function database(pois:any[],events:any[]=[],respond?:(page:Page,records:any[])=
   };return query;
  }};
 }
-async function rejects(work:Promise<any>,code:string):Promise<void>{
+async function rejects(work:Promise<unknown>,code:string):Promise<void>{
  try{await work;}catch(error){
   if(error instanceof Error&&'code' in error&&'status' in error&&error.code===code&&error.status===503)return;
   throw new Error('Unexpected pagination failure');
@@ -48,6 +50,10 @@ Deno.test('content handles empty views and exact1000-row boundaries',async()=>{
  equal(result.pois.length,1000);equal(result.events.length,2000);
  equal(db.requests.filter(page=>page.view==='public_pois').length,2);
  equal(db.requests.filter(page=>page.view==='public_events').length,3);
+});
+Deno.test('event scope never queries the POI catalog',async()=>{
+ const db=database(rows(1868),rows(2)),result=await content(db,'events');
+ equal(result,{events:rows(2)});equal(db.requests.length,1);equal(db.requests[0].view,'public_events');
 });
 Deno.test('content rejects a later database-page error instead of returning partial content',async()=>{
  const db=database(rows(1868),[],(page,records)=>page.view==='public_pois'&&page.start===1000?
