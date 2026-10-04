@@ -17,6 +17,7 @@ import {
 } from "@phosphor-icons/react";
 import { useSettings } from "./context";
 import { ContentAutomation } from "./content-automation";
+import { BrokerAdmin } from "./broker-admin";
 import { newProperty } from "@/lib/new-property";
 import {
   propertySchema,
@@ -801,6 +802,7 @@ export function Admin({
           ["inquiries", "Inquiries", "คำถาม"],
           ["imports", "Import & export", "นำเข้าและส่งออก"],
           ...(liveMode ? [["content-updates", "Content updates", "อัปเดตเนื้อหา"]] : []),
+          ...(liveMode ? [["brokers", "Brokers & contacts", "นายหน้าและผู้รับคำถาม"]] : []),
         ].map(([id, en, th]) => (
           <button
             key={id}
@@ -824,6 +826,7 @@ export function Admin({
       )}
       {busy && <p role="status">{tr("Working…", "กำลังดำเนินการ…")}</p>}
       {tab === "content-updates" && <ContentAutomation token={token} />}
+      {tab === "brokers" && <BrokerAdmin token={token} properties={rows} />}
       {tab === "properties" && (
         <>
           <div className="admin-toolbar">

@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-10-03T19:14:46.513Z
-> Files: 241 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-10-04T08:37:41.773Z
+> Files: 275 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -60,6 +60,8 @@
 
 - `assets-provenance.json` (~492 tok)
 - `backend.md` — Backend implementation and operating runbook (~4525 tok)
+- `broker-backend.md` — Broker subscription and listing contact relay — 2026-10-04 (~4353 tok)
+- `broker-membership-and-contact.md` — ส่งมอบระบบนายหน้าและการติดต่อเจ้าของประกาศ — 4 ตุลาคม 2026 (~1831 tok)
 - `build-preview-pois.mjs` — Declares project (~495 tok)
 - `capture-review.mjs` — Capture a single batched visual-review round from the exported preview. (~820 tok)
 - `content-automation.md` — Thaimora content automation — 2026-10-04 (~3445 tok)
@@ -81,6 +83,8 @@
 - `content-public-http.json` (~232 tok)
 - `content-scheduler-configured.json` (~66 tok)
 - `content-worker-http.json` (~220 tok)
+- `feature-hosted-database.json` (~1182 tok)
+- `feature-hosted-http.json` (~1503 tok)
 - `hosted-database-verification.json` — Declares to (~3958 tok)
 - `hosted-http-auth-smoke.json` (~464 tok)
 - `hosted-import-counts.json` (~344 tok)
@@ -91,6 +95,7 @@
 
 ## docs/reviews/
 
+- `broker-contact-review.md` — Broker membership and contact feature verification — 2026-10-04 (~2402 tok)
 - `content-api-baseline.json` (~598 tok)
 - `content-api-measured.json` (~1469 tok)
 - `content-api-optimized.json` (~1470 tok)
@@ -141,6 +146,7 @@
 - `smoke-content-admin.ts` — Bounded actual HTTP/Auth verification. Synthetic draft fixtures never become public. (~2924 tok)
 - `smoke-content-http.ts` — API routes: GET (8 endpoints) (~833 tok)
 - `smoke-content-worker.ts` — main: signed, probe (~735 tok)
+- `smoke-feature-endpoints.mjs` — Read-only checks against this project's authorized hosted functions only. (~1819 tok)
 - `smoke-hosted.test.ts` — API routes: GET (3 endpoints) (~2065 tok)
 - `smoke-hosted.ts` — Real HTTP checks against the explicitly selected backend. No provider/email calls. (~2692 tok)
 - `sync-content.ts` — CLI and scheduler use the same private leases and atomic writes. (~318 tok)
@@ -159,16 +165,25 @@
 
 ## src/app/
 
+- `broker.css` — Styles: 18 rules, 1 media queries (~899 tok)
 - `globals.css` — Styles: 100 rules, 11 vars (~11994 tok)
-- `layout.tsx` — metadata (~375 tok)
+- `layout.tsx` — metadata (~381 tok)
 - `not-found.tsx` — NotFound (~167 tok)
 - `page.tsx` — metadata (~141 tok)
-- `robots.ts` — Exports dynamic (~126 tok)
+- `robots.ts` — Exports dynamic (~139 tok)
 - `sitemap.ts` — Exports dynamic (~232 tok)
 
 ## src/app/admin/
 
 - `page.tsx` — metadata (~105 tok)
+
+## src/app/broker/
+
+- `page.tsx` — metadata (~52 tok)
+
+## src/app/broker/dashboard/
+
+- `page.tsx` — metadata (~55 tok)
 
 ## src/app/credits/
 
@@ -198,6 +213,14 @@
 
 - `page.tsx` — metadata (~107 tok)
 
+## src/app/th/broker/
+
+- `page.tsx` — metadata (~51 tok)
+
+## src/app/th/broker/dashboard/
+
+- `page.tsx` — metadata (~54 tok)
+
 ## src/app/th/credits/
 
 - `page.tsx` — metadata (~84 tok)
@@ -221,14 +244,16 @@
 ## src/components/
 
 - `admin-map.tsx` — AdminMap — renders map — uses useRef, useState, useEffect (~848 tok)
-- `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17378 tok)
+- `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17440 tok)
+- `broker-admin.tsx` — membersSchema — renders form, table — uses useState, useEffect (~1586 tok)
+- `broker.tsx` — destinationSchema — renders form — uses useState, useRef, useCallback, useEffect (~9448 tok)
 - `content-automation.tsx` — ContentAutomation — renders table — uses useState, useEffect (~1407 tok)
 - `content-freshness.tsx` — ContentFreshness (~509 tok)
 - `content-page.tsx` — ContentPage — renders map — uses useState, useEffect (~3453 tok)
-- `context.tsx` — Context — uses useContext, useRouter, useState, useEffect (~1768 tok)
+- `context.tsx` — Context — uses useContext, useRouter, useState, useEffect (~1946 tok)
 - `explorer.tsx` — PropertyMap (~9051 tok)
-- `header.tsx` — Header — renders map (~1037 tok)
-- `inquiry.tsx` — InquiryButton — renders form, modal — uses useRef, useState, useEffect (~2848 tok)
+- `header.tsx` — Header — renders map (~1100 tok)
+- `inquiry.tsx` — InquiryButton — renders form, modal — uses useRef, useState, useEffect (~3150 tok)
 - `map.tsx` — EMPTY_POIS — renders map — uses useRef, useState, useEffect (~4709 tok)
 - `property-card.tsx` — PropertyCard (~954 tok)
 - `property-detail.tsx` — amenityIcons — renders map — uses useEffect, useState (~3198 tok)
@@ -238,6 +263,8 @@
 ## src/lib/
 
 - `api.ts` — Exports liveMode, SearchScope, api, propertyQuery + 10 more (~1760 tok)
+- `broker-api.ts` — Zod schemas: brokerConfigSchema, brokerProfileSchema, brokerMeSchema, galleryImage + 4 more (~1526 tok)
+- `broker-auth.ts` — API routes: GET (2 endpoints) (~1198 tok)
 - `content-automation.ts` — Exports protectedSourceRecord (~79 tok)
 - `demo.ts` — Exports demoPlaces, demoProperties, previewFX, demoPOIs (~1650 tok)
 - `import.ts` — Exports parseCSV, parseImportRows, DuplicatePolicy, applyPreviewImport + 2 more (~2513 tok)
@@ -256,7 +283,7 @@
 
 ## supabase/
 
-- `config.toml` (~92 tok)
+- `config.toml` (~131 tok)
 
 ## supabase/.temp/
 
@@ -271,21 +298,37 @@
 
 - `admin-input.ts` — API routes: GET (2 endpoints) (~524 tok)
 - `api-path.ts` — Exports apiParts (~137 tok)
+- `broker-api.ts` — API routes: GET (1 endpoints) (~4656 tok)
+- `broker-billing.ts` — Exports STRIPE_VERSION, ObjectValue, record, objectId + 8 more (~1892 tok)
+- `broker-webhook.ts` — API routes: GET (1 endpoints) (~938 tok)
+- `contact-relay.ts` — API routes: GET (4 endpoints) (~2618 tok)
 - `content-sync.ts` — Visitor routes never fetch upstream data. Only leased, fixed registry sources run here. (~3845 tok)
 - `domain.ts` — API routes: GET (13 endpoints) (~4642 tok)
 - `hosting.ts` — Reviewed observations only. Do not infer billing, rights or usage from a key. (~401 tok)
 - `http.ts` — Exports fetchJson (~94 tok)
 - `public-content.ts` — API routes: GET (2 endpoints) (~1270 tok)
-- `runtime.ts` — API routes: GET (6 endpoints) (~1485 tok)
+- `runtime.ts` — API routes: GET (6 endpoints) (~1486 tok)
 - `sources.ts` — Exports tatRows, normalizeTat, inBbox, normalizePoi, licensedOsmRecords (~886 tok)
 
 ## supabase/functions/api/
 
-- `index.ts` — API routes: GET (4 endpoints) (~3430 tok)
+- `index.ts` — API routes: GET (4 endpoints) (~3732 tok)
+
+## supabase/functions/deliver-contact/
+
+- `index.ts` — API routes: GET (1 endpoints) (~417 tok)
 
 ## supabase/functions/deliver-email/
 
 - `index.ts` — API routes: GET (1 endpoints) (~558 tok)
+
+## supabase/functions/line-webhook/
+
+- `index.ts` — API routes: GET (1 endpoints) (~310 tok)
+
+## supabase/functions/stripe-webhook/
+
+- `index.ts` — Declares safe (~137 tok)
 
 ## supabase/functions/sync-content/
 
@@ -312,6 +355,10 @@
 - `202610040003_signed_content_scheduler.sql` — Managed pg_net queue grants cannot be changed by the tenant owner. Never queue a permanent bearer. (~800 tok)
 - `202610040004_content_snapshot.sql` — One stable database statement keeps public data and revision coherent. (~507 tok)
 - `202610040005_content_revision_safeupdate.sql` — PostgREST sessions enforce pg-safeupdate; update only the singleton revision row. (~248 tok)
+- `202610040006_broker_subscription.sql` — Broker identities and payment facts are private; client claims never grant access. (~6788 tok)
+- `202610040007_contact_relay.sql` — Inquiries notify only the listing's privately assigned, consenting recipient. (~5987 tok)
+- `202610040008_contact_scheduler.sql` — OFF until real accounts are configured. Queued auth is short-lived, never a bearer. (~1555 tok)
+- `202610040009_contact_preferences_upsert.sql` — PostgreSQL checks proposed INSERT rows before ON CONFLICT selects the linked row. (~774 tok)
 
 ## supabase/operations/
 
@@ -330,9 +377,11 @@
 
 ## tests/frontend/
 
+- `broker.playwright.config.ts` (~214 tok)
+- `broker.spec.ts` — ",async route=>{const path=new URL(route.request().url()).pathname.split("/mock-api")[1];calls.push(path);if(path==="/v1/broker/config")return rout... (~3706 tok)
 - `content-freshness.config.ts` (~197 tok)
 - `content-freshness.spec.ts` — ", async route => { (~1446 tok)
-- `material-fixes.spec.ts` — ", async (route) => { (~3710 tok)
+- `material-fixes.spec.ts` — ", async (route) => { (~3728 tok)
 - `material-fixes.test.ts` — Declares id (~1711 tok)
 - `playwright.config.ts` — Playwright test configuration (~224 tok)
 
@@ -341,6 +390,10 @@
 - `api-path.deno.ts` — Declares equal (~460 tok)
 - `backup-fixture.sql` (~264 tok)
 - `boundaries.test.ts` — Declares row (~1577 tok)
+- `broker-billing.deno.ts` — ObjectValue: equal, rejects, subscription + 4 more (~3031 tok)
+- `broker-contact.sql` — Hosted-safe synthetic assertions. Every named fixture/configuration change rolls back. (~4358 tok)
+- `contact-preferences-upsert.sql` — Regression for actual 23514: INSERT checks precede ON CONFLICT UPDATE. (~600 tok)
+- `contact-relay.deno.ts` — API routes: GET, DELETE (5 endpoints) (~2939 tok)
 - `content-automation.sql` — Safe on the hosted database: all named fixtures/configuration changes roll back. (~3477 tok)
 - `content-pagination.deno.ts` — equal: database, rejects (~1493 tok)
 - `content-snapshot.sql` — Read-only assertions inside a rollback transaction; no production fixture writes. (~550 tok)
@@ -352,7 +405,7 @@
 - `export-content-pages.test.ts` — API routes: GET (15 endpoints) (~1227 tok)
 - `export-safety.test.ts` — Declares token (~344 tok)
 - `gates.test.ts` — Declares script (~321 tok)
-- `local-bootstrap.sql` — SQL: tables: auth, 1 function(s) (~338 tok)
+- `local-bootstrap.sql` — SQL: tables: auth, 1 function(s) (~350 tok)
 - `managed-grants.sql` — Synthetic privilege regression against managed-default ALL grants. (~2105 tok)
 - `osm-source.test.ts` — Declares extract (~322 tok)
 - `pagination.sql` (~804 tok)
@@ -376,6 +429,8 @@
 ## tests/unit/
 
 - `api.test.ts` — API routes: GET (6 endpoints) (~1286 tok)
+- `broker-api.test.ts` — Declares config (~1440 tok)
+- `broker-auth.test.ts` — API routes: GET (1 endpoints) (~1133 tok)
 - `content-automation.test.ts` (~202 tok)
 - `live-content.test.ts` — Declares event (~226 tok)
 - `pagination.test.ts` — Declares rows (~238 tok)

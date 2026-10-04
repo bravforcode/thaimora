@@ -41,6 +41,8 @@ export function LocaleLink({
     locale === "th"
       ? `/th${href}`
       : href;
+  if(typeof localized === "string" && /^\/(?:th\/)?broker(?:\/|$)/.test(localized))
+    return <a href={localized} {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)} />;
   return <NextLink href={localized} {...props} />;
 }
 export function SettingsProvider({ children }: { children: ReactNode }) {
@@ -48,6 +50,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     router = useRouter(),
     routeLocale: Locale =
       path.startsWith("/th/") || path === "/th" ? "th" : "en";
+  const accountRoute = /^\/(?:th\/)?broker(?:\/|$)/.test(path);
   const [locale, setLocaleState] = useState<Locale>(routeLocale),
     [currency, setCurrencyState] = useState("THB"),
     [unit, setUnitState] = useState<"sqm" | "sqft">("sqm"),
@@ -83,6 +86,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setLocaleState(v);
     localStorage.setItem("thaimora-language", v);
     const clean = path.replace(/^\/th(?=\/|$)/, "") || "/";
+    if(accountRoute) {
+      // A fresh document keeps account-link tokens away from public-page analytics.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign(`${v === "th" ? "/th" : ""}${clean}${location.search}${location.hash}`);
+      return;
+    }
     router.push(
       `${v === "th" ? "/th" : ""}${clean}${location.search}${location.hash}`,
     );
@@ -129,7 +138,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         unit,
         setUnit,
         favorites,
-        measurementConsent: consent === "accepted",
+        measurementConsent: consent === "accepted" && !accountRoute,
         toggleFavorite,
         tr: (en, th) => (locale === "th" ? th : en),
       }}
@@ -153,8 +162,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             </strong>
             <p>
               {locale === "th"
-                ? "เราใช้พื้นที่จัดเก็บที่จำเป็นสำหรับภาษาและรายการโปรด การวิเคราะห์จะเปิดใช้เมื่อคุณยินยอมเท่านั้น"
-                : "Essential storage remembers your language and saved homes. Analytics runs only with your permission."}
+                ? "เราใช้พื้นที่จัดเก็บที่จำเป็นสำหรับภาษา รายการโปรด และเซสชันบัญชี การวิเคราะห์จะเปิดใช้เมื่อคุณยินยอมเท่านั้น"
+                : "Essential storage remembers your language, saved homes and account session. Analytics runs only with your permission."}
             </p>
           </div>
           <button
@@ -168,7 +177,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
           </button>
         </aside>
       )}
-      {consent === "accepted" && process.env.NEXT_PUBLIC_GA4_ID && (
+      {consent === "accepted" && !accountRoute && process.env.NEXT_PUBLIC_GA4_ID && (
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA4_ID}`}

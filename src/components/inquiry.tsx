@@ -84,6 +84,8 @@ export function InquiryButton({ property: p }: { property: PublicProperty }) {
     setBusy(true);
     try {
       if (liveMode) {
+        if (values.consentToShare !== "on")
+          throw new Error(tr("Please agree to sharing this inquiry with the listing owner.", "กรุณายินยอมให้ส่งคำถามนี้แก่เจ้าของประกาศ"));
         if (!token)
           throw new Error(
             tr(
@@ -95,13 +97,18 @@ export function InquiryButton({ property: p }: { property: PublicProperty }) {
           id: string;
           deliveryStatus: "sent" | "pending_retry";
           emailStatus?: string;
+          contactStatus?: "queued" | "unavailable";
         }>("/v1/inquiries", {
           method: "POST",
           headers: { "Idempotency-Key": key.current },
-          body: JSON.stringify({ ...parsed.data, turnstileToken: token }),
+          body: JSON.stringify({ ...parsed.data, consentToShare: true, turnstileToken: token }),
         });
         setResult(
-          inquiryDelivery(r) === "sent"
+          r.contactStatus === "queued"
+            ? tr("Your inquiry was recorded. Notifications to the listing owner are queued.", "บันทึกคำถามแล้ว การแจ้งเตือนถึงเจ้าของประกาศอยู่ในคิวส่ง")
+            : r.contactStatus === "unavailable"
+              ? tr("Your inquiry was recorded. Owner notifications are not available yet; the team can see your request.", "บันทึกคำถามแล้ว ยังไม่พร้อมแจ้งเตือนเจ้าของประกาศ ทีมงานสามารถดูคำขอของคุณได้")
+              : inquiryDelivery(r) === "sent"
             ? tr("Your inquiry has been sent.", "ส่งคำถามของคุณแล้ว")
             : tr(
                 "Your inquiry was recorded. Email delivery is pending; the team can see your request.",
@@ -245,6 +252,10 @@ export function InquiryButton({ property: p }: { property: PublicProperty }) {
                 {tr("Privacy notice", "ประกาศความเป็นส่วนตัว")}
               </a>
             </label>
+            {liveMode && <label className="checkbox-label">
+              <input type="checkbox" name="consentToShare" required />
+              {tr("I agree to sharing my name, email and message with the owner of this listing so they can respond.", "ฉันยินยอมให้ส่งชื่อ อีเมล และข้อความแก่เจ้าของประกาศนี้เพื่อให้ติดต่อกลับ")}
+            </label>}
             {liveMode && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
               <>
                 <Script

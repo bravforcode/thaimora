@@ -35,7 +35,7 @@ export function serve(handler:(req:Request)=>Promise<Response>):void{
     response.headers.set("Vary","Origin");
     response.headers.set("Access-Control-Allow-Headers","Authorization,Content-Type,Idempotency-Key,If-None-Match");
     response.headers.set("Access-Control-Expose-Headers","ETag,Cache-Control");
-    response.headers.set("Access-Control-Allow-Methods","GET,POST,PATCH,DELETE,OPTIONS");
+    response.headers.set("Access-Control-Allow-Methods","GET,POST,PUT,PATCH,DELETE,OPTIONS");
     return response;
   });
 }

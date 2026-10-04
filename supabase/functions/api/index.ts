@@ -3,6 +3,8 @@ import { serve,client,env,body,json,checkDb,admin,rate,fetchJson,fx } from "../_
 import {auditMutation,reportRange} from "../_shared/admin-input.ts";
 import {publicContentResponse} from "../_shared/public-content.ts";
 import {apiParts} from "../_shared/api-path.ts";
+import {brokerRoute,brokerAdminRoute,type BrokerDb} from "../_shared/broker-api.ts";
+import {contactRoute} from "../_shared/contact-relay.ts";
 const propertiesFields=["slug","title","description","transaction","type","price_thb","area_m2","land_area_m2","beds","baths","floor","built_year","ownership","furnishing","status","zone","province","amenities","published","demo","source_id","source_url","rights_status","ownership_evidence","expires_at"];
 function safeFields(raw:any,allowed:string[]):any{return Object.fromEntries(Object.entries(raw).filter(([k])=>allowed.includes(k)));}
 async function writeProperty(db:any,raw:any,id?:string,actor?:string):Promise<any>{
@@ -14,8 +16,14 @@ async function writeProperty(db:any,raw:any,id?:string,actor?:string):Promise<an
 }
 serve(async req=>{
   const url=new URL(req.url),parts=apiParts(url),db=client();
+  if(parts[0]==="broker"||parts[0]==="contact"){
+    if(req.method!=="GET")await rate(req,db,"broker-"+parts[1],parts[1]==="checkout"?5:20);
+    const response=await brokerRoute(req,parts,db as unknown as BrokerDb)??await contactRoute(req,parts,db as unknown as BrokerDb);
+    if(response)return response;
+  }
   if(parts[0]==="admin"){
     const userId=await admin(req,db),kind=parts[1],id=parts[2];
+    const brokerResponse=await brokerAdminRoute(req,parts,db as unknown as BrokerDb,userId);if(brokerResponse)return brokerResponse;
     if(["pois","events"].includes(kind)&&id&&parts[3]==="automation"&&req.method==="POST"){
       if((await body(req)).enabled!==true)throw new ApiError(422,"explicit_automation_release_required");
       return json({item:checkDb(await db.rpc("admin_release_content_override",{p_table:kind,p_id:id,p_actor:userId}))});
@@ -105,6 +113,7 @@ serve(async req=>{
   }
   if(req.method==="POST"&&parts[0]==="inquiries"){
     const raw=await body(req);if(raw.website||raw.honeypot)throw new ApiError(422,"spam_rejected");
+    if(raw.consent!==true||raw.consentToShare!==true)throw new ApiError(422,"inquiry_contact_consent_required");
     const name=text(raw.name,2,100),email=text(raw.email,3,254),country=text(raw.country,2,80),message=text(raw.message,10,4000),propertyId=text(raw.propertyId,36,36),key=text(req.headers.get("Idempotency-Key"),8,128);
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!/^[0-9a-f-]{36}$/.test(propertyId))throw new ApiError(422,"invalid_inquiry");
     if(!env("TURNSTILE_SECRET_KEY"))throw new ApiError(503,"turnstile_not_configured");
@@ -112,10 +121,11 @@ serve(async req=>{
     const token=text(raw.turnstileToken,1,2048),form=new URLSearchParams({secret:env("TURNSTILE_SECRET_KEY"),response:token});
     const check=await fetchJson("https://challenges.cloudflare.com/turnstile/v0/siteverify",{method:"POST",body:form});
     if(!check.success||check.action!=="inquiry"||!env("TURNSTILE_HOSTNAMES").split(",").includes(check.hostname))throw new ApiError(422,"turnstile_failed");
-    const payload=await sha256(JSON.stringify({name,email,country,message,propertyId})),result=await db.rpc("submit_inquiry",{p_property:propertyId,p_name:name,p_email:email,p_country:country,p_message:message,p_key:await sha256(key),p_payload:payload});
+    const payload=await sha256(JSON.stringify({name,email,country,message,propertyId,consentToShare:true})),result=await db.rpc("submit_contact_inquiry",{p_property:propertyId,p_name:name,p_email:email,p_country:country,p_message:message,p_key:await sha256(key),p_payload:payload,p_share:true});
     if(result.error){if(result.error.message.includes("Idempotency conflict"))throw new ApiError(409,"idempotency_conflict");if(result.error.message.includes("Property unavailable"))throw new ApiError(422,"property_unavailable");throw new ApiError(503,"inquiry_not_saved");}
     if(env("EMAIL_WORKER_SECRET"))await fetch(env("SUPABASE_URL")+"/functions/v1/deliver-email",{method:"POST",headers:{Authorization:"Bearer "+env("EMAIL_WORKER_SECRET")},signal:AbortSignal.timeout(2000)}).catch(()=>undefined);
-    return json({id:result.data.id,duplicate:result.data.duplicate,emailStatus:result.data.emailStatus},result.data.duplicate?200:202);
+    if(env("CONTACT_DELIVERY_ENABLED")==="true"&&env("CONTACT_WORKER_SECRET"))await fetch(env("SUPABASE_URL")+"/functions/v1/deliver-contact",{method:"POST",headers:{Authorization:"Bearer "+env("CONTACT_WORKER_SECRET")},signal:AbortSignal.timeout(2000)}).catch(()=>undefined);
+    return json({id:result.data.id,duplicate:result.data.duplicate,emailStatus:result.data.emailStatus,contactStatus:result.data.contactStatus},result.data.duplicate?200:202);
   }
   throw new ApiError(404,"not_found");
 });

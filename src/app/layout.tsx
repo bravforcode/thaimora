@@ -8,6 +8,7 @@ import "@fontsource/noto-sans-thai/500.css";
 import "@fontsource/noto-sans-thai/600.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import "./broker.css";
 import { SettingsProvider } from "@/components/context";
 import { Header, Footer } from "@/components/header";
 export const metadata: Metadata = {

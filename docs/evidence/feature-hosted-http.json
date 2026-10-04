@@ -1,0 +1,218 @@
+{
+  "project": "thaimora",
+  "checkedAt": "2026-10-04T08:13:53.739Z",
+  "scope": "hosted_read_only_http",
+  "configurationExpected": "accounts_and_delivery_disabled",
+  "checks": [
+    {
+      "name": "public_broker_config",
+      "status": 200,
+      "errorCode": null,
+      "pass": true,
+      "assertions": {
+        "success": true,
+        "quotedUsd25Monthly": true,
+        "noApprovalRequired": true,
+        "billingDisabled": true,
+        "registrationDisabledUntilApprovedTerms": true,
+        "contactDeliveryDisabled": true,
+        "lineLinkDisabled": true,
+        "configHasOnlyPublicFields": true
+      }
+    },
+    {
+      "name": "unauthenticated_broker_me",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_broker_dashboard",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_broker_listings",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_broker_leads",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_contact_preferences",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_admin_brokers",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_broker_checkout",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_broker_portal",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "unauthenticated_contact_line-link",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "forged_broker_token_denied",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "stripe_missing_signature",
+      "status": 503,
+      "errorCode": "billing_not_configured",
+      "pass": true,
+      "assertions": {
+        "closed": true,
+        "safeError": true,
+        "noSuccessOrPrivatePayload": true
+      }
+    },
+    {
+      "name": "stripe_invalid_signature",
+      "status": 503,
+      "errorCode": "billing_not_configured",
+      "pass": true,
+      "assertions": {
+        "closed": true,
+        "safeError": true,
+        "noSuccessOrPrivatePayload": true
+      }
+    },
+    {
+      "name": "line_missing_signature",
+      "status": 503,
+      "errorCode": "line_not_configured",
+      "pass": true,
+      "assertions": {
+        "closed": true,
+        "safeError": true,
+        "noSuccessOrPrivatePayload": true
+      }
+    },
+    {
+      "name": "line_invalid_signature",
+      "status": 503,
+      "errorCode": "line_not_configured",
+      "pass": true,
+      "assertions": {
+        "closed": true,
+        "safeError": true,
+        "noSuccessOrPrivatePayload": true
+      }
+    },
+    {
+      "name": "contact_worker_missing_authorization",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "contact_worker_invalid_authorization",
+      "status": 401,
+      "errorCode": "unauthorized",
+      "pass": true,
+      "assertions": {
+        "authDenied": true,
+        "safeError": true,
+        "privatePayloadAbsent": true
+      }
+    },
+    {
+      "name": "public_content_preserved",
+      "status": 200,
+      "errorCode": null,
+      "pass": true,
+      "assertions": {
+        "success": true,
+        "poiCountPreserved": true,
+        "noPublishedEvents": true
+      }
+    }
+  ],
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "limitations": [
+    "No authenticated broker flow or real provider delivery checked.",
+    "No frontend deployment or commercial hosting entitlement checked."
+  ]
+}

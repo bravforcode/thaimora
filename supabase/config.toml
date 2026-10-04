@@ -14,3 +14,9 @@ verify_jwt = false
 verify_jwt = false
 [functions.sync-content]
 verify_jwt = false
+[functions.stripe-webhook]
+verify_jwt = false
+[functions.line-webhook]
+verify_jwt = false
+[functions.deliver-contact]
+verify_jwt = false

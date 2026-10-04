@@ -182,6 +182,7 @@ test("consumed inquiry token is refreshed for retry while the idempotency key an
   await page.getByLabel("Email", { exact: true }).fill("retry@example.test");
   await page.getByLabel("Country of residence").fill("UK");
   await page.locator('input[name="consent"]').check();
+  await page.locator('input[name="consentToShare"]').check();
   await expect
     .poll(() =>
       page.evaluate(() =>

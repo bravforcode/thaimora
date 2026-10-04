@@ -4,7 +4,7 @@ export default function robots(): MetadataRoute.Robots {
   return process.env.NEXT_PUBLIC_DATA_MODE === "live"
     ? {
         rules: [
-          { userAgent: "*", allow: "/", disallow: ["/admin/", "/th/admin/"] },
+          { userAgent: "*", allow: "/", disallow: ["/admin/", "/th/admin/", "/broker/dashboard/", "/th/broker/dashboard/"] },
         ],
         sitemap: `${process.env.NEXT_PUBLIC_SITE_URL}/sitemap.xml`,
       }

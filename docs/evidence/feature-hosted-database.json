@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "project": "thaimora",
+  "projectId": "hpjmttoxomdhxxsourih",
+  "recordedAt": "2026-10-04T08:28:50.407Z",
+  "scope": "Hosted Supabase feature preparation. Provider services remain disabled; no public frontend deployment or real customer billing/delivery is asserted.",
+  "migrations": [
+    {
+      "version": "20261004075640",
+      "name": "broker_subscription",
+      "sourceFile": "supabase/migrations/202610040006_broker_subscription.sql",
+      "sha256": "464C77EE3FEC1F8DE16089E26E72774CAC1012F0455A734282C9F699D61C864F"
+    },
+    {
+      "version": "20261004075645",
+      "name": "contact_relay",
+      "sourceFile": "supabase/migrations/202610040007_contact_relay.sql",
+      "sha256": "77A661B92DD6AB6D65301FCA6C612A9465A0749C103625D6F472738BAF3B6922"
+    },
+    {
+      "version": "20261004075646",
+      "name": "contact_scheduler",
+      "sourceFile": "supabase/migrations/202610040008_contact_scheduler.sql",
+      "sha256": "CA083A9BDBD4B4BE0E68AA367B95FA356288781706D8AA695F984F4A72811B93"
+    },
+    {
+      "version": "20261004080033",
+      "name": "contact_preferences_upsert",
+      "sourceFile": "supabase/migrations/202610040009_contact_preferences_upsert.sql",
+      "sha256": "8B9CAED7339576FB0898AC0D48992BA09F2884AA6F4B32A4C890387D71FBEC10"
+    }
+  ],
+  "functions": [
+    {
+      "slug": "api",
+      "status": "ACTIVE",
+      "version": 7,
+      "updatedAt": "2026-10-04T08:00:58.832Z",
+      "bundleSha256": "d378fb575977fd3a23f79a42b946f721cb8a1c2f3f96e7aea9aac40ebcdd623b",
+      "verifyJwt": false
+    },
+    {
+      "slug": "stripe-webhook",
+      "status": "ACTIVE",
+      "version": 1,
+      "updatedAt": "2026-10-04T08:01:02.435Z",
+      "bundleSha256": "b8fcc3bbf73fe65535e79707206888436278443e6ccec0335eabfe2bc8b051c8",
+      "verifyJwt": false
+    },
+    {
+      "slug": "line-webhook",
+      "status": "ACTIVE",
+      "version": 1,
+      "updatedAt": "2026-10-04T08:01:06.858Z",
+      "bundleSha256": "97ec7f1ffb48fe1eea5705c1a74fa7e97ccd77fbd43b984a38122913568455b4",
+      "verifyJwt": false
+    },
+    {
+      "slug": "deliver-contact",
+      "status": "ACTIVE",
+      "version": 1,
+      "updatedAt": "2026-10-04T08:01:10.868Z",
+      "bundleSha256": "57376bc6783b1e278cea8dd975896a2fb44c4ea351a8c1f1f18e04cbe74f75b5",
+      "verifyJwt": false
+    }
+  ],
+  "deployment": {
+    "provider": "Supabase CLI",
+    "exitCode": 0,
+    "archiveId": "6dc74ff3ff7e6431"
+  },
+  "hostedSqlAssertions": [
+    {
+      "file": "tests/integration/broker-contact.sql",
+      "sha256": "0FA89994F4C86369F9FF5B630D5C5FD678626DB0BB7DA5CCDF18EC84221EB599",
+      "result": "passed after migration 09; synthetic BEGIN/ROLLBACK returned [] without error"
+    },
+    {
+      "file": "tests/integration/contact-preferences-upsert.sql",
+      "sha256": "DDAB832C041688666AD7D3BF78BE6D48593F8EA9F40C83CF0620C3E529373BBB",
+      "result": "passed; focused actual PostgreSQL BEGIN/ROLLBACK returned [] without error"
+    }
+  ],
+  "retainedFailure": {
+    "sqlState": "23514",
+    "constraint": "contact_accounts_check1",
+    "cause": "INSERT checked LINE enabled/null account before ON CONFLICT despite an existing linked account.",
+    "fix": "Forward migration 09 inserts LINE disabled then applies the requested flag in the conflict update. Applied migration 07 was preserved."
+  },
+  "finalReadOnlyDatabaseObservation": {
+    "observed_at": "2026-10-04 08:28:04.835819+00",
+    "fixture_users": 0,
+    "broker_profiles": 0,
+    "contact_jobs": 0,
+    "published_properties": 0,
+    "published_events": 0,
+    "billing_enabled": false,
+    "approval_required": false,
+    "amount_minor": 2500,
+    "currency": "usd",
+    "stripe_price_unconfigured": true,
+    "terms_unconfigured": true,
+    "delivery_enabled": false
+  },
+  "httpEvidence": "feature-hosted-http.json",
+  "limits": [
+    "Configured live Stripe/LINE signatures and external provider delivery require account setup and provider UAT; disabled 503 responses are not that proof.",
+    "No real broker accounts, charges or messages were created.",
+    "Public inventory and approved membership terms remain unavailable."
+  ]
+}

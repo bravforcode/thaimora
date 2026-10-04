@@ -321,6 +321,97 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-03T19:14:46.1040572+00:00"
+    },
+    {
+      "id": "TH-BROKER-CONTACT-UPSERT",
+      "error": "Hosted broker-contact.sql failed SQLSTATE23514 while opting an existing linked recipient into LINE",
+      "file": "supabase/migrations/202610040009_contact_preferences_upsert.sql; tests/integration/contact-preferences-upsert.sql",
+      "root_cause": "INSERT ON CONFLICT checked a proposed LINE-enabled row with no LINE user ID before updating the existing verified linked row",
+      "fix": "Preserve applied migrations06-08; forward09 inserts LINE disabled then applies the requested flag on the existing validated row; hosted broker-contact.sql and focused contact-preferences-upsert.sql rollback suites passed and tracked users/profiles/outbox fixtures returned to0",
+      "tags": ["postgres", "contact", "hosted", "upsert"],
+      "related_bugs": [],
+      "evidence": "docs/reviews/broker-contact-review.md; docs/evidence/feature-hosted-database.json; source09 and both hosted rollbackSQL receipts",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:05:13Z"
+    },
+    {
+      "id": "TH-BROKER-PRIVATE-STATE",
+      "error": "Review found stale private dashboard responses could outlive session changes, concurrent403 or paid-period expiry",
+      "file": "src/components/broker.tsx; src/lib/broker-auth.ts; tests/frontend/broker.spec.ts",
+      "root_cause": "Asynchronous dashboard work needed a session-generation boundary and explicit invalidation when authorization or current payment changed",
+      "fix": "Root added session-generation guards, clears private state on authorization failure and expiry/resume, and rejects unsafe payment redirects; corrected-code11Chromium cases passed",
+      "tags": ["auth", "privacy", "frontend"],
+      "related_bugs": ["TH-BROKER-REACT-KEY"],
+      "evidence": "docs/reviews/broker-contact-review.md; corrected browserc90accd3aa80e7ae; root source review",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:05:13Z"
+    },
+    {
+      "id": "TH-BROKER-REACT-KEY",
+      "error": "Chromium run passed10assertions but emitted duplicate React key warnings",
+      "file": "src/components/broker.tsx",
+      "root_cause": "Session-based component keys were reused; key changes also needed to avoid placing sensitive session material in React diagnostics",
+      "fix": "Root replaced keys with nonsensitive session revisions and distinct component prefixes; final11Chromium cases passed without duplicate-key warnings; corrected captures supersede earlier screenshots",
+      "tags": ["react", "privacy", "frontend"],
+      "related_bugs": ["TH-BROKER-PRIVATE-STATE"],
+      "evidence": "earlier d963220146c235cf; finalc90accd3aa80e7ae; docs/reviews/broker-contact-review.md",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:05:13Z"
+    },
+    {
+      "id": "TH-BROKER-PHOTO-DTO",
+      "error": "TS2345: Add photo draft omitted credit/sourceUrl fields required after nullable DTO transform inference",
+      "file": "src/components/broker.tsx; src/lib/broker-api.ts",
+      "root_cause": "Draft form initializer did not supply the normalized nullable image fields expected by the inferred type",
+      "fix": "Initialize explicit blank credit/sourceUrl fields; final typecheck/lint and80unit tests passed",
+      "tags": ["typescript", "validation", "frontend"],
+      "related_bugs": [],
+      "evidence": "initial mixedwrapper0b06eeda1e3cb4a9; passed68338f1c0977f670",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:12:34Z"
+    },
+    {
+      "id": "TH-BROKER-RESPONSE-FIXTURE",
+      "error": "Unit request fixture reused a Response with an already consumed body",
+      "file": "tests/unit/broker-api.test.ts",
+      "root_cause": "The fetch mock returned the same Response instance for two requests",
+      "fix": "Mock implementation creates a fresh Response on each call; final80unit tests passed",
+      "tags": ["test-harness", "fetch"],
+      "related_bugs": [],
+      "evidence": "initial mixedwrapper0b06eeda1e3cb4a9; passed68338f1c0977f670",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:12:34Z"
+    },
+    {
+      "id": "TH-BROKER-ALERT-SELECTOR",
+      "error": "11caseChromium run failed because getByRole(alert) matched both hidden Next route announcer and application notice",
+      "file": "tests/frontend/broker.spec.ts",
+      "root_cause": "Generic role selector was not unique; application private lead state had correctly cleared on403",
+      "fix": "Target .notice.error[role=alert]; strengthen analytics fixture with enabled analytics, prior consent and LINE link-token URL; final corrected-code11Chromiumcases passed",
+      "tags": ["test-harness", "browser", "privacy"],
+      "related_bugs": ["TH-BROKER-PRIVATE-STATE"],
+      "evidence": "faileda88931c44ceea764; passedc90accd3aa80e7ae; docs/reviews/broker-contact-review.md",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:12:34Z"
+    },
+    {
+      "id": "TH-BROKER-NULL-PROOF",
+      "error": "Private listing DTO rejected null publication.ownershipEvidence or gallery.rightsEvidence after staff cleared proof",
+      "file": "src/lib/broker-api.ts; tests/unit/broker-api.test.ts",
+      "root_cause": "The valid private database response may contain SQLNULL for cleared proof, while draft editing expected strings",
+      "fix": "Normalize nullable proof to empty draft-edit strings without altering required UI/save/publication proof validation; enhanced existing nullable fixture,16focused broker API tests, typecheck, lint and current80page/79HTMLlanguage preview build passed; final reviewer approved read-only normalization",
+      "tags": ["validation", "nullable", "frontend", "draft"],
+      "related_bugs": ["TH-BROKER-PHOTO-DTO"],
+      "evidence": "docs/reviews/broker-contact-review.md; final16unit/type/lint/build8f7c8d6cba4f712b",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-04T08:34:16Z"
     }
   ]
 }
