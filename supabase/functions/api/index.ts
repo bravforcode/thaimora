@@ -82,6 +82,7 @@ serve(async req=>{
     throw new ApiError(405,"method_not_allowed");
   }
   if(req.method==="GET"&&parts[0]==="properties"){
+    await rate(req,db,"public-properties",120);
     if(!parts[1]){
       const filters=parsePropertyQuery(url),limit=filters.limit;
       const rows=checkDb(await db.rpc("search_properties_v2",{p_filters:{...filters,limit:limit+1}})),page=rows.slice(0,limit),last=page.at(-1);
@@ -94,14 +95,15 @@ serve(async req=>{
     return json(publicProperty(property));
   }
   if(req.method==="GET"&&parts[0]==="places"&&parts[1]==="autocomplete"){
+    await rate(req,db,"public-autocomplete",30);
     const q=text(url.searchParams.get("q"),2,100),locale=url.searchParams.get("locale")??"en";
     if(!["en","th"].includes(locale))throw new ApiError(422,"invalid_locale");
     if(!env("GEOAPIFY_API_KEY"))throw new ApiError(503,"autocomplete_not_configured");
     const data=await fetchJson("https://api.geoapify.com/v1/geocode/autocomplete?text="+encodeURIComponent(q)+"&lang="+locale+"&filter=countrycode:th&limit=8&apiKey="+env("GEOAPIFY_API_KEY"));
     return json({items:data.features.map((x:any)=>({id:x.properties.place_id,name:x.properties.formatted,location:{lat:x.properties.lat,lng:x.properties.lon}})),attribution:"Powered by Geoapify | © OpenStreetMap contributors"});
   }
-  if(req.method==="GET"&&parts[0]==="content")return publicContentResponse(req,db);
-  if(req.method==="GET"&&parts[0]==="fx")return json(await fx(db,url));
+  if(req.method==="GET"&&parts[0]==="content"){await rate(req,db,"public-content",60);return publicContentResponse(req,db);}
+  if(req.method==="GET"&&parts[0]==="fx"){await rate(req,db,"public-fx",30);return json(await fx(db,url));}
   if(req.method==="POST"&&parts[0]==="analytics"&&parts[1]==="events"){
     const raw=await body(req);
     if(raw.consented!==true||!["view","contact_click"].includes(raw.kind))throw new ApiError(422,"analytics_consent_required");
