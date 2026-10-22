@@ -1,8 +1,9 @@
 import {ApiError} from "../_shared/domain.ts";
 import {serve,env,client,json,checkDb,fetchJson} from "../_shared/runtime.ts";
+import {constantEqual} from "../_shared/broker-billing.ts";
 serve(async req=>{
   if(req.method!=="POST")throw new ApiError(405,"method_not_allowed");
-  if(!env("EMAIL_WORKER_SECRET")||req.headers.get("Authorization")!=="Bearer "+env("EMAIL_WORKER_SECRET"))throw new ApiError(401,"unauthorized");
+  if(!env("EMAIL_WORKER_SECRET")||!constantEqual(req.headers.get("Authorization")??"","Bearer "+env("EMAIL_WORKER_SECRET")))throw new ApiError(401,"unauthorized");
   if(!env("RESEND_API_KEY")||!env("INQUIRY_EMAIL_TO")||!env("INQUIRY_EMAIL_FROM"))throw new ApiError(503,"email_not_configured");
   const db=client(),batch=checkDb(await db.rpc("claim_email_batch",{p_limit:5}).abortSignal(AbortSignal.timeout(8000)));let sent=0,failed=0;
   // Five concurrent tasks bound database/provider deadlines below the scheduler's 60 seconds.
