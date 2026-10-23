@@ -247,6 +247,7 @@
 - `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17440 tok)
 - `broker-admin.tsx` — membersSchema — renders form, table — uses useState, useEffect (~1586 tok)
 - `broker.tsx` — destinationSchema — renders form — uses useState, useRef, useCallback, useEffect (~9448 tok)
+- `broker-demo.tsx` — BrokerDemoDesk — renders sample listings and device-local inquiries; preview only — uses useState, useEffect (~1800 tok)
 - `content-automation.tsx` — ContentAutomation — renders table — uses useState, useEffect (~1407 tok)
 - `content-freshness.tsx` — ContentFreshness (~509 tok)
 - `content-page.tsx` — ContentPage — renders map — uses useState, useEffect (~3453 tok)
