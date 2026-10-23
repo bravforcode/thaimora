@@ -412,6 +412,78 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-04T08:34:16Z"
+    },
+    {
+      "id": "TH-AUDIT-DEPS-NEXT-VITE",
+      "error": "Critical next 16.3.8 advisory GHSA-2464-fhr4-w9xw plus high vite and fast-glob advisories in the build toolchain",
+      "file": "package.json; package-lock.json",
+      "root_cause": "next, eslint-config-next and the transitive vite and fast-glob versions were vulnerable",
+      "fix": "next and eslint-config-next to ^16.4.2; overrides fast-glob 3.3.3 and vite 8.3.4 (vite 8.3.5 needs rolldown 1.2.14 and broke the native binding). Lockfile regenerated with npx --yes npm@latest install because npm 11.6.0 drops the @rolldown/binding-* optional entries. Residual: braces GHSA-vfj7-8cjw-p6xm has no patched release and affects dev and lint tooling only",
+      "tags": ["dependencies", "security", "lockfile"],
+      "evidence": "npm audit --omit=dev 0 vulnerabilities; typecheck, lint, test:unit 80/80, test:backend 39/39, build exit 0",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-CONTENT-MASS-ASSIGN",
+      "error": "Admin content writes passed the raw request body to the database, so any key could set admin_override or fetched_at, or rename a row on PATCH through its body id",
+      "file": "supabase/functions/_shared/admin-input.ts; supabase/functions/api/index.ts; tests/integration/review-contracts.test.ts",
+      "root_cause": "Only source_quarantine was stripped; every other body key was written",
+      "fix": "contentWriteFields keeps a per-table editorial allowlist and drops id on update; admin_override is still forced for pois and events. Red then green test added",
+      "tags": ["authorization", "mass-assignment", "admin"],
+      "evidence": "review-contracts 4/4; test:backend 39/39",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-RATE-LIMIT-IP",
+      "error": "Rate-limit key came from cf-connecting-ip or the first X-Forwarded-For hop, both client-controlled",
+      "file": "supabase/functions/_shared/http.ts; supabase/functions/_shared/runtime.ts; tests/integration/review-contracts.test.ts",
+      "root_cause": "A client can send any spoofed header value and get a fresh bucket on every request",
+      "fix": "clientIp uses the last X-Forwarded-For hop, which the gateway appends, and ignores cf-connecting-ip. Residual: if the hosted edge sits behind another proxy that appends its own address, all clients share one bucket; verify on the live project",
+      "tags": ["rate-limit", "spoofing", "edge-function"],
+      "evidence": "clientIp tests red then green; deno check runtime.ts exit 0",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-STATIC-HEADERS",
+      "error": "Static export served with no CSP, framing, MIME, referrer, HSTS or permissions headers",
+      "file": "vercel.json; tests/integration/static-headers.test.ts",
+      "root_cause": "vercel.json had no headers block",
+      "fix": "Catch-all headers rule: CSP without unsafe-eval, X-Frame-Options DENY, nosniff, strict-origin-when-cross-origin, HSTS, Permissions-Policy. Test red then green. Residual: CSP is not verified in a browser; MapLibre workers, Turnstile and GA4 need a Vercel preview check",
+      "tags": ["csp", "headers", "hosting"],
+      "evidence": "test:hosting 4/4; test:deployment 6/6",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-ACTION-PINS",
+      "error": "GitHub Actions referenced by mutable major tags",
+      "file": ".github/workflows/backup.yml; catalog.yml; content.yml; deploy-vercel.yml; export.yml; verify.yml",
+      "root_cause": "uses: lines pinned to actions/checkout@v4, setup-node@v4 and upload-artifact@v4, which can move",
+      "fix": "Pinned checkout v4.4.0, setup-node v4.4.0 and upload-artifact v4.6.2 to commit SHAs with version comments; all 13 uses lines pinned",
+      "tags": ["supply-chain", "github-actions"],
+      "evidence": "grep of uses: lines finds no tag-only pin",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-BACKUP-RETENTION",
+      "error": "Encrypted backup artifacts kept only 7 days",
+      "file": ".github/workflows/backup.yml",
+      "root_cause": "upload-artifact retention-days was 7",
+      "fix": "retention-days raised to 30. Off-site copy is still blocked on the user's storage credentials",
+      "tags": ["backup", "retention"],
+      "evidence": "backup.yml line 45 reads retention-days: 30",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
     }
   ]
 }
