@@ -1455,6 +1455,10 @@ dialog::backdrop {
 .inquiry-dialog form > label {
   margin-top: 16px;
 }
+.inquiry-result .button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
