@@ -1,6 +1,6 @@
 import { ApiError,publicProperty,parsePropertyQuery,text,sha256,importRows,parseCsv,safeCsvCell,coordinate } from "../_shared/domain.ts";
 import { serve,client,env,body,json,checkDb,admin,rate,fetchJson,fx } from "../_shared/runtime.ts";
-import {auditMutation,reportRange} from "../_shared/admin-input.ts";
+import {auditMutation,contentWriteFields,reportRange} from "../_shared/admin-input.ts";
 import {publicContentResponse} from "../_shared/public-content.ts";
 import {apiParts} from "../_shared/api-path.ts";
 import {brokerRoute,brokerAdminRoute,type BrokerDb} from "../_shared/broker-api.ts";
@@ -74,10 +74,10 @@ serve(async req=>{
     if(kind==="inquiries"&&req.method==="PATCH"&&id){const raw=await body(req);if(!["new","contacted","closed"].includes(raw.status))throw new ApiError(422,"invalid_status");return json({item:checkDb(await db.from("inquiries").update({status:raw.status}).eq("id",id).select().single())});}
     if(["pois","events","zones","settings"].includes(kind)&&["POST","PATCH","DELETE"].includes(req.method)){
       if(req.method==="DELETE"){checkDb(await db.from(tables[kind]).delete().eq("id",id));await auditMutation(db,userId,tables[kind],id,"DELETE",[]);return json({deleted:true});}
-      const raw=await body(req);delete raw.source_quarantine;
-      if(["pois","events"].includes(kind))raw.admin_override=true;
-      const item=checkDb(id?await db.from(tables[kind]).update(raw).eq("id",id).select().single():await db.from(tables[kind]).insert(raw).select().single());
-      await auditMutation(db,userId,tables[kind],String(item.id),id?"UPDATE":"INSERT",Object.keys(raw));return json({item});
+      const fields=contentWriteFields(kind,await body(req),id);
+      if(["pois","events"].includes(kind))fields.admin_override=true;
+      const item=checkDb(id?await db.from(tables[kind]).update(fields).eq("id",id).select().single():await db.from(tables[kind]).insert(fields).select().single());
+      await auditMutation(db,userId,tables[kind],String(item.id),id?"UPDATE":"INSERT",Object.keys(fields));return json({item});
     }
     throw new ApiError(405,"method_not_allowed");
   }
