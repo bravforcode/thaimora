@@ -508,6 +508,18 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "PHUKET-HEADER-OVERFLOW",
+      "error": "Home and explorer e2e failed on mobile: cookie Reject button covered by map canvas; scrollWidth 495 at 375px",
+      "file": "src/components/header.tsx; src/app/phuket.css",
+      "root_cause": "New header sign-in link made .header-actions 303px wide; layout viewport widened, so fixed cookie banner and map shifted off-target",
+      "fix": "Hide .header-signin at max-width 640px; home CTA card links to /dashboard/",
+      "tags": ["header", "mobile", "e2e"],
+      "evidence": "375px measurement: scrollWidth 495 before, 375 after on /, /explore/, /th/, /th/explore/; full e2e 30/30 pass",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-26T00:00:00Z"
     }
   ]
 }

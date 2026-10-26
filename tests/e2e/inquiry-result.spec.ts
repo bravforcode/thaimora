@@ -7,7 +7,7 @@ test("preview inquiry confirmation keeps Done on one line at 1024px", async ({
       localStorage.setItem("thaimora-consent", "rejected");
   });
   await page.setViewportSize({ width: 1024, height: 768 });
-  await page.goto("/property/villa-bang-tao-1/");
+  await page.goto("/property/villa-mai-khao-1/");
   await page.getByRole("button", { name: "Inquire about this home" }).click();
   await page.getByLabel("Full name").fill("Jane Preview");
   await page.getByLabel("Email", { exact: true }).fill("jane@example.com");

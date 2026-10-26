@@ -348,7 +348,7 @@ export const currencies = [
   "JPY",
 ] as const;
 export function priceLabel(
-  p: PublicProperty,
+  p: Pick<PublicProperty, "priceTHB">,
   locale: Locale,
   currency: string = "THB",
   rates: Record<string, number> = { THB: 1 },

@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 test("filter URLs restore controls and comparisons survive reload", async ({
   page,
 }, info) => {
-  await page.goto("/?type=villa&sort=price_desc&beds=2");
+  await page.goto("/explore/?type=villa&sort=price_desc&beds=2");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
@@ -38,7 +38,7 @@ test("filter URLs restore controls and comparisons survive reload", async ({
 test("polygon keyboard alternative rejects crossing edges and applies a valid area", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/explore/");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();

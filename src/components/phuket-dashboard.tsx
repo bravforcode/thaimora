@@ -1,0 +1,560 @@
+"use client";
+import { useEffect, useState, type FormEvent } from "react";
+import { Buildings, House, Storefront, UserCircle } from "@phosphor-icons/react";
+import { useSettings } from "./context";
+import { previewFX } from "@/lib/demo";
+import { type HomeListing } from "@/lib/listings";
+import { priceLabel, type Locale, type PublicProperty } from "@/lib/property";
+import { countByZone, zoneLabel, zones } from "@/lib/zones";
+
+type Role = "owner" | "agent";
+type Session = { role: Role; name: string };
+type Draft = {
+  id: string;
+  title: string;
+  zone: string;
+  type: string;
+  transaction: "sale" | "rent";
+  priceTHB: number;
+};
+
+type PriceOf = (p: Pick<PublicProperty, "priceTHB" | "transaction">) => string;
+
+const SESSION_KEY = "phuketlens.demo.session";
+const MEMBERSHIP_KEY = "phuketlens.demo.membership";
+const DRAFTS_KEY = "phuketlens.demo.drafts";
+const AGENT_PRICE_USD = 25;
+
+// Per-viewer demo state only. Storage can be blocked, so every access is guarded.
+function readStore<T>(key: string, fallback: T): T {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStore(key: string, value: unknown) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Storage unavailable: the preview keeps working for this page view only.
+  }
+}
+
+const types = ["villa", "condo", "house", "townhouse", "land"] as const;
+
+function areaName(zoneName: string, locale: Locale) {
+  const zone = zones.find((z) => z.en === zoneName);
+  return zone ? zoneLabel(zone, locale) : zoneName;
+}
+
+export function PhuketDashboard({ listings }: { listings: HomeListing[] }) {
+  const { locale, tr, currency } = useSettings();
+  const [ready, setReady] = useState(false),
+    [session, setSession] = useState<Session | null>(null),
+    [membership, setMembership] = useState(false),
+    [drafts, setDrafts] = useState<Draft[]>([]);
+
+  useEffect(() => {
+    setSession(readStore<Session | null>(SESSION_KEY, null));
+    setMembership(readStore<boolean>(MEMBERSHIP_KEY, false));
+    setDrafts(readStore<Draft[]>(DRAFTS_KEY, []));
+    setReady(true);
+  }, []);
+
+  const signIn = (role: Role, name: string) => {
+    const next: Session = {
+      role,
+      name:
+        name.trim() ||
+        (role === "owner" ? tr("Owner", "เจ้าของ") : tr("Agent", "นายหน้า")),
+    };
+    setSession(next);
+    writeStore(SESSION_KEY, next);
+  };
+  const signOut = () => {
+    setSession(null);
+    writeStore(SESSION_KEY, null);
+  };
+  const toggleMembership = () => {
+    const next = !membership;
+    setMembership(next);
+    writeStore(MEMBERSHIP_KEY, next);
+  };
+  const addDraft = (draft: Omit<Draft, "id">) => {
+    const next = [{ ...draft, id: `draft-${Date.now()}` }, ...drafts];
+    setDrafts(next);
+    writeStore(DRAFTS_KEY, next);
+  };
+
+  const priceOf: PriceOf = (p) =>
+    priceLabel(p, locale, currency, previewFX.rates) +
+    (p.transaction === "rent" ? tr(" / month", " / เดือน") : "");
+
+  if (!ready)
+    return (
+      <main id="main" className="dash">
+        <p className="muted">{tr("Loading…", "กำลังโหลด…")}</p>
+      </main>
+    );
+
+  return (
+    <main id="main" className="dash">
+      <header className="dash-head">
+        <div>
+          <span className="eyebrow">
+            {tr("Demo preview", "ตัวอย่างการใช้งาน")}
+          </span>
+          <h1>
+            {session
+              ? session.role === "owner"
+                ? tr("Owner dashboard", "แดชบอร์ดเจ้าของ")
+                : tr("Agent dashboard", "แดชบอร์ดนายหน้า")
+              : tr("Owner or agent sign-in", "เข้าสู่ระบบเจ้าของ / นายหน้า")}
+          </h1>
+          <p className="muted">
+            {tr(
+              "No account is created and no payment is taken in this preview. Data stays in this browser.",
+              "ตัวอย่างนี้ไม่สร้างบัญชีและไม่รับชำระเงิน ข้อมูลเก็บไว้ในเบราว์เซอร์นี้เท่านั้น",
+            )}
+          </p>
+        </div>
+        {session && (
+          <button type="button" className="button ghost" onClick={signOut}>
+            {tr("Sign out", "ออกจากระบบ")}
+          </button>
+        )}
+      </header>
+
+      {!session && (
+        <SignIn onSignIn={signIn} />
+      )}
+
+      {session?.role === "owner" && (
+        <OwnerView
+          name={session.name}
+          drafts={drafts}
+          listings={listings}
+          onDraft={addDraft}
+          priceOf={priceOf}
+        />
+      )}
+
+      {session?.role === "agent" && (
+        <AgentView
+          name={session.name}
+          membership={membership}
+          onToggleMembership={toggleMembership}
+          drafts={drafts}
+          listings={listings}
+          onDraft={addDraft}
+          priceOf={priceOf}
+        />
+      )}
+    </main>
+  );
+}
+
+function SignIn({
+  onSignIn,
+}: {
+  onSignIn: (role: Role, name: string) => void;
+}) {
+  const { tr } = useSettings();
+  const [role, setRole] = useState<Role>("owner"),
+    [name, setName] = useState("");
+  return (
+    <section className="signin-grid" aria-label={tr("Choose an account type", "เลือกประเภทบัญชี")}>
+      <div className="role-cards" role="radiogroup" aria-label={tr("Account type", "ประเภทบัญชี")}>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={role === "owner"}
+          className="role-card"
+          onClick={() => setRole("owner")}
+        >
+          <House size={28} />
+          <b>{tr("Property owner", "เจ้าของทรัพย์สิน")}</b>
+          <span>
+            {tr(
+              "List your property and sell it directly, without an agent.",
+              "ลงประกาศทรัพย์สินของคุณและขายเองโดยไม่ผ่านนายหน้า",
+            )}
+          </span>
+        </button>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={role === "agent"}
+          className="role-card"
+          onClick={() => setRole("agent")}
+        >
+          <Storefront size={28} />
+          <b>{tr("Agent", "นายหน้า")}</b>
+          <span>
+            {tr(
+              "Subscribe, post listings and show them on the zone map.",
+              "สมัครสมาชิก ลงประกาศ และแสดงบนแผนที่ตามโซน",
+            )}
+          </span>
+        </button>
+      </div>
+      <form
+        className="panel-card signin-form"
+        onSubmit={(e: FormEvent) => {
+          e.preventDefault();
+          onSignIn(role, name);
+        }}
+      >
+        <label>
+          {tr("Name or company (optional)", "ชื่อหรือชื่อบริษัท (ไม่บังคับ)")}
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+            maxLength={80}
+          />
+        </label>
+        <button type="submit" className="button primary">
+          {tr("Continue to dashboard", "ไปยังแดชบอร์ด")}
+        </button>
+        <p className="muted small">
+          {tr(
+            "Preview sign-in only. Live accounts need email verification before listings are published.",
+            "ลงชื่อเข้าใช้เพื่อดูตัวอย่างเท่านั้น บัญชีจริงต้องยืนยันอีเมลก่อนเผยแพร่ประกาศ",
+          )}
+        </p>
+      </form>
+    </section>
+  );
+}
+
+function ListingForm({
+  disabled,
+  disabledNote,
+  onDraft,
+}: {
+  disabled: boolean;
+  disabledNote?: string;
+  onDraft: (d: Omit<Draft, "id">) => void;
+}) {
+  const { locale, tr } = useSettings();
+  const [title, setTitle] = useState(""),
+    [zone, setZone] = useState(zones[0].en),
+    [type, setType] = useState<(typeof types)[number]>("villa"),
+    [transaction, setTransaction] = useState<"sale" | "rent">("sale"),
+    [price, setPrice] = useState("");
+  const [saved, setSaved] = useState(false);
+  const typeLabel = (t: string) =>
+    ({
+      villa: tr("Villa", "วิลลา"),
+      condo: tr("Condo", "คอนโด"),
+      house: tr("House", "บ้าน"),
+      townhouse: tr("Townhouse", "ทาวน์เฮาส์"),
+      land: tr("Land", "ที่ดิน"),
+    })[t] ?? t;
+  return (
+    <form
+      className="panel-card listing-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const priceTHB = Number(price);
+        if (!title.trim() || !Number.isFinite(priceTHB) || priceTHB <= 0) return;
+        onDraft({ title: title.trim(), zone, type, transaction, priceTHB });
+        setTitle("");
+        setPrice("");
+        setSaved(true);
+      }}
+    >
+      <fieldset disabled={disabled} className="listing-fields">
+        <label className="span-full">
+          {tr("Listing title", "ชื่อประกาศ")}
+          <input
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setSaved(false);
+            }}
+            maxLength={120}
+            required
+          />
+        </label>
+        <label>
+          {tr("Area", "พื้นที่")}
+          <select value={zone} onChange={(e) => setZone(e.target.value)}>
+            {zones.map((z) => (
+              <option key={z.id} value={z.en}>
+                {zoneLabel(z, locale)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {tr("Property type", "ประเภททรัพย์สิน")}
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as (typeof types)[number])}
+          >
+            {types.map((t) => (
+              <option key={t} value={t}>
+                {typeLabel(t)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {tr("For", "ประกาศเพื่อ")}
+          <select
+            value={transaction}
+            onChange={(e) => setTransaction(e.target.value as "sale" | "rent")}
+          >
+            <option value="sale">{tr("Sale", "ขาย")}</option>
+            <option value="rent">{tr("Rent", "เช่า")}</option>
+          </select>
+        </label>
+        <label>
+          {tr("Price (THB)", "ราคา (บาท)")}
+          <input
+            type="number"
+            inputMode="numeric"
+            min={1}
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+        </label>
+        <div className="span-full form-actions">
+          <button type="submit" className="button primary">
+            {tr("Save as draft", "บันทึกเป็นฉบับร่าง")}
+          </button>
+          {saved && (
+            <span role="status" className="muted small">
+              {tr(
+                "Saved as a draft in this preview. Not published.",
+                "บันทึกเป็นฉบับร่างในตัวอย่างนี้ ยังไม่เผยแพร่",
+              )}
+            </span>
+          )}
+          {disabled && disabledNote && (
+            <span className="muted small">{disabledNote}</span>
+          )}
+        </div>
+      </fieldset>
+    </form>
+  );
+}
+
+function DraftList({
+  drafts,
+  priceOf,
+}: {
+  drafts: Draft[];
+  priceOf: PriceOf;
+}) {
+  const { locale, tr } = useSettings();
+  if (!drafts.length)
+    return (
+      <p className="muted">
+        {tr("No drafts yet.", "ยังไม่มีฉบับร่าง")}
+      </p>
+    );
+  return (
+    <ul className="table-list">
+      {drafts.map((d) => {
+        return (
+          <li key={d.id}>
+            <b>{d.title}</b>
+            <span>{areaName(d.zone, locale)}</span>
+            <span>{priceOf(d)}</span>
+            <span className="badge draft">{tr("Draft", "ฉบับร่าง")}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function Kpi({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="kpi">
+      <span>{label}</span>
+      <b>{value}</b>
+    </div>
+  );
+}
+
+function OwnerView({
+  name,
+  drafts,
+  listings,
+  onDraft,
+  priceOf,
+}: {
+  name: string;
+  drafts: Draft[];
+  listings: HomeListing[];
+  onDraft: (d: Omit<Draft, "id">) => void;
+  priceOf: PriceOf;
+}) {
+  const { locale, tr } = useSettings();
+  const sample = listings.filter((l) => l.channel.kind === "owner").slice(0, 3);
+  return (
+    <div className="dash-grid">
+      <section className="panel-card">
+        <div className="profile-row">
+          <UserCircle size={36} />
+          <div>
+            <b>{name}</b>
+            <p className="muted small">{tr("Owner account", "บัญชีเจ้าของ")}</p>
+          </div>
+        </div>
+        <div className="kpi-grid">
+          <Kpi label={tr("My listings", "ประกาศของฉัน")} value={drafts.length} />
+          <Kpi label={tr("Enquiries", "คำถาม")} value={0} />
+          <Kpi label={tr("Sample on map", "ตัวอย่างบนแผนที่")} value={sample.length} />
+        </div>
+      </section>
+
+      <section className="panel-card">
+        <h2>{tr("Identity check", "ยืนยันตัวตน")}</h2>
+        <p>
+          {tr(
+            "Not verified. Passport or ID upload is available only in the live service; this preview stores no identity document.",
+            "ยังไม่ยืนยัน การอัปโหลดหนังสือเดินทางหรือบัตรประชาชนใช้ได้เฉพาะบริการจริง ตัวอย่างนี้ไม่เก็บเอกสารใด ๆ",
+          )}
+        </p>
+        <span className="badge pending">{tr("Pending", "รอตรวจ")}</span>
+      </section>
+
+      <section className="panel-card wide-card">
+        <h2>{tr("List a property yourself", "ลงประกาศทรัพย์สินเอง")}</h2>
+        <ListingForm disabled={false} onDraft={onDraft} />
+      </section>
+
+      <section className="panel-card wide-card">
+        <h2>{tr("Your drafts", "ฉบับร่างของคุณ")}</h2>
+        <DraftList drafts={drafts} priceOf={priceOf} />
+      </section>
+
+      <section className="panel-card wide-card">
+        <h2>{tr("Sample owner listings on the map", "ตัวอย่างประกาศของเจ้าของบนแผนที่")}</h2>
+        <ul className="table-list">
+          {sample.map((l) => (
+            <li key={l.id}>
+              <b>{locale === "th" ? l.title.th : l.title.en}</b>
+              <span>{areaName(l.zone, locale)}</span>
+              <span>{priceOf(l)}</span>
+              <span className="badge live">{tr("Owner direct", "เจ้าของขายเอง")}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+}
+
+function AgentView({
+  name,
+  membership,
+  onToggleMembership,
+  drafts,
+  listings,
+  onDraft,
+  priceOf,
+}: {
+  name: string;
+  membership: boolean;
+  onToggleMembership: () => void;
+  drafts: Draft[];
+  listings: HomeListing[];
+  onDraft: (d: Omit<Draft, "id">) => void;
+  priceOf: PriceOf;
+}) {
+  const { locale, tr } = useSettings();
+  const agentListings = listings.filter((l) => l.channel.kind === "agent");
+  const counts = countByZone(agentListings);
+  const covered = Object.keys(counts).length;
+  return (
+    <div className="dash-grid">
+      <section className="panel-card membership-card">
+        <div className="profile-row">
+          <Buildings size={36} />
+          <div>
+            <b>{name}</b>
+            <p className="muted small">
+              {tr("Agent membership", "สมาชิกนายหน้า")} · US${AGENT_PRICE_USD}{" "}
+              {tr("per month", "ต่อเดือน")}
+            </p>
+          </div>
+        </div>
+        <p>
+          {membership
+            ? tr(
+                "Membership active in this preview. Your listings can go to review.",
+                "สมาชิกเปิดใช้งานในตัวอย่างนี้แล้ว ประกาศของคุณส่งตรวจได้",
+              )
+            : tr(
+                "Start membership to post listings. No payment is taken in this preview.",
+                "เริ่มสมาชิกเพื่อลงประกาศ ตัวอย่างนี้ไม่รับชำระเงิน",
+              )}
+        </p>
+        <button type="button" className="button primary" onClick={onToggleMembership}>
+          {membership
+            ? tr("Cancel membership (demo)", "ยกเลิกสมาชิก (ตัวอย่าง)")
+            : tr("Start membership (demo)", "เริ่มสมาชิก (ตัวอย่าง)")}
+        </button>
+        <p className="muted small">
+          {tr(
+            "Live billing is not connected in this preview.",
+            "ยังไม่ได้เชื่อมระบบชำระเงินจริงในตัวอย่างนี้",
+          )}
+        </p>
+      </section>
+
+      <section className="panel-card">
+        <div className="kpi-grid">
+          <Kpi label={tr("Listings live", "ประกาศที่แสดง")} value={agentListings.length} />
+          <Kpi label={tr("Areas covered", "พื้นที่ที่ครอบคลุม")} value={covered} />
+          <Kpi label={tr("Enquiries", "คำถาม")} value={0} />
+        </div>
+      </section>
+
+      <section className="panel-card wide-card">
+        <h2>{tr("Listings by area on the map", "ประกาศแยกตามพื้นที่บนแผนที่")}</h2>
+        <ul className="area-bars">
+          {zones.map((z) => {
+            const n = counts[z.id] ?? 0;
+            return (
+              <li key={z.id}>
+                <span>{zoneLabel(z, locale)}</span>
+                <span className="bar">
+                  <i style={{ width: `${Math.min(100, n * 20)}%` }} />
+                </span>
+                <b>{n}</b>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className="panel-card wide-card">
+        <h2>{tr("Post a listing", "ลงประกาศ")}</h2>
+        <ListingForm
+          disabled={!membership}
+          disabledNote={tr(
+            "Start membership to post.",
+            "เริ่มสมาชิกก่อนลงประกาศ",
+          )}
+          onDraft={onDraft}
+        />
+      </section>
+
+      <section className="panel-card wide-card">
+        <h2>{tr("Your drafts", "ฉบับร่างของคุณ")}</h2>
+        <DraftList drafts={drafts} priceOf={priceOf} />
+      </section>
+    </div>
+  );
+}

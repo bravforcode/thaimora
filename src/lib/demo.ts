@@ -1,4 +1,6 @@
 import { type PublicProperty, publicSnapshot } from "./property";
+import { type HomeListing } from "./listings";
+import { zones } from "./zones";
 export const demoPlaces = [
   {
     id: "phuket",
@@ -37,14 +39,6 @@ export const demoPlaces = [
     lng: 98.389,
   },
 ];
-const zones = [
-  ["Bang Tao", "บางเทา", 98.303, 8.003],
-  ["Kamala", "กมลา", 98.284, 7.954],
-  ["Rawai", "ราไวย์", 98.325, 7.786],
-  ["Kathu", "กะทู้", 98.344, 7.914],
-  ["Phuket Town", "เมืองภูเก็ต", 98.389, 7.884],
-  ["Chalong", "ฉลอง", 98.347, 7.845],
-] as const;
 const types = ["villa", "condo", "house", "townhouse", "land"] as const;
 const names = {
   villa: ["Garden pool villa", "วิลล่าสระว่ายน้ำในสวน"],
@@ -57,18 +51,18 @@ export const demoProperties: PublicProperty[] = Array.from(
   { length: 30 },
   (_, i) => {
     const type = types[i % 5],
-      zone = zones[i % 6],
+      zone = zones[i % zones.length],
       rent = i % 4 === 1;
     return publicSnapshot({
       id: `10000000-0000-4000-8000-${String(i + 1).padStart(12, "0")}`,
-      slug: `${type}-${String(zone[0]).toLowerCase().replaceAll(" ", "-")}-${i + 1}`,
+      slug: `${type}-${zone.id}-${i + 1}`,
       title: {
-        en: `${names[type][0]} · ${zone[0]}`,
-        th: `${names[type][1]} · ${zone[1]}`,
+        en: `${names[type][0]} · ${zone.en}`,
+        th: `${names[type][1]} · ${zone.th}`,
       },
       description: {
-        en: "Synthetic property created to explore the Thaimora experience. The photography illustrates Phuket and is not a photograph of this listing. No property is offered for sale or rent in this preview.",
-        th: "อสังหาริมทรัพย์จำลองเพื่อทดลองใช้งาน Thaimora ภาพประกอบแสดงบรรยากาศภูเก็ต ไม่ใช่ภาพของรายการนี้ ไม่มีการเสนอขายหรือให้เช่าจริงในตัวอย่างนี้",
+        en: "Synthetic property created to explore the PhuketLens experience. The photography illustrates Phuket and is not a photograph of this listing. No property is offered for sale or rent in this preview.",
+        th: "อสังหาริมทรัพย์จำลองเพื่อทดลองใช้งาน PhuketLens ภาพประกอบแสดงบรรยากาศภูเก็ต ไม่ใช่ภาพของรายการนี้ ไม่มีการเสนอขายหรือให้เช่าจริงในตัวอย่างนี้",
       },
       transaction: rent ? "rent" : "sale",
       type,
@@ -88,33 +82,14 @@ export const demoProperties: PublicProperty[] = Array.from(
             : "furnished",
       status: i === 28 ? "sold" : i === 29 ? "rented" : "available",
       location: {
-        lat: Number((zone[3] + (Math.floor(i / 6) - 2) * 0.008).toFixed(3)),
-        lng: Number((zone[2] + ((i % 3) - 1) * 0.006).toFixed(3)),
+        lat: Number((zone.center[1] + (Math.floor(i / 8) - 2) * 0.002).toFixed(4)),
+        lng: Number((zone.center[0] + ((i % 3) - 1) * 0.002).toFixed(4)),
         accuracy: "approximate",
         radiusMeters: 300,
       },
-      zone: zone[0],
+      zone: zone.en,
       province: "Phuket",
-      images: [
-        {
-          url: "/images/phuket-coast.jpg",
-          alt: {
-            en: "Illustrative Phuket coastline, not this property",
-            th: "ภาพประกอบชายฝั่งภูเก็ต ไม่ใช่ภาพอสังหาริมทรัพย์นี้",
-          },
-          credit: "Illustrative image · source credit pending",
-          sourceUrl: "",
-        },
-        {
-          url: "/images/phuket-town.jpg",
-          alt: {
-            en: "Illustrative Phuket street, not this property",
-            th: "ภาพประกอบถนนภูเก็ต ไม่ใช่ภาพอสังหาริมทรัพย์นี้",
-          },
-          credit: "Illustrative image · source credit pending",
-          sourceUrl: "",
-        },
-      ],
+      images: [],
       amenities:
         type === "land"
           ? ["Road access"]
@@ -152,6 +127,19 @@ demoProperties.forEach((p) => {
     },
   ];
 });
+// Demo channel split: every third listing is sold by its owner directly,
+// the rest are posted by sample agents. Names are synthetic placeholders.
+const sampleAgents = [
+  { name: "Sample Agent A", agency: "Sample Realty · Patong" },
+  { name: "Sample Agent B", agency: "Sample Realty · Bang Tao" },
+];
+export const demoListings: HomeListing[] = demoProperties.map((p, i) => ({
+  ...p,
+  channel:
+    i % 3 === 0
+      ? { kind: "owner" }
+      : { kind: "agent", ...sampleAgents[i % sampleAgents.length] },
+}));
 export const previewFX = {
   date: "2026-10-01",
   rates: {
