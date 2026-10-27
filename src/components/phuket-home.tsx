@@ -16,6 +16,7 @@ import { InquiryButton } from "./inquiry";
 import { previewFX } from "@/lib/demo";
 import { priceLabel, type PublicProperty } from "@/lib/property";
 import { type HomeListing } from "@/lib/listings";
+import { toHomeListing, usePublished } from "@/lib/published";
 import { countByZone, zoneById, zoneIdFor, zoneLabel, zones } from "@/lib/zones";
 
 const ZoneMap = dynamic(() => import("./zone-map").then((m) => m.ZoneMap), {
@@ -33,9 +34,14 @@ const typeLabels: Record<string, [string, string]> = {
 
 type Transaction = "" | "sale" | "rent";
 
-export function PhuketHome({ listings }: { listings: HomeListing[] }) {
+export function PhuketHome({ listings: catalog }: { listings: HomeListing[] }) {
   const { locale, tr, currency, unit, favorites, toggleFavorite } =
     useSettings();
+  const { items: published } = usePublished();
+  const listings = useMemo(
+    () => [...catalog, ...published.map((p, i) => toHomeListing(p, i))],
+    [catalog, published],
+  );
   const [activeZone, setActiveZone] = useState<string | null>(null),
     [selectedId, setSelectedId] = useState<string | null>(null),
     [transaction, setTransaction] = useState<Transaction>(""),
@@ -283,9 +289,11 @@ export function PhuketHome({ listings }: { listings: HomeListing[] }) {
                   : selected.description.en}
               </p>
               <ChannelBox listing={selected} />
-              <Link className="text-link" href={`/property/${selected.slug}/`}>
-                {tr("Full property page", "หน้ารายละเอียดเต็ม")}
-              </Link>
+              {!selected.published && (
+                <Link className="text-link" href={`/property/${selected.slug}/`}>
+                  {tr("Full property page", "หน้ารายละเอียดเต็ม")}
+                </Link>
+              )}
             </article>
           )}
         </aside>
@@ -322,9 +330,8 @@ function ChannelBox({ listing }: { listing: HomeListing }) {
     <div className="channel-box">
       <p>
         <Storefront size={18} />{" "}
-        {listing.channel.name
-          ? `${listing.channel.name} · ${listing.channel.agency}`
-          : tr("Listed by an agent", "ลงประกาศโดยนายหน้า")}
+        {[listing.channel.name, listing.channel.agency].filter(Boolean).join(" · ") ||
+          tr("Listed by an agent", "ลงประกาศโดยนายหน้า")}
       </p>
       <p className="muted">
         {tr(

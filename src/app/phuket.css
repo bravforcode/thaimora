@@ -541,6 +541,11 @@
   background: #e7f6f2;
   color: var(--green);
 }
+.error-text {
+  margin: 0;
+  color: #9a3412;
+  font-size: 13px;
+}
 .badge.draft {
   background: #eef2f5;
   color: var(--navy);

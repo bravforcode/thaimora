@@ -103,29 +103,30 @@ export const demoProperties: PublicProperty[] = Array.from(
     });
   },
 );
+export const illustrativeImages: PublicProperty["images"] = [
+  {
+    url: "/images/phuket-coast.jpg",
+    alt: {
+      en: "Illustrative Banana Beach, not this property",
+      th: "ภาพประกอบหาดกล้วย ไม่ใช่ภาพอสังหาริมทรัพย์นี้",
+    },
+    credit: "Anton Zelenov · CC BY-SA 4.0 · illustrative",
+    sourceUrl:
+      "https://commons.wikimedia.org/wiki/File:Banana_beach_Phuket_2017_-_01.jpg",
+  },
+  {
+    url: "/images/phuket-building.jpg",
+    alt: {
+      en: "Illustrative Phuket house with shrine, not this property",
+      th: "ภาพประกอบบ้านในภูเก็ต ไม่ใช่ภาพอสังหาริมทรัพย์นี้",
+    },
+    credit: "Sharon Hahn Darlin · CC BY 2.0 · illustrative",
+    sourceUrl:
+      "https://commons.wikimedia.org/wiki/File:Phuket,_Thailand_December_2021_-_House_with_shrine.jpg",
+  },
+];
 demoProperties.forEach((p) => {
-  p.images = [
-    {
-      url: "/images/phuket-coast.jpg",
-      alt: {
-        en: "Illustrative Banana Beach, not this property",
-        th: "ภาพประกอบหาดกล้วย ไม่ใช่ภาพอสังหาริมทรัพย์นี้",
-      },
-      credit: "Anton Zelenov · CC BY-SA 4.0 · illustrative",
-      sourceUrl:
-        "https://commons.wikimedia.org/wiki/File:Banana_beach_Phuket_2017_-_01.jpg",
-    },
-    {
-      url: "/images/phuket-building.jpg",
-      alt: {
-        en: "Illustrative Phuket house with shrine, not this property",
-        th: "ภาพประกอบบ้านในภูเก็ต ไม่ใช่ภาพอสังหาริมทรัพย์นี้",
-      },
-      credit: "Sharon Hahn Darlin · CC BY 2.0 · illustrative",
-      sourceUrl:
-        "https://commons.wikimedia.org/wiki/File:Phuket,_Thailand_December_2021_-_House_with_shrine.jpg",
-    },
-  ];
+  p.images = illustrativeImages;
 });
 // Demo channel split: every third listing is sold by its owner directly,
 // the rest are posted by sample agents. Names are synthetic placeholders.

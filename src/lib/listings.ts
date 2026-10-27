@@ -5,7 +5,11 @@ export type ListingChannel =
   | { kind: "owner" }
   | { kind: "agent"; name: string; agency: string };
 
-export type HomeListing = PublicProperty & { channel: ListingChannel };
+// `published` marks listings posted in this browser; they have no static page.
+export type HomeListing = PublicProperty & {
+  channel: ListingChannel;
+  published?: boolean;
+};
 
 // Live snapshots carry no channel yet; treat them as agent-listed so the
 // contact route stays the consent-gated inquiry form.

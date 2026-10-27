@@ -1,47 +1,40 @@
 "use client";
 import { useEffect, useState, type FormEvent } from "react";
 import { Buildings, House, Storefront, UserCircle } from "@phosphor-icons/react";
-import { useSettings } from "./context";
+import { LocaleLink as Link, useSettings } from "./context";
 import { previewFX } from "@/lib/demo";
 import { type HomeListing } from "@/lib/listings";
+import {
+  type PublishedListing,
+  usePublished,
+} from "@/lib/published";
+import { readStore, writeStore } from "@/lib/store";
 import { priceLabel, type Locale, type PublicProperty } from "@/lib/property";
 import { countByZone, zoneLabel, zones } from "@/lib/zones";
 
 type Role = "owner" | "agent";
 type Session = { role: Role; name: string };
-type Draft = {
-  id: string;
+type ListingInput = {
   title: string;
   zone: string;
-  type: string;
-  transaction: "sale" | "rent";
+  type: PublicProperty["type"];
+  transaction: PublicProperty["transaction"];
   priceTHB: number;
+  beds: number;
+  baths: number;
+  areaM2: number;
 };
+type Draft = ListingInput & { id: string };
 
 type PriceOf = (p: Pick<PublicProperty, "priceTHB" | "transaction">) => string;
 
 const SESSION_KEY = "phuketlens.demo.session";
 const MEMBERSHIP_KEY = "phuketlens.demo.membership";
 const DRAFTS_KEY = "phuketlens.demo.drafts";
+const IDENTITY_KEY = "phuketlens.demo.identity";
 const AGENT_PRICE_USD = 25;
-
-// Per-viewer demo state only. Storage can be blocked, so every access is guarded.
-function readStore<T>(key: string, fallback: T): T {
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeStore(key: string, value: unknown) {
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Storage unavailable: the preview keeps working for this page view only.
-  }
-}
+const ID_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+const ID_MAX_BYTES = 5 * 1024 * 1024;
 
 const types = ["villa", "condo", "house", "townhouse", "land"] as const;
 
@@ -50,17 +43,24 @@ function areaName(zoneName: string, locale: Locale) {
   return zone ? zoneLabel(zone, locale) : zoneName;
 }
 
+// Form numbers are clamped to a non-negative range before they are stored.
+const clamp = (value: string, max: number) =>
+  Math.min(max, Math.max(0, Number(value) || 0));
+
 export function PhuketDashboard({ listings }: { listings: HomeListing[] }) {
   const { locale, tr, currency } = useSettings();
   const [ready, setReady] = useState(false),
     [session, setSession] = useState<Session | null>(null),
     [membership, setMembership] = useState(false),
-    [drafts, setDrafts] = useState<Draft[]>([]);
+    [drafts, setDrafts] = useState<Draft[]>([]),
+    [identity, setIdentity] = useState(false);
+  const { items: published, publish } = usePublished();
 
   useEffect(() => {
     setSession(readStore<Session | null>(SESSION_KEY, null));
     setMembership(readStore<boolean>(MEMBERSHIP_KEY, false));
     setDrafts(readStore<Draft[]>(DRAFTS_KEY, []));
+    setIdentity(readStore<boolean>(IDENTITY_KEY, false));
     setReady(true);
   }, []);
 
@@ -83,10 +83,15 @@ export function PhuketDashboard({ listings }: { listings: HomeListing[] }) {
     setMembership(next);
     writeStore(MEMBERSHIP_KEY, next);
   };
-  const addDraft = (draft: Omit<Draft, "id">) => {
+  const addDraft = (draft: ListingInput) => {
     const next = [{ ...draft, id: `draft-${Date.now()}` }, ...drafts];
     setDrafts(next);
     writeStore(DRAFTS_KEY, next);
+  };
+  // Only the fact that a file was received is kept; the file itself is never stored.
+  const markIdentity = (received: boolean) => {
+    setIdentity(received);
+    writeStore(IDENTITY_KEY, received);
   };
 
   const priceOf: PriceOf = (p) =>
@@ -137,6 +142,8 @@ export function PhuketDashboard({ listings }: { listings: HomeListing[] }) {
           name={session.name}
           drafts={drafts}
           listings={listings}
+          identity={identity}
+          onIdentity={markIdentity}
           onDraft={addDraft}
           priceOf={priceOf}
         />
@@ -147,9 +154,8 @@ export function PhuketDashboard({ listings }: { listings: HomeListing[] }) {
           name={session.name}
           membership={membership}
           onToggleMembership={toggleMembership}
-          drafts={drafts}
-          listings={listings}
-          onDraft={addDraft}
+          published={published}
+          onPublish={(input) => publish({ ...input, agent: session.name })}
           priceOf={priceOf}
         />
       )}
@@ -232,20 +238,25 @@ function SignIn({
 }
 
 function ListingForm({
-  disabled,
+  mode,
+  disabled = false,
   disabledNote,
-  onDraft,
+  onSubmit,
 }: {
-  disabled: boolean;
+  mode: "draft" | "publish";
+  disabled?: boolean;
   disabledNote?: string;
-  onDraft: (d: Omit<Draft, "id">) => void;
+  onSubmit: (input: ListingInput) => void;
 }) {
   const { locale, tr } = useSettings();
   const [title, setTitle] = useState(""),
     [zone, setZone] = useState(zones[0].en),
     [type, setType] = useState<(typeof types)[number]>("villa"),
     [transaction, setTransaction] = useState<"sale" | "rent">("sale"),
-    [price, setPrice] = useState("");
+    [price, setPrice] = useState(""),
+    [beds, setBeds] = useState(""),
+    [baths, setBaths] = useState(""),
+    [size, setSize] = useState("");
   const [saved, setSaved] = useState(false);
   const typeLabel = (t: string) =>
     ({
@@ -262,9 +273,21 @@ function ListingForm({
         e.preventDefault();
         const priceTHB = Number(price);
         if (!title.trim() || !Number.isFinite(priceTHB) || priceTHB <= 0) return;
-        onDraft({ title: title.trim(), zone, type, transaction, priceTHB });
+        onSubmit({
+          title: title.trim(),
+          zone,
+          type,
+          transaction,
+          priceTHB,
+          beds: Math.round(clamp(beds, 50)),
+          baths: Math.round(clamp(baths, 50)),
+          areaM2: clamp(size, 100000),
+        });
         setTitle("");
         setPrice("");
+        setBeds("");
+        setBaths("");
+        setSize("");
         setSaved(true);
       }}
     >
@@ -325,16 +348,55 @@ function ListingForm({
             required
           />
         </label>
+        <label>
+          {tr("Bedrooms", "ห้องนอน")}
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={50}
+            value={beds}
+            onChange={(e) => setBeds(e.target.value)}
+          />
+        </label>
+        <label>
+          {tr("Bathrooms", "ห้องน้ำ")}
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={50}
+            value={baths}
+            onChange={(e) => setBaths(e.target.value)}
+          />
+        </label>
+        <label>
+          {tr("Size (m²)", "ขนาด (ตร.ม.)")}
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            value={size}
+            onChange={(e) => setSize(e.target.value)}
+          />
+        </label>
         <div className="span-full form-actions">
           <button type="submit" className="button primary">
-            {tr("Save as draft", "บันทึกเป็นฉบับร่าง")}
+            {mode === "publish"
+              ? tr("Publish to map", "เผยแพร่ขึ้นแผนที่")
+              : tr("Save as draft", "บันทึกเป็นฉบับร่าง")}
           </button>
           {saved && (
             <span role="status" className="muted small">
-              {tr(
-                "Saved as a draft in this preview. Not published.",
-                "บันทึกเป็นฉบับร่างในตัวอย่างนี้ ยังไม่เผยแพร่",
-              )}
+              {mode === "publish"
+                ? tr(
+                    "Published in this preview. It now shows on the Phuket map.",
+                    "เผยแพร่ในตัวอย่างนี้แล้ว ปรากฏบนแผนที่ภูเก็ตแล้ว",
+                  )
+                : tr(
+                    "Saved as a draft in this preview. Not published.",
+                    "บันทึกเป็นฉบับร่างในตัวอย่างนี้ ยังไม่เผยแพร่",
+                  )}
             </span>
           )}
           {disabled && disabledNote && (
@@ -343,6 +405,65 @@ function ListingForm({
         </div>
       </fieldset>
     </form>
+  );
+}
+
+function IdentityCheck({
+  received,
+  onReceived,
+}: {
+  received: boolean;
+  onReceived: (received: boolean) => void;
+}) {
+  const { tr } = useSettings();
+  const [problem, setProblem] = useState<"type" | "size" | null>(null);
+  return (
+    <>
+      <p>
+        {received
+          ? tr(
+              "Demo upload received, not verified. This preview checks the file type and size on this device only. Nothing is uploaded or stored.",
+              "รับไฟล์ตัวอย่างแล้ว ยังไม่ยืนยัน ตัวอย่างนี้ตรวจชนิดและขนาดไฟล์บนเครื่องของคุณเท่านั้น ไม่มีการอัปโหลดหรือเก็บไฟล์",
+            )
+          : tr(
+              "Upload a passport or ID photo (JPG, PNG or PDF, up to 5 MB). This preview checks the file on this device only. Nothing is uploaded or stored.",
+              "อัปโหลดรูปหนังสือเดินทางหรือบัตรประชาชน (JPG, PNG หรือ PDF ไม่เกิน 5 MB) ตัวอย่างนี้ตรวจไฟล์บนเครื่องของคุณเท่านั้น ไม่มีการอัปโหลดหรือเก็บไฟล์",
+            )}
+      </p>
+      <input
+        type="file"
+        accept={ID_TYPES.join(",")}
+        aria-label={tr("Passport or ID file", "ไฟล์หนังสือเดินทางหรือบัตรประชาชน")}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          if (!ID_TYPES.includes(file.type)) {
+            setProblem("type");
+            return;
+          }
+          if (file.size > ID_MAX_BYTES) {
+            setProblem("size");
+            return;
+          }
+          setProblem(null);
+          onReceived(true);
+        }}
+      />
+      {problem && (
+        <p className="error-text">
+          {problem === "type"
+            ? tr("Use a JPG, PNG or PDF file.", "ใช้ไฟล์ JPG, PNG หรือ PDF")
+            : tr("This file is larger than 5 MB.", "ไฟล์นี้ใหญ่กว่า 5 MB")}
+        </p>
+      )}
+      <p>
+        <span className="badge pending">
+          {received
+            ? tr("Demo received", "รับไฟล์ตัวอย่างแล้ว")
+            : tr("Pending", "รอตรวจ")}
+        </span>
+      </p>
+    </>
   );
 }
 
@@ -376,6 +497,34 @@ function DraftList({
   );
 }
 
+function PublishedList({
+  items,
+  priceOf,
+}: {
+  items: PublishedListing[];
+  priceOf: PriceOf;
+}) {
+  const { locale, tr } = useSettings();
+  if (!items.length)
+    return (
+      <p className="muted">
+        {tr("No listings on the map yet.", "ยังไม่มีประกาศบนแผนที่")}
+      </p>
+    );
+  return (
+    <ul className="table-list">
+      {[...items].reverse().map((d) => (
+        <li key={d.id}>
+          <b>{d.title}</b>
+          <span>{areaName(d.zone, locale)}</span>
+          <span>{priceOf(d)}</span>
+          <span className="badge live">{tr("Live on map", "แสดงบนแผนที่")}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Kpi({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="kpi">
@@ -389,13 +538,17 @@ function OwnerView({
   name,
   drafts,
   listings,
+  identity,
+  onIdentity,
   onDraft,
   priceOf,
 }: {
   name: string;
   drafts: Draft[];
   listings: HomeListing[];
-  onDraft: (d: Omit<Draft, "id">) => void;
+  identity: boolean;
+  onIdentity: (received: boolean) => void;
+  onDraft: (d: ListingInput) => void;
   priceOf: PriceOf;
 }) {
   const { locale, tr } = useSettings();
@@ -419,18 +572,12 @@ function OwnerView({
 
       <section className="panel-card">
         <h2>{tr("Identity check", "ยืนยันตัวตน")}</h2>
-        <p>
-          {tr(
-            "Not verified. Passport or ID upload is available only in the live service; this preview stores no identity document.",
-            "ยังไม่ยืนยัน การอัปโหลดหนังสือเดินทางหรือบัตรประชาชนใช้ได้เฉพาะบริการจริง ตัวอย่างนี้ไม่เก็บเอกสารใด ๆ",
-          )}
-        </p>
-        <span className="badge pending">{tr("Pending", "รอตรวจ")}</span>
+        <IdentityCheck received={identity} onReceived={onIdentity} />
       </section>
 
       <section className="panel-card wide-card">
         <h2>{tr("List a property yourself", "ลงประกาศทรัพย์สินเอง")}</h2>
-        <ListingForm disabled={false} onDraft={onDraft} />
+        <ListingForm mode="draft" onSubmit={onDraft} />
       </section>
 
       <section className="panel-card wide-card">
@@ -459,22 +606,19 @@ function AgentView({
   name,
   membership,
   onToggleMembership,
-  drafts,
-  listings,
-  onDraft,
+  published,
+  onPublish,
   priceOf,
 }: {
   name: string;
   membership: boolean;
   onToggleMembership: () => void;
-  drafts: Draft[];
-  listings: HomeListing[];
-  onDraft: (d: Omit<Draft, "id">) => void;
+  published: PublishedListing[];
+  onPublish: (input: ListingInput) => void;
   priceOf: PriceOf;
 }) {
   const { locale, tr } = useSettings();
-  const agentListings = listings.filter((l) => l.channel.kind === "agent");
-  const counts = countByZone(agentListings);
+  const counts = countByZone(published);
   const covered = Object.keys(counts).length;
   return (
     <div className="dash-grid">
@@ -492,8 +636,8 @@ function AgentView({
         <p>
           {membership
             ? tr(
-                "Membership active in this preview. Your listings can go to review.",
-                "สมาชิกเปิดใช้งานในตัวอย่างนี้แล้ว ประกาศของคุณส่งตรวจได้",
+                "Membership active in this preview. Your listings go straight to the map.",
+                "สมาชิกเปิดใช้งานในตัวอย่างนี้แล้ว ประกาศของคุณขึ้นแผนที่ได้ทันที",
               )
             : tr(
                 "Start membership to post listings. No payment is taken in this preview.",
@@ -515,7 +659,7 @@ function AgentView({
 
       <section className="panel-card">
         <div className="kpi-grid">
-          <Kpi label={tr("Listings live", "ประกาศที่แสดง")} value={agentListings.length} />
+          <Kpi label={tr("Listings live", "ประกาศที่แสดง")} value={published.length} />
           <Kpi label={tr("Areas covered", "พื้นที่ที่ครอบคลุม")} value={covered} />
           <Kpi label={tr("Enquiries", "คำถาม")} value={0} />
         </div>
@@ -542,18 +686,22 @@ function AgentView({
       <section className="panel-card wide-card">
         <h2>{tr("Post a listing", "ลงประกาศ")}</h2>
         <ListingForm
+          mode="publish"
           disabled={!membership}
           disabledNote={tr(
             "Start membership to post.",
             "เริ่มสมาชิกก่อนลงประกาศ",
           )}
-          onDraft={onDraft}
+          onSubmit={onPublish}
         />
       </section>
 
       <section className="panel-card wide-card">
-        <h2>{tr("Your drafts", "ฉบับร่างของคุณ")}</h2>
-        <DraftList drafts={drafts} priceOf={priceOf} />
+        <h2>{tr("Your listings on the map", "ประกาศของคุณบนแผนที่")}</h2>
+        <Link className="text-link" href="/">
+          {tr("View the map", "ดูแผนที่")}
+        </Link>
+        <PublishedList items={published} priceOf={priceOf} />
       </section>
     </div>
   );
