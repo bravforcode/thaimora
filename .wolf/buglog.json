@@ -520,6 +520,18 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-26T00:00:00Z"
+    },
+    {
+      "id": "TH-CI-PG-CRON-DB",
+      "error": "verify CI failed in scripts/test-database.sh: Docker pull of public.ecr.aws/supabase/postgres rate-limited on both runs; with a local pull, migration 202610040001_content_automation.sql failed: can only create extension in database postgres",
+      "file": "scripts/test-database.sh",
+      "root_cause": "pg_cron installs only in cron.database_name (default postgres) but migrations run in site_test. Passing postgres -c cron.database_name=site_test as container args skipped the image role setup, so create extension postgis then failed with permission denied",
+      "fix": "Start with the default command, create site_test, then ALTER SYSTEM cron.database_name as supabase_admin (PGPASSWORD) and restart; local run exit 0 through all migrations and managed-grants. Residual: the CI pull rate limit is external; scripts/test-database.ps1 has the same pg_cron gap and is unchanged",
+      "tags": ["ci", "postgres", "pg_cron", "test-harness"],
+      "evidence": "gh runs 40462997252 and 40463907936 verify step; local bash scripts/test-database.sh exit 0",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27T00:00:00Z"
     }
   ]
 }

@@ -7,11 +7,19 @@ cleanup(){
 }
 trap cleanup EXIT
 docker run -d --name "$container" --label "site-test-owner=$site" -e POSTGRES_PASSWORD=local-test-only public.ecr.aws/supabase/postgres:15.8.1.085 >/dev/null
-for attempt in $(seq 1 60); do
- if docker exec "$container" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then break; fi
- sleep 1
-done
+wait_ready(){
+ for attempt in $(seq 1 60); do
+  if docker exec "$container" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then return 0; fi
+  sleep 1
+ done
+ return 1
+}
+wait_ready
 docker exec "$container" psql -U postgres -v ON_ERROR_STOP=1 -c 'create database site_test' >/dev/null
+# pg_cron installs only in the database named by cron.database_name. Passing it as a postgres argument skips the image's role setup, so set it with ALTER SYSTEM and restart.
+docker exec -e PGPASSWORD=local-test-only "$container" psql -U supabase_admin -d postgres -v ON_ERROR_STOP=1 -c "alter system set cron.database_name = 'site_test'" >/dev/null
+docker restart "$container" >/dev/null
+wait_ready
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < tests/integration/local-bootstrap.sql
 docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < tests/integration/storage-bootstrap.sql
 for migration in supabase/migrations/*.sql; do docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -d site_test < "$migration"; done
