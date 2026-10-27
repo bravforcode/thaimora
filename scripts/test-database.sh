@@ -6,7 +6,17 @@ cleanup(){
  if [[ "$(docker inspect --format '{{index .Config.Labels "site-test-owner"}}' "$container" 2>/dev/null)" == "$site" ]]; then docker rm -f "$container" >/dev/null; fi
 }
 trap cleanup EXIT
-docker run -d --name "$container" --label "site-test-owner=$site" -e POSTGRES_PASSWORD=local-test-only public.ecr.aws/supabase/postgres:15.8.1.085 >/dev/null
+image=public.ecr.aws/supabase/postgres:15.8.1.085
+# ECR Public can answer "toomanyrequests" on shared runner IPs (run 40468254761); the same SHA passed on retry, so retry with backoff.
+pull_image(){
+ for attempt in 1 2 3 4; do
+  if docker image inspect "$image" >/dev/null 2>&1 || docker pull "$image" >/dev/null; then return 0; fi
+  if ((attempt < 4)); then sleep $((attempt * 30)); fi
+ done
+ return 1
+}
+pull_image
+docker run -d --name "$container" --label "site-test-owner=$site" -e POSTGRES_PASSWORD=local-test-only "$image" >/dev/null
 wait_ready(){
  for attempt in $(seq 1 60); do
   if docker exec "$container" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then return 0; fi

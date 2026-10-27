@@ -532,6 +532,18 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": "TH-CI-DOCKER-PULL-RATE-LIMIT",
+      "error": "verify run 40468254761 failed at docker pull of public.ecr.aws/supabase/postgres:15.8.1.085: toomanyrequests: Data limit exceeded; the same head e6e36b6 passed in run 40468253363",
+      "file": "scripts/test-database.sh; .github/workflows/verify.yml",
+      "root_cause": "Anonymous ECR Public pulls from shared GitHub runner IPs are rate limited and intermittent. The pull ran once with no retry",
+      "fix": "pull_image retries 4 times with backoff in scripts/test-database.sh. verify.yml restores the image from actions/cache (v6.1.0, key on the pinned tag); on a miss it pulls with retry and saves the image tar. Branches checked with a stub docker: miss 3 pulls then save, hit load only, always-fail exit 1 with no tar",
+      "tags": ["ci", "docker", "rate-limit", "cache"],
+      "evidence": "gh run 40468254761 log; gh run 40468253363 pass; stub docker runs in scratchpad. Not verified: GitHub cache save/restore timing and size, and a full local run of scripts/test-database.sh (Docker Desktop daemon returned HTTP 500 on _ping at that time)",
+      "status": "mitigated",
+      "occurrences": 1,
+      "last_seen": "2026-10-27T00:00:00Z"
     }
   ]
 }
