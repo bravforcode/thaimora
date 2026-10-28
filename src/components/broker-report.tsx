@@ -172,7 +172,7 @@ export function ReportPanel({ token }: { token: string }) {
               <tr key={lead.id}>
                 <td><strong>{lead.name}</strong><br /><a href={`mailto:${lead.email}`}>{lead.email}</a></td>
                 <td className="broker-message">{lead.message}</td>
-                <td>{new Date(lead.createdAt).toLocaleString(locale === "th" ? "th-TH" : "en-GB")}</td>
+                <td className="nowrap">{new Date(lead.createdAt).toLocaleString(locale === "th" ? "th-TH" : "en-GB")}</td>
                 <td>
                   <select aria-label={tr("Follow-up status", "สถานะติดตาม")} value={lead.status} disabled={busy} onChange={e => changeStatus(lead.id, e.target.value as BrokerLead["status"])}>
                     {statuses.map(s => <option key={s.value} value={s.value}>{tr(s.en, s.th)}</option>)}

@@ -477,6 +477,32 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-27"
+    },
+    {
+      "id": "BROKER-REPORT-LEAD-DATE-WRAP",
+      "error": "Report leads Received date wrapped mid-number at 390px width",
+      "file": "src/components/broker-report.tsx; src/app/broker.css",
+      "root_cause": "Date cell inside the horizontally scrollable leads table had no no-wrap rule",
+      "fix": "Leads date cell gets className nowrap; .table-scroll .nowrap { white-space:nowrap } added in broker.css",
+      "tags": ["responsive", "table", "broker-report"],
+      "related_bugs": [],
+      "evidence": "broker-chromium Playwright 29/29 on 2026-10-28; no automated assertion covers the wrap width",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-28"
+    },
+    {
+      "id": "BROKER-DASH-NOTIFY-ORDER",
+      "error": "Notification preferences rendered above the dashboard report, pushing the report down the page",
+      "file": "src/components/broker.tsx",
+      "root_cause": "NotificationPreferences render sat before the dashboard block in broker.tsx",
+      "fix": "Moved the NotificationPreferences render below the dashboard block so the report appears first",
+      "tags": ["layout", "broker-dashboard"],
+      "related_bugs": [],
+      "evidence": "broker-chromium Playwright 29/29 on 2026-10-28; no automated assertion covers element order",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-28"
     }
   ]
 }

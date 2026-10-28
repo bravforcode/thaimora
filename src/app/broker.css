@@ -31,4 +31,5 @@
 .table-scroll { overflow-x:auto; max-width:100%; }
 .table-scroll table { width:100%; min-width:560px; border-collapse:collapse; }
 .table-scroll th,.table-scroll td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+.table-scroll .nowrap { white-space:nowrap; }
 @media(min-width:1024px) { .report-kpis { grid-template-columns:repeat(5,minmax(0,1fr)); } }
