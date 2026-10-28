@@ -149,7 +149,8 @@ export function Admin({
     > | null>(null),
     [rawCSV, setRawCSV] = useState(""),
     [filter, setFilter] = useState(""),
-    [stats, setStats] = useState<DailyStats[]>([]);
+    [stats, setStats] = useState<DailyStats[]>([]),
+    [truncated, setTruncated] = useState(false);
   const [duplicatePolicy, setDuplicatePolicy] =
       useState<DuplicatePolicy>("skip"),
     [importDone, setImportDone] = useState(false);
@@ -211,8 +212,12 @@ export function Admin({
     if (!liveMode || !token) return;
     setBusy(true);
     Promise.all([
-      api<{ items: AdminRecord[] }>("/v1/admin/properties", {}, token),
-      api<{ items: Record<string, unknown>[] }>(
+      api<{ items: AdminRecord[]; truncated?: boolean }>(
+        "/v1/admin/properties",
+        {},
+        token,
+      ),
+      api<{ items: Record<string, unknown>[]; truncated?: boolean }>(
         "/v1/admin/inquiries",
         {},
         token,
@@ -230,6 +235,7 @@ export function Admin({
         setRows(p.items.map((p) => propertySchema.parse(p)));
         setInquiries(i.items.map(normalizeInquiry));
         setStats(s.items);
+        setTruncated(p.truncated === true || i.truncated === true);
       })
       .catch((e) => setError(e.message))
       .finally(() => setBusy(false));
@@ -676,6 +682,14 @@ export function Admin({
           </span>
         )}
       </div>
+      {truncated && (
+        <p className="notice" role="status">
+          {tr(
+            "Showing the first 1,000 records. Filter the list to find the rest.",
+            "แสดง 1,000 รายการแรก ใช้ตัวกรองเพื่อค้นหารายการที่เหลือ",
+          )}
+        </p>
+      )}
       {!liveMode && (
         <p className="notice">
           {tr(

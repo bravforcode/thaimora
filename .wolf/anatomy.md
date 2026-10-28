@@ -193,6 +193,14 @@
 
 - `page.tsx` — metadata (~53 tok)
 
+## src/app/owner/
+
+- `page.tsx` — Owner membership page (noindex)
+
+## src/app/owner/dashboard/
+
+- `page.tsx` — Owner report dashboard (noindex)
+
 ## src/app/privacy/
 
 - `page.tsx` — metadata (~107 tok)
@@ -229,6 +237,14 @@
 
 - `page.tsx` — metadata (~82 tok)
 
+## src/app/th/owner/
+
+- `page.tsx` — Thai owner membership page (noindex)
+
+## src/app/th/owner/dashboard/
+
+- `page.tsx` — Thai owner report dashboard (noindex)
+
 ## src/app/th/privacy/
 
 - `page.tsx` — metadata (~110 tok)
@@ -246,6 +262,7 @@
 - `admin-map.tsx` — AdminMap — renders map — uses useRef, useState, useEffect (~848 tok)
 - `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17440 tok)
 - `broker-admin.tsx` — membersSchema — renders form, table — uses useState, useEffect (~1586 tok)
+- `broker-report.tsx` — ReportPanel: KPI, daily trend, per-listing and lead tables, status select, CSV export
 - `broker.tsx` — destinationSchema — renders form — uses useState, useRef, useCallback, useEffect (~9448 tok)
 - `content-automation.tsx` — ContentAutomation — renders table — uses useState, useEffect (~1407 tok)
 - `content-freshness.tsx` — ContentFreshness (~509 tok)
@@ -265,6 +282,7 @@
 - `api.ts` — Exports liveMode, SearchScope, api, propertyQuery + 10 more (~1760 tok)
 - `broker-api.ts` — Zod schemas: brokerConfigSchema, brokerProfileSchema, brokerMeSchema, galleryImage + 4 more (~1526 tok)
 - `broker-auth.ts` — API routes: GET (2 endpoints) (~1198 tok)
+- `broker-report.ts` — reportWindow, bangkokToday, fillDailySeries, formatResponseTime (pure, no network)
 - `content-automation.ts` — Exports protectedSourceRecord (~79 tok)
 - `demo.ts` — Exports demoPlaces, demoProperties, previewFX, demoPOIs (~1650 tok)
 - `import.ts` — Exports parseCSV, parseImportRows, DuplicatePolicy, applyPreviewImport + 2 more (~2513 tok)
@@ -300,6 +318,7 @@
 - `api-path.ts` — Exports apiParts (~137 tok)
 - `broker-api.ts` — API routes: GET (1 endpoints) (~4656 tok)
 - `broker-billing.ts` — Exports STRIPE_VERSION, ObjectValue, record, objectId + 8 more (~1892 tok)
+- `broker-report.ts` — reportWindow, leadPage, csvText, csvResponse; CSV is BOM-prefixed and formula-safe.
 - `broker-webhook.ts` — API routes: GET (1 endpoints) (~938 tok)
 - `contact-relay.ts` — API routes: GET (4 endpoints) (~2618 tok)
 - `content-sync.ts` — Visitor routes never fetch upstream data. Only leased, fixed registry sources run here. (~3845 tok)
@@ -359,6 +378,8 @@
 - `202610040007_contact_relay.sql` — Inquiries notify only the listing's privately assigned, consenting recipient. (~5987 tok)
 - `202610040008_contact_scheduler.sql` — OFF until real accounts are configured. Queued auth is short-lived, never a bearer. (~1555 tok)
 - `202610040009_contact_preferences_upsert.sql` — PostgreSQL checks proposed INSERT rows before ON CONFLICT selects the linked row. (~774 tok)
+- `202610270001_owner_accounts.sql` — Owners reuse broker entitlement; owner approval required by default; pending owners cannot start Checkout.
+- `202610270002_broker_reports.sql` — Report RPCs are security-definer and trust only the JWT-derived actor; first_response_at set by trigger, not backfilled.
 
 ## supabase/operations/
 
@@ -383,6 +404,7 @@
 - `content-freshness.spec.ts` — ", async route => { (~1446 tok)
 - `material-fixes.spec.ts` — ", async (route) => { (~3728 tok)
 - `material-fixes.test.ts` — Declares id (~1711 tok)
+- `owner.spec.ts` — Owner dashboard fit at 360/390/1024/1440 px; CSV download; membership copy
 - `playwright.config.ts` — Playwright test configuration (~224 tok)
 
 ## tests/integration/
@@ -392,6 +414,9 @@
 - `boundaries.test.ts` — Declares row (~1577 tok)
 - `broker-billing.deno.ts` — ObjectValue: equal, rejects, subscription + 4 more (~3031 tok)
 - `broker-contact.sql` — Hosted-safe synthetic assertions. Every named fixture/configuration change rolls back. (~4358 tok)
+- `broker-owner.sql` — Owner account kind and approval rule; rolls back.
+- `broker-report-api.test.ts` — Report window, lead page and CSV helper contracts.
+- `broker-reports.sql` — Report RPC totals, lead status and response time; rolls back.
 - `contact-preferences-upsert.sql` — Regression for actual 23514: INSERT checks precede ON CONFLICT UPDATE. (~600 tok)
 - `contact-relay.deno.ts` — API routes: GET, DELETE (5 endpoints) (~2939 tok)
 - `content-automation.sql` — Safe on the hosted database: all named fixtures/configuration changes roll back. (~3477 tok)
@@ -431,6 +456,7 @@
 - `api.test.ts` — API routes: GET (6 endpoints) (~1286 tok)
 - `broker-api.test.ts` — Declares config (~1440 tok)
 - `broker-auth.test.ts` — API routes: GET (1 endpoints) (~1133 tok)
+- `broker-report.test.ts` — reportWindow, bangkokToday, fillDailySeries, formatResponseTime, brokerReportSchema
 - `content-automation.test.ts` (~202 tok)
 - `live-content.test.ts` — Declares event (~226 tok)
 - `pagination.test.ts` — Declares rows (~238 tok)

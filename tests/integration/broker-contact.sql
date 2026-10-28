@@ -5,7 +5,7 @@ declare a uuid:='fefefefe-0000-4000-8000-000000000001';b uuid:='fefefefe-0000-40
  property uuid;foreign_property uuid;iid uuid;claim jsonb;other_claim jsonb;state jsonb;result jsonb;task jsonb;line_id text:='U'||repeat('a',32);fields jsonb;
 begin
  if has_schema_privilege('anon','private','USAGE') or has_schema_privilege('authenticated','private','USAGE') then raise exception 'Private broker schema exposed';end if;
- if has_function_privilege('authenticated','public.broker_register(uuid,text,text,text,text)','EXECUTE')
+ if has_function_privilege('authenticated','public.broker_register(uuid,text,text,text,text,text)','EXECUTE')
  or has_function_privilege('anon','public.broker_context(uuid)','EXECUTE')
  or has_function_privilege('authenticated','public.contact_save_preferences(uuid,text,boolean,boolean,text)','EXECUTE') then raise exception 'Client may mutate broker state';end if;
  if exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='private'

@@ -1,5 +1,12 @@
 import {describe,it,expect} from 'vitest';
 import {unsafeExport,privateData} from '../../scripts/lib/export-safety';
+import {capRows} from '../../supabase/functions/_shared/admin-input.ts';
+describe('admin list caps',()=>{
+ it('reports truncation instead of silently dropping rows',()=>{
+  expect(capRows([1,2,3],2)).toEqual({rows:[1,2],truncated:true});
+  expect(capRows([1,2],2)).toEqual({rows:[1,2],truncated:false});
+ });
+});
 describe('production data versus administrator schema',()=>{
  it('allows legitimate compiled admin fields but rejects private exported data',()=>{
   expect(unsafeExport('admin.js','JSON.stringify({ownership_evidence:value,exact_publication_consent:true,consent_evidence:input})')).toBe(false);

@@ -2,6 +2,19 @@
   "version": 1,
   "bugs": [
     {
+      "id": "OWNER-SEARCH-PATH-ADVISOR",
+      "error": "Supabase advisor function_search_path_mutable WARN on private.broker_approval_satisfied (created in 202610270001 without set search_path)",
+      "file": "supabase/migrations/202610270001_owner_accounts.sql; supabase/migrations/202610270003_owner_approval_search_path.sql",
+      "root_cause": "New SQL helper was created without a search_path pin, so name resolution depended on the caller's search_path",
+      "fix": "Forward migration 202610270003 sets search_path=pg_catalog,private on the function. 202610270001 is not edited because it is already applied to hosted. Applied to hosted 2026-10-28; execute_sql shows proconfig search_path=pg_catalog, private and the security advisor rerun no longer reports the WARN",
+      "tags": ["supabase", "advisor", "search-path", "owner-accounts"],
+      "related_bugs": [],
+      "evidence": "get_advisors security run observed 2026-10-27T19:20Z; docs/production-status.md owner accounts section",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27T19:20:00Z"
+    },
+    {
       "id": "TH-PROD-SMOKE-CLEANUP",
       "error": "Smoke harness had CJS top-level await, undeclared SDK, expected403 for anonymous SQL42501 and uncertain Auth create could report no cleanup needed",
       "file": "scripts/smoke-hosted.ts; scripts/smoke-hosted.test.ts",
@@ -412,6 +425,58 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-04T08:34:16Z"
+    },
+    {
+      "id": "ADMIN-SILENT-TRUNCATION",
+      "error": "Admin list and inquiries export dropped rows silently above 1,000 (list) or 5,000 (export) with no truncation flag or error",
+      "file": "supabase/functions/api/index.ts; supabase/functions/_shared/admin-input.ts",
+      "root_cause": "Fixed .limit(1000) on admin lists and an export that did not check its row count",
+      "fix": "capRows returns {rows, truncated} and list responses set truncated; the inquiries export throws export_limit_exceeded above 5,000 rows instead of truncating",
+      "tags": ["admin", "truncation", "export", "data-loss"],
+      "related_bugs": [],
+      "evidence": "tests/integration/export-safety.test.ts (capRows); 2026-10-27 local integration run",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27"
+    },
+    {
+      "id": "BROKER-PASSWORD-RECOVERY-REMOUNT",
+      "error": "tests/frontend/broker.spec.ts:19 failed: getByLabel('อีเมลบัญชี') not visible after the recovery disclosure was opened",
+      "file": "src/components/broker.tsx",
+      "root_cause": "Initial load called updateSession(null), which bumped sessionRevision and remounted BrokerPasswordHelp through its key, closing the details element",
+      "fix": "Call updateSession only when the session is non-null (if(s)updateSession(s)); broker and owner Playwright run then passed 17/17",
+      "tags": ["react", "remount", "playwright", "auth"],
+      "related_bugs": [],
+      "evidence": "2026-10-27 Playwright run, broker-chromium project, 17 passed",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27"
+    },
+    {
+      "id": "NEXT-ZOD-PROD-AUDIT",
+      "error": "npm audit --omit=dev exit 1: next 16.0.0-16.4.0 critical (GHSA-2464-fhr4-w9xw, GHSA-p3m5-59mp-jv5r, GHSA-673q-mjm6-r5xr); zod <4.6.6 high (GHSA-mrhx-c7xc-m3w5)",
+      "file": "package-lock.json (next, zod)",
+      "root_cause": "The lockfile resolved next 16.3.8 and zod 4.6.5, both inside the advisory ranges",
+      "fix": "npm audit fix --omit=dev changed the lockfile only: next 16.4.3, zod 4.6.7; package.json ranges unchanged; npm audit --omit=dev exit 0",
+      "tags": ["dependency", "audit", "next", "zod"],
+      "related_bugs": [],
+      "evidence": "2026-10-27 npm audit --omit=dev exit 0 after the fix",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27"
+    },
+    {
+      "id": "LOCKFILE-NATIVE-BINDINGS-DROPPED",
+      "error": "vitest startup fails: Cannot find native binding; Cannot find module '@rolldown/binding-wasm32-wasi' (unit and integration exit 1)",
+      "file": "package-lock.json (@rolldown/binding-*, vite/node_modules/lightningcss-*)",
+      "root_cause": "npm 11.6 audit fix and lock-only writes (npm update, npm install --package-lock-only) removed 26 optional native entries (15 rolldown bindings, 11 lightningcss); npm ci then skipped the win32 rolldown binding",
+      "fix": "Restore the 11 lightningcss entries verbatim from HEAD; add the 15 rolldown bindings at 1.2.15 with registry tarball URLs and integrity from npm view; then npm ci. node_modules/@rolldown/binding-win32-x64-msvc present; unit 85 and integration 42 pass",
+      "tags": ["dependency", "lockfile", "npm", "rolldown", "native-binding"],
+      "related_bugs": ["NEXT-ZOD-PROD-AUDIT"],
+      "evidence": "2026-10-27 unit and integration exit 0 after npm ci; lock has 15 @rolldown/binding- and 11 lightningcss- keys",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27"
     }
   ]
 }

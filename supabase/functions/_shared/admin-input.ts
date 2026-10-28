@@ -6,6 +6,9 @@ export function reportRange(url:URL):{from:string;to:string}{
  if(from>to||Date.parse(to)-Date.parse(from)>365*86400000)throw new ApiError(422,'invalid_report_range');
  return {from,to};
 }
+export function capRows<T>(rows:T[],limit:number):{rows:T[];truncated:boolean}{
+ return {rows:rows.slice(0,limit),truncated:rows.length>limit};
+}
 export function homeSettings(value:any,eligibleIds:string[]):any{
  if(!value||typeof value!=='object')return {heading:null,featuredHotelIds:[]};
  const heading=value.heading??value.headline;

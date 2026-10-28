@@ -1,6 +1,6 @@
 # Broker subscription and listing contact relay — 2026-10-04
 
-The requested fee is **US$25 per month** (`2500` USD minor units). “Dollar” is configured as USD. A confirmed payment opens the broker dashboard immediately; normal enrollment has no staff approval step. Listing publication still requires staff review of ownership, content, images and safe coordinates.
+The requested fee is **US$25 per month** (`2500` USD minor units). “Dollar” is configured as USD. A confirmed payment opens the broker dashboard immediately; broker enrollment has no staff approval step. Owner accounts (`account_kind = 'owner'`) also need staff approval before access opens while `owner_approval_required` is true (default); see [Owner accounts](#owner-accounts). Listing publication still requires staff review of ownership, content, images and safe coordinates.
 
 Stripe billing, recipient delivery and LINE linking start **OFF**. No Stripe product, Price, customer, subscription or charge was created during implementation. No email, LINE message or provider application was sent. Real account end-to-end verification remains required before activation.
 
@@ -11,28 +11,31 @@ All endpoints use the existing Supabase Edge API base followed by `/v1`.
 | Route | Behavior |
 |---|---|
 | `GET /broker/config` | Quote `{amountMinor:2500,currency:"USD",interval:"month"}`, actual billing readiness, terms version and optional LINE friend URL. |
-| `POST /broker/register` | A server-validated, confirmed-email Supabase user accepts the configured terms version. Stores name, company and phone; creates no staff role or paid status. |
+| `POST /broker/register` | A server-validated, confirmed-email Supabase user accepts the configured terms version. Stores name, company and phone. `accountKind` is `broker` (default) or `owner`, fixed at first registration; any other value returns `422 invalid_account_kind`. Creates no staff role or paid status. |
 | `GET /broker/me` | Own private profile, subscription dates/status and `{active,reason}` entitlement. |
 | `POST /broker/checkout` | Hosted Stripe Checkout for exactly one configured US$25 monthly Price. No arbitrary Price, amount, customer or return URL from the browser. |
 | `POST /broker/portal` | Stripe Customer Portal for the authenticated user's server-bound customer. Also available after membership expiration to repair/cancel billing. |
 | `GET /broker/dashboard` | Paid, active user's own listing and lead summaries. |
+| `GET /broker/reports/summary?from=&to=` | Paid, active user's KPI totals, daily series and per-listing results for a date range. See [Report endpoints](#report-endpoints). |
+| `GET /broker/reports/leads?from=&to=&before=&limit=` | Keyset page of the user's leads, newest first. `limit` is 1–200 (default 50). Returns `{items}`. |
+| `GET /broker/reports/export?kind=&from=&to=` | CSV download. `kind` is `leads` or `listings`. |
 | `GET/POST /broker/listings`, `GET/PATCH /broker/listings/:id` | Own listing reads and draft saves. Every save sets unpublished/pending rights, uses approximate coordinates, and reconciles the gallery atomically. |
 | `POST /broker/listings/:id/submit` | Requests listing review; grants no publication rights. |
 | `GET /broker/leads`, `PATCH /broker/leads/:id` | Immutable inquiry-recipient assignment and own listing ownership bound lead reads/status updates. |
 | `GET/PATCH /contact/preferences` | Verified recipient opts into email/LINE using `contact-relay-v1` consent. All-off withdrawal does not require renewed consent or a paid subscription. |
 | `POST /contact/line-link` | Authenticated account consumes a LINE-issued link token and receives the official LINE account-link dialog URL. |
 | `DELETE /contact/line-link` | Removes LINE identity, pending link nonces and queued LINE notifications, including after subscription expiry. |
-| `GET /admin/brokers` | Staff-only `{items:[{...profile,subscription}]}`. |
+| `GET /admin/brokers` | Staff-only `{items:[{...profile,subscription}]}`. `profile.accountKind` is `broker` or `owner`. |
 | `PATCH /admin/brokers/:id` | Admin may suspend/reject an account. It cannot create payment evidence or bypass Stripe billing. |
 | `GET/PUT /admin/properties/:id/contact` | Staff binds the listing to an existing verified recipient account. Accepts a user UUID; never arbitrary recipient email or LINE IDs. |
 
 Inquiries require both `consent:true` and `consentToShare:true`, the existing Turnstile/rate protection, and an idempotency key. The saved inquiry returns `contactStatus:"queued"|"unavailable"` in addition to the existing staff-copy `emailStatus`. “Queued” means persisted for delivery; it does not promise a send before provider activation. The original staff-copy email outbox remains separate.
 
-Draft input uses camel case (`priceThb`, `areaM2`, `sourceUrl`, `ownershipEvidence`, `privateLocation`, `images`). Billing, role, ownership assignment and publication fields are rejected. Authorized listing responses include private editing evidence and coordinates only in the broker API, which is `no-store`; none is added to public snapshots or public Storage metadata. Missing draft location is `null`; optional image credits/source URLs can be `null`. Dashboard reads fail explicitly above 1,000 own records; they never silently truncate. A larger broker workload needs pagination before activation for that workload.
+Draft input uses camel case (`priceThb`, `areaM2`, `sourceUrl`, `ownershipEvidence`, `privateLocation`, `images`). Billing, role, ownership assignment and publication fields are rejected. Authorized listing responses include private editing evidence and coordinates only in the broker API, which is `no-store`; none is added to public snapshots or public Storage metadata. Missing draft location is `null`; optional image credits/source URLs can be `null`. Dashboard reads fail explicitly above 1,000 own records; they never silently truncate. Report reads fail explicitly above 1,000 own listings. Admin list endpoints return at most 1,000 rows and set `truncated:true` when more exist, and the admin inquiries export fails with `422 export_limit_exceeded` above 5,000 rows instead of dropping rows. A larger broker workload needs pagination before activation for that workload.
 
 ## Payment state and race protection
 
-Use migrations `202610040006_broker_subscription.sql`, `202610040007_contact_relay.sql`, `202610040008_contact_scheduler.sql`, then `202610040009_contact_preferences_upsert.sql` after the existing migrations through `202610040005_content_revision_safeupdate.sql`. Migration 09 corrects the actual PostgreSQL upsert/check ordering found during hosted verification; applied migrations 06–08 stay unchanged.
+Use migrations `202610040006_broker_subscription.sql`, `202610040007_contact_relay.sql`, `202610040008_contact_scheduler.sql`, then `202610040009_contact_preferences_upsert.sql` after the existing migrations through `202610040005_content_revision_safeupdate.sql`. Migration 09 corrects the actual PostgreSQL upsert/check ordering found during hosted verification; applied migrations 06–08 stay unchanged. Owner accounts (`202610270001_owner_accounts.sql`) and reports (`202610270002_broker_reports.sql`) apply after migration 09. They replace the 5-argument `broker_register` with a 6-argument version and redefine `broker_is_entitled`, `broker_start_checkout` and `broker_context`. Both were applied to the hosted database on 2026-10-27 and the `api` Edge Function was deployed as v11 with `verify_jwt=false`. The search_path follow-up `202610270003_owner_approval_search_path.sql` was applied to hosted on 2026-10-28; `proconfig` now shows `search_path=pg_catalog, private`.
 
 Profiles, customer bindings, subscription facts, event receipts and listing ownership are in revoked, RLS-enabled `private` tables. Public application RPCs are executable only by `service_role`; the API derives the actor from `auth.getUser`, never from browser metadata. Staff and broker identities stay separate.
 
@@ -43,6 +46,25 @@ Entitlement requires the configured Price and mode, an active subscription, a pa
 The Price validator accepts exactly `unit_amount=2500`, `currency=usd`, `recurring.interval=month`, interval count one and quantity one. Cached Checkout sessions are bound to Price/mode and checked again before reuse; existing outstanding subscriptions use the portal instead of creating another subscription. Config changes during session creation invalidate local completion.
 
 The integration uses fixed-host REST requests and Web Crypto, with no new SDK dependency. Stripe API version `2026-08-26.dahlia` was verified against the official changelog on this date. Provider errors return fixed application codes and are not logged verbatim.
+
+## Owner accounts
+
+- `private.broker_profiles.account_kind` is `broker` or `owner`. It is set at first registration and re-registration does not change it.
+- Owners use the same Stripe Price (US$25 monthly), the same entitlement rules and the same billing states as brokers. There is no free tier.
+- `private.broker_config.owner_approval_required` defaults to `true`. `private.broker_approval_satisfied` returns true when the profile is `approved`, or when it is `pending` and neither the global `approval_required` nor the owner rule applies.
+- A pending owner is not entitled even when paid. `broker_start_checkout` refuses Checkout until approval.
+- `broker_context.entitlement.reason` is `approval_required` while an approval gate blocks access. Staff decide through the existing `admin_review_broker` path.
+- Known limitation: the Stripe success and return URLs are still built for `/broker/dashboard/`, so owners land on the broker path. The data and access rules are the same. No backend change was made; move the return path before opening owner billing.
+
+## Report endpoints
+
+- The three `/broker/reports/*` routes require the same active entitlement as the dashboard.
+- `from` and `to` are `YYYY-MM-DD` calendar dates, checked by round-trip. `to` must not precede `from`, and the window is at most 365 days. Otherwise the response is `422 report_range_invalid`. Day boundaries use Asia/Bangkok, matching `daily_property_stats`.
+- Summary: `totals` (views, inquiries, contactClicks, leads, newLeads, contactedLeads, closedLeads, respondedLeads, medianResponseSeconds), `daily` (days with activity; the client fills the gaps) and `listings` (own listings with per-listing counts). Views, inquiries and contact clicks come from `daily_property_stats`.
+- A lead is an inquiry routed to the user through `private.inquiry_recipients` and attached to a listing the user owns, counted by its created date in the range.
+- `public.inquiries.first_response_at` is set once, by a `BEFORE UPDATE OF status` trigger, when status first leaves `new`. Leads created before the migration have no value and are excluded from the response-time median. They are not backfilled.
+- Leads page: `before` is an ISO timestamp used as an exclusive keyset on `created_at`. `limit` is 1–200 (default 50). Invalid values return `invalid_cursor` or `invalid_limit`. Leads that share an identical `created_at` can be skipped at a page boundary. This is accepted at current volume.
+- Export: `kind=leads` or `listings`. Any other value returns `invalid_export_kind`. A leads export over 10,000 rows returns `export_limit_exceeded` and never a partial file. The CSV is UTF-8 with a BOM and CRLF line endings. Formula-prefixed cells are neutralised by `safeCsvCell`. Responses are `Cache-Control: no-store` and `X-Content-Type-Options: nosniff`. Filenames are `leads-<from>-<to>.csv` or `listings-<from>-<to>.csv`.
 
 ## Exact recipient delivery
 
@@ -89,6 +111,8 @@ Check real Cron HTTP outcomes, outbox due/failed/canceled counts and provider re
 Offline Deno tests cover signatures, exact fee, mode and ownership checks, current-state ordering, leases, duplicates, failures, expiry, cancellation, pause, refund/dispute blocks, forbidden broker fields, exact destination/payload, consent, opt-out, LINE linking and provider retry behavior. All provider traffic in these tests is mocked.
 
 `tests/integration/broker-contact.sql` is a hosted-safe `BEGIN`/`ROLLBACK` assertion set covering private grants/RLS, own listings/leads, paid gating without signup approval, publication guards, immutable customer binding, event leases/deduplication, opt-out lead snapshots, nonce/replay checks, exact recipient outbox, Auth email changes, reassignment, withdrawal, refund blocking and suspension. `contact-preferences-upsert.sql` separately covers fresh email opt-in, rejection of unlinked LINE, verified existing LINE opt-in, LINE-only opt-in and withdrawal after email verification changes. Both create synthetic database fixtures only, never an Auth signup email or actual provider operation. Root records the actual migration, SQL, HTTP and frontend receipts in the shared verification/status documents after executing them.
+
+Owner and report work (2026-10-27) adds `tests/integration/broker-owner.sql` and `tests/integration/broker-reports.sql`. Neither has been run: the local Docker engine returned HTTP 500, no `psql` is installed, and running them against hosted has not been approved. The two migrations are applied to hosted (see Account setup and the production status record). `tests/integration/broker-contact.sql` was updated to the 6-argument `broker_register` and is also unrun. Node-side checks cover the report helpers (`tests/integration/broker-report-api.test.ts`, `tests/unit/broker-report.test.ts`) and the owner and report frontend flows (`tests/frontend/owner.spec.ts`).
 
 Real-account Stripe/LINE/email behavior, current backup recovery, approved legal/terms, production hosting entitlement and real rights-approved inventory remain deployment gates. Passing source/mock tests does not establish full production readiness.
 
