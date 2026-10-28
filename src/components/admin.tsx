@@ -245,44 +245,6 @@ export function Admin({
     if (!liveMode)
       localStorage.setItem("thaimora-properties", JSON.stringify(next));
   }
-  async function login(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setBusy(true);
-    setError("");
-    const fields = Object.fromEntries(new FormData(event.currentTarget));
-    try {
-      if (
-        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      )
-        throw new Error(
-          tr(
-            "Staff authentication is not configured.",
-            "ยังไม่ได้ตั้งค่าการยืนยันตัวตนเจ้าหน้าที่",
-          ),
-        );
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-          },
-          body: JSON.stringify(fields),
-        },
-      );
-      const result = await response.json();
-      if (!response.ok)
-        throw new Error(result.msg || result.message || "Sign-in failed");
-      setToken(result.access_token);
-      sessionStorage.setItem("thaimora-staff-token", result.access_token);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Sign-in failed");
-    } finally {
-      setBusy(false);
-    }
-  }
   function startEdit(p?: PublicProperty) {
     const record = p ? adminDetails.current[p.id] : undefined;
     setPublication({
@@ -617,6 +579,45 @@ export function Admin({
     [images[i], images[i + offset]] = [images[i + offset], images[i]];
     change("images", images);
   }
+  async function login(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setError("");
+    const fields = Object.fromEntries(new FormData(event.currentTarget));
+    try {
+      if (
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      )
+        throw new Error(
+          tr(
+            "Staff authentication is not configured.",
+            "ยังไม่ได้ตั้งค่าการยืนยันตัวตนเจ้าหน้าที่",
+          ),
+        );
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify(fields),
+        },
+      );
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(result.msg || result.message || "Sign-in failed");
+      setToken(result.access_token);
+      sessionStorage.setItem("thaimora-staff-token", result.access_token);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sign-in failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (liveMode && !token)
     return (
       <main id="main" className="admin-login">

@@ -1,5 +1,6 @@
 import fs from "node:fs";
-import { demoProperties } from "./demo";
+import { demoListings, demoProperties } from "./demo";
+import { type HomeListing, withDefaultChannel } from "./listings";
 import { propertySchema, publicSnapshot } from "./property";
 export function snapshots() {
   const file = process.env.THAIMORA_SNAPSHOT_PATH;
@@ -13,4 +14,9 @@ export function snapshots() {
     } catch {}
   }
   return demoProperties;
+}
+
+export function homeListings(): HomeListing[] {
+  if (process.env.NEXT_PUBLIC_DATA_MODE !== "live") return demoListings;
+  return withDefaultChannel(snapshots());
 }

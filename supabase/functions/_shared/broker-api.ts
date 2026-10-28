@@ -104,7 +104,7 @@ export async function brokerRoute(req:Request,parts:string[],db:BrokerDb):Promis
  const user=await brokerUser(req,db);
  if(req.method==='GET'&&action==='me')return json(await brokerRpc(db,'broker_context',{p_actor:user.id}));
  if(req.method==='POST'&&action==='register'){
-  const raw=record(await body(req));if(raw.termsAccepted!==true)throw new ApiError(422,'broker_terms_required');const accountKind=raw.accountKind??'broker';if(!['broker','owner'].includes(accountKind))throw new ApiError(422,'invalid_account_kind');
+  const raw=record(await body(req));if(raw.termsAccepted!==true)throw new ApiError(422,'broker_terms_required');const accountKind=raw.accountKind===undefined?'broker':raw.accountKind;if(typeof accountKind!=='string'||!['broker','owner'].includes(accountKind))throw new ApiError(422,'invalid_account_kind');
   await brokerRpc(db,'contact_ensure_account',{p_actor:user.id,p_email:user.email});
   return json(await brokerRpc(db,'broker_register',{p_actor:user.id,p_name:text(raw.displayName,2,100),p_company:optionalText(raw.company,200),p_phone:optionalText(raw.phone,40),p_terms:text(raw.termsVersion,1,200),p_kind:accountKind}),201);
  }

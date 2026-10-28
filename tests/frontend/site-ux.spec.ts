@@ -150,7 +150,7 @@ test.describe("UI/UX System Verification", () => {
 
     // 1. Desktop Navigation
     await expect(page.locator("header.header")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Thaimora home" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "PhuketLens home" })).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
 
     // 2. Language Switcher (EN -> TH)
@@ -182,7 +182,7 @@ test.describe("UI/UX System Verification", () => {
 
   test("search filtering, currency switching, and zero-results reset resilience", async ({ page }) => {
     await setupPageMocks(page);
-    await page.goto("/");
+    await page.goto("/explore/");
 
     // 1. Transaction filter: Rent
     const transactionSelect = page.locator('select[aria-label="Transaction type"], select[name="transaction"]').first();
@@ -214,7 +214,7 @@ test.describe("UI/UX System Verification", () => {
 
   test("property card favorites persistence and side-by-side comparison drawer", async ({ page }) => {
     await setupPageMocks(page);
-    await page.goto("/");
+    await page.goto("/explore/");
 
     // On mobile view toggle to list if needed
     const listBtn = page.getByRole("button", { name: "List", exact: true });

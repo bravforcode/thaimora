@@ -48,7 +48,7 @@ for (const corrupt of [null, { unexpected: true }, [{}, null, 5, "invalid"]])
         localStorage.setItem("thaimora-favorites", JSON.stringify(value)),
       corrupt,
     );
-    await page.goto("/");
+    await page.goto("/explore/");
     await page
       .getByRole("button", { name: "Reject optional", exact: true })
       .click();
@@ -118,7 +118,7 @@ test("autocomplete distinguishes loading, empty, error and retry and discards st
       },
     });
   });
-  await page.goto("/");
+  await page.goto("/explore/");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
@@ -296,7 +296,7 @@ test("nearby detail and guide display actual distances and source freshness meta
   await page.goto("/guide/");
   await expect(page.locator(".guide-places")).toContainText("ODbL 1.0");
   await expect(page.locator(".guide-places")).toContainText("Source updated");
-  await page.goto("/");
+  await page.goto("/explore/");
   await page.locator(".property-card .source-details summary").click();
   await expect(page.locator(".property-card")).toContainText("licensed:1");
   await expect(page.locator(".property-card")).toContainText("Fetched");

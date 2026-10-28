@@ -187,8 +187,8 @@ export function InquiryButton({ property: p }: { property: PublicProperty }) {
         </div>
         <p className="muted">{p.title[locale]}</p>
         {result ? (
-          <div role="status" className="notice success">
-            {result}
+          <div role="status" className="notice success inquiry-result">
+            <span>{result}</span>
             <button
               className="button secondary"
               onClick={() => dialog.current?.close()}

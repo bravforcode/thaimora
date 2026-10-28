@@ -58,6 +58,24 @@ Staged-file checks passed: generated build/dependency folders, real env files, p
 
 Both static preview URLs returned HTTP 200 during the final handover check. OpenWolf final anatomy scans completed (archive `b0436d0fdd637cae`); file counts are filesystem indexes, not provider usage. No Git remote or push was configured.
 
+## Demo-readiness gates (2026-10-23)
+
+Scope: preview mode with synthetic demo data. The broker dashboard now shows a labelled demo view (sample listings and inquiries saved on this device), and the inquiry confirmation keeps its Done button on one line. No account, payment, publication or email is connected, so these results are not live acceptance evidence.
+
+| Check | Command | Observed result |
+| --- | --- | --- |
+| TypeScript | `npm run typecheck` | exit 0 |
+| ESLint | `npm run lint` | exit 0 |
+| Unit | `npm run test:unit` | 12 files, 80 of 80 passed |
+| Backend | `npm run test:backend` | 10 files, 39 of 39 passed |
+| Production build | `npm run build` | exit 0; 79 exported HTML files passed the document-language check |
+| Preview e2e | `npm run test:e2e` | exit 0; 22 of 22 passed on chromium and mobile, including 6 new demo and Done-button tests |
+| Negative Done check | selector renamed in `tests/e2e/inquiry-result.spec.ts` run | failed at 63px height; restored, then passed under 50px |
+| Material behaviour | `npm run test:e2e:material` | exit 0; 8 of 8 passed |
+| Mocked live broker contract | `npx playwright test --config tests/frontend/broker.playwright.config.ts` | exit 0; 11 of 11 passed |
+
+The Done-button check guards the one-line layout at 1024px. The demo listings come from the synthetic `src/lib/demo.ts` set. The gates in the next section are unchanged.
+
 ## Required before live acceptance
 
 | Gate | Current state / required evidence |

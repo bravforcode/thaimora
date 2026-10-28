@@ -13,14 +13,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run test:backend
       - run: npx deno check --config supabase/functions/deno.json supabase/functions/api/index.ts supabase/functions/deliver-email/index.ts
+      - name: Restore Postgres test image cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/postgres-test-image.tar
+          key: postgres-test-image-public.ecr.aws-supabase-postgres-15.8.1.085
+      - name: Load or pull Postgres test image
+        run: |
+          image=public.ecr.aws/supabase/postgres:15.8.1.085
+          tar="$RUNNER_TEMP/postgres-test-image.tar"
+          if [[ -f "$tar" ]]; then
+            docker load -i "$tar"
+            exit 0
+          fi
+          for attempt in 1 2 3 4; do
+            docker pull "$image" && break
+            if ((attempt < 4)); then sleep $((attempt * 30)); fi
+          done
+          docker image inspect "$image" >/dev/null
+          docker save -o "$tar" "$image"
       - run: bash scripts/test-database.sh
       - run: npm run lint
       - run: npm run build

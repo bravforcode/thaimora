@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ApiError, sha256 } from "./domain.ts";
+import { clientIp } from "./http.ts";
 export const env=(key:string)=>Deno.env.get(key)??"";
 export function client(){
   if(!env("SUPABASE_URL")||!env("SUPABASE_SERVICE_ROLE_KEY"))throw new ApiError(503,"backend_not_configured");
@@ -19,7 +20,7 @@ export async function admin(req:Request,db:any):Promise<string>{
 }
 export async function rate(req:Request,db:any,bucket:string,limit=10):Promise<void>{
   if(!env("RATE_LIMIT_SALT"))throw new ApiError(503,"rate_protection_not_configured");
-  const ip=req.headers.get("cf-connecting-ip")??req.headers.get("x-forwarded-for")?.split(",")[0]??"anonymous";
+  const ip=clientIp(req);
   const key=await sha256(env("RATE_LIMIT_SALT")+":"+bucket+":"+ip);
   if(checkDb(await db.rpc("take_rate_limit",{p_key:key,p_limit:limit,p_seconds:60}))!==true)throw new ApiError(429,"rate_limited");
 }
