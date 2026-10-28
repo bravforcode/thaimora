@@ -1,6 +1,6 @@
 import { ApiError,publicProperty,parsePropertyQuery,text,sha256,importRows,parseCsv,safeCsvCell,coordinate } from "../_shared/domain.ts";
 import { serve,client,env,body,json,checkDb,admin,rate,fetchJson,fx } from "../_shared/runtime.ts";
-import {auditMutation,contentWriteFields,reportRange} from "../_shared/admin-input.ts";
+import {auditMutation,capRows,contentWriteFields,reportRange} from "../_shared/admin-input.ts";
 import {publicContentResponse} from "../_shared/public-content.ts";
 import {apiParts} from "../_shared/api-path.ts";
 import {brokerRoute,brokerAdminRoute,type BrokerDb} from "../_shared/broker-api.ts";
@@ -29,7 +29,7 @@ serve(async req=>{
       return json({item:checkDb(await db.rpc("admin_release_content_override",{p_table:kind,p_id:id,p_actor:userId}))});
     }
     if(kind==="inquiries"&&id==="export"&&req.method==="GET"){
-      const rows=checkDb(await db.from("inquiries").select("id,property_id,name,email,country,message,created_at,status").order("created_at").limit(1000));
+      const rows=checkDb(await db.from("inquiries").select("id,property_id,name,email,country,message,created_at,status").order("created_at").limit(5001));if(rows.length>5000)throw new ApiError(422,"export_limit_exceeded");
       const keys=["id","property_id","name","email","country","message","created_at","status"];
       return new Response([keys.map(safeCsvCell).join(","),...rows.map((r:any)=>keys.map(k=>safeCsvCell(r[k])).join(","))].join("\r\n"),{headers:{"Content-Type":"text/csv","Content-Disposition":"attachment; filename=inquiries.csv","Cache-Control":"no-store"}});
     }
@@ -63,11 +63,11 @@ serve(async req=>{
         const range=reportRange(url);
         return json({items:checkDb(await db.rpc("property_stats_range",{p_from:range.from,p_to:range.to}))});
       }
-      let query=db.from(tables[kind]).select(kind==="properties"?"*,property_private_locations(*),property_images(*)":"*").limit(1000);
+      let query=db.from(tables[kind]).select(kind==="properties"?"*,property_private_locations(*),property_images(*)":"*").limit(1001);
       if(["pois","events"].includes(kind)&&url.searchParams.get("protected")==="true")query=query.eq("admin_override",true);
-      if(id)query=query.eq("id",id);const rows=checkDb(await query);
-      if(kind==="properties")return json({items:rows.map((r:any)=>({...publicProperty({...r,images:r.property_images?.map((i:any)=>({url:i.url,alt:i.alt,credit:i.credit,sourceUrl:i.source_url}))}),publication:{published:r.published,demo:r.demo,rightsStatus:r.rights_status,ownershipEvidence:r.ownership_evidence,sourceUrl:r.source_url,sourceId:r.source_id},privateLocation:r.property_private_locations?.[0]??r.property_private_locations,gallery:r.property_images}))});
-      return json({items:rows});
+      if(id)query=query.eq("id",id);const capped=capRows(checkDb(await query),1000);const rows=capped.rows;
+      if(kind==="properties")return json({items:rows.map((r:any)=>({...publicProperty({...r,images:r.property_images?.map((i:any)=>({url:i.url,alt:i.alt,credit:i.credit,sourceUrl:i.source_url}))}),publication:{published:r.published,demo:r.demo,rightsStatus:r.rights_status,ownershipEvidence:r.ownership_evidence,sourceUrl:r.source_url,sourceId:r.source_id},privateLocation:r.property_private_locations?.[0]??r.property_private_locations,gallery:r.property_images})),truncated:capped.truncated});
+      return json({items:rows,truncated:capped.truncated});
     }
     if(kind==="properties"&&["POST","PATCH"].includes(req.method))return json({item:await writeProperty(db,await body(req),id,userId)},req.method==="POST"?201:200);
     if(kind==="properties"&&req.method==="DELETE"&&id){checkDb(await db.from("properties").delete().eq("id",id));await auditMutation(db,userId,"properties",id,"DELETE",[]);return json({deleted:true});}

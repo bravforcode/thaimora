@@ -30,6 +30,7 @@ export function useSettings() {
 }
 export function LocaleLink({
   href,
+  prefetch = false,
   ...props
 }: React.ComponentProps<typeof NextLink>) {
   const { locale } = useSettings();
@@ -41,9 +42,17 @@ export function LocaleLink({
     locale === "th"
       ? `/th${href}`
       : href;
-  if(typeof localized === "string" && /^\/(?:th\/)?broker(?:\/|$)/.test(localized))
-    return <a href={localized} {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)} />;
-  return <NextLink href={localized} {...props} />;
+  if (
+    typeof localized === "string" &&
+    /^\/(?:th\/)?(broker|owner|admin)(?:\/|$)/.test(localized)
+  )
+    return (
+      <a
+        href={localized}
+        {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+      />
+    );
+  return <NextLink href={localized} prefetch={prefetch} {...props} />;
 }
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const path = usePathname(),

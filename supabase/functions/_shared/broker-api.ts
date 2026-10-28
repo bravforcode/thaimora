@@ -1,6 +1,7 @@
 import {ApiError,coordinate,publicProperty,text} from './domain.ts';
 import {body,env,json} from './runtime.ts';
 import {monthlyPrice,objectId,record,stripeClient,type ObjectValue} from './broker-billing.ts';
+import {leadPage,csvResponse,csvText,reportWindow} from './broker-report.ts';
 
 type DbResult={data:unknown;error:{message?:string}|null};
 type DbCall=PromiseLike<DbResult>&{abortSignal?:(signal:AbortSignal)=>PromiseLike<DbResult>};
@@ -19,6 +20,10 @@ export async function brokerRpc(db:BrokerDb,name:string,args?:Record<string,unkn
   if(message.includes('Test billing reset required'))throw new ApiError(409,'test_billing_reset_required');
   if(message.includes('Verified LINE'))throw new ApiError(422,'line_link_required');
   if(message.includes('Verified current email'))throw new ApiError(403,'verified_email_required');
+  if(message.includes('Report range invalid'))throw new ApiError(422,'report_range_invalid');
+  if(message.includes('Export limit exceeded'))throw new ApiError(422,'export_limit_exceeded');
+  if(message.includes('Invalid account kind'))throw new ApiError(422,'invalid_account_kind');
+  if(message.includes('Broker record page required'))throw new ApiError(422,'broker_record_page_required');
   throw new ApiError(503,'broker_database_unavailable');
  }
  return result.data;
@@ -99,9 +104,9 @@ export async function brokerRoute(req:Request,parts:string[],db:BrokerDb):Promis
  const user=await brokerUser(req,db);
  if(req.method==='GET'&&action==='me')return json(await brokerRpc(db,'broker_context',{p_actor:user.id}));
  if(req.method==='POST'&&action==='register'){
-  const raw=record(await body(req));if(raw.termsAccepted!==true)throw new ApiError(422,'broker_terms_required');
+  const raw=record(await body(req));if(raw.termsAccepted!==true)throw new ApiError(422,'broker_terms_required');const accountKind=raw.accountKind===undefined?'broker':raw.accountKind;if(typeof accountKind!=='string'||!['broker','owner'].includes(accountKind))throw new ApiError(422,'invalid_account_kind');
   await brokerRpc(db,'contact_ensure_account',{p_actor:user.id,p_email:user.email});
-  return json(await brokerRpc(db,'broker_register',{p_actor:user.id,p_name:text(raw.displayName,2,100),p_company:optionalText(raw.company,200),p_phone:optionalText(raw.phone,40),p_terms:text(raw.termsVersion,1,200)}),201);
+  return json(await brokerRpc(db,'broker_register',{p_actor:user.id,p_name:text(raw.displayName,2,100),p_company:optionalText(raw.company,200),p_phone:optionalText(raw.phone,40),p_terms:text(raw.termsVersion,1,200),p_kind:accountKind}),201);
  }
  if(req.method==='POST'&&(action==='checkout'||action==='portal')){
   const c=await configuration(db);if(!billingConfigured(c))throw new ApiError(503,'billing_not_configured');
@@ -131,6 +136,20 @@ export async function brokerRoute(req:Request,parts:string[],db:BrokerDb):Promis
   }catch(error){await brokerRpc(db,'broker_finish_checkout',{p_actor:user.id,p_token:token,p_url:null,p_expires:null}).catch(()=>undefined);throw error;}
  }
  await entitled(db,user.id);
+ if(action==='reports'){
+  if(req.method!=='GET')throw new ApiError(405,'method_not_allowed');
+  const url=new URL(req.url),window=reportWindow(url);
+  if(id==='summary')return json(await brokerRpc(db,'broker_report',{p_actor:user.id,p_from:window.from,p_to:window.to}));
+  if(id==='leads'){const page=leadPage(url);return json({items:await brokerRpc(db,'broker_report_leads',{p_actor:user.id,p_from:window.from,p_to:window.to,p_before:page.before,p_limit:page.limit})});}
+  if(id==='export'){
+   const kind=url.searchParams.get('kind')??'';
+   if(!['leads','listings'].includes(kind))throw new ApiError(422,'invalid_export_kind');
+   const rows=await brokerRpc(db,'broker_report_export',{p_actor:user.id,p_kind:kind,p_from:window.from,p_to:window.to});
+   if(!Array.isArray(rows))throw new ApiError(503,'broker_database_unavailable');
+   const keys=kind==='leads'?['id','propertyId','name','email','country','message','status','createdAt','firstResponseAt']:['propertyId','slug','published','views','inquiries','contactClicks'];
+   return csvResponse(csvText(rows.map(record),keys),`${kind}-${window.from}-${window.to}.csv`);
+  }
+ }
  if(req.method==='GET'&&action==='dashboard'){
   const [listingRows,leads]=await Promise.all([brokerRpc(db,'broker_read_listings',{p_actor:user.id}),brokerRpc(db,'broker_read_leads',{p_actor:user.id})]);
   if(!Array.isArray(listingRows)||!Array.isArray(leads))throw new ApiError(503,'broker_database_unavailable');

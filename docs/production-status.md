@@ -59,3 +59,51 @@ Public API content now uses one coherent database snapshot, bounded public proje
 Actual hosted tests passed seven admin cases, five signed-worker/replay cases and five public CORS/count/validator cases per site; synthetic users, memberships, events and exact fixture tombstones were removed. Frontend preview builds, unit and functional browser tests passed. These results do not establish an actual-user production acceptance or a public frontend deployment.
 
 Evidence: [natural scheduler and source state](evidence/content-automation-hosted.json), [admin HTTP and cleanup](evidence/content-admin-http.json), [worker authorization](evidence/content-worker-http.json), [public HTTP](evidence/content-public-http.json), [measured API samples](reviews/content-api-optimized.json), [runbook](content-automation.md), [review and limitations](reviews/content-automation-review.md).
+
+## Owner accounts, broker reports and local hardening — 2026-10-27
+
+Hosted rollout is recorded below. This supersedes the 2026-10-04 count of five high development findings.
+
+- Owner accounts: `broker_profiles.account_kind` (`broker` | `owner`), `/owner` and `/th/owner` routes. Owners use the same monthly membership and Stripe price as brokers. Owner listings need admin approval (`broker_config.owner_approval_required`, default on).
+- Report dashboard for brokers and owners: 7/30/90-day KPIs, daily trend, per-listing results, lead status and first-response time, CSV export. Reports are security-definer RPCs with Asia/Bangkok day boundaries, a 365-day maximum range, and a 10,000-row lead export cap that returns an error instead of truncating.
+- Admin lists return `truncated`; the admin inquiry export above 5,000 rows returns `422 export_limit_exceeded` instead of cutting rows silently.
+- Dependency patch via non-breaking `npm audit fix --omit=dev`: next 16.3.8 → 16.4.3, zod 4.6.5 → 4.6.7, vite 8.3.2 → 8.3.5, rolldown 1.2.12 → 1.2.15, plus transitive `postcss`, `nanoid`, `@oxc-project/types`. `npm audit fix --force` was not run.
+- Lockfile repair: npm 11.6 on this machine dropped 26 optional native entries (15 `@rolldown/binding-*`, 11 `vite/node_modules/lightningcss-*`) during the audit fix and every later lock-only write. Restored lightningcss entries from HEAD (versions unchanged); rolldown bindings at 1.2.15 with integrity from `npm view`. `npm ci` then installed `@rolldown/binding-win32-x64-msvc` 1.2.15.
+
+### Hosted rollout on `hpjmttoxomdhxxsourih`
+
+- Migrations `202610270001_owner_accounts` and `202610270002_broker_reports` applied. The 1000-listing guard in `broker_report` and its `broker_record_page_required` mapping were added before apply.
+- `api` Edge Function deployed as v11 with `verify_jwt` false.
+- Smoke: `GET /v1/broker/config` returned 200. `GET /v1/broker/reports/summary` and `/export` without a token returned 401. The authenticated 422 check (`invalid_export_kind`) was skipped because no test account was created.
+- SQL state check: `account_kind`, `owner_approval_required` and `first_response_at` exist. Trigger `inquiry_first_response` exists. `broker_register` takes `p_kind`. The three report functions are executable by `service_role` only (anon 0, authenticated 0).
+- Advisors (observed 2026-10-27 19:20 UTC):
+  - New from this work: `function_search_path_mutable` on `private.broker_approval_satisfied`. Fixed by `supabase/migrations/202610270003_owner_approval_search_path.sql`, applied to hosted on 2026-10-28. Rerun the same day (06:24 UTC) no longer reports it; `proconfig` is `search_path=pg_catalog, private`. The remaining security findings are unchanged.
+  - Pre-existing, not changed here: 7 SECURITY DEFINER helpers executable by `anon` and `authenticated` (documented as intentional); `pg_net` in `public`; RLS enabled without policies on 23 `private` tables (intentional, no client access); `admin_memberships` policy `member_self` initplan; 7 multiple-permissive-policy sets; 9 unused indexes and 17 unindexed foreign keys (INFO). Two unused indexes are on broker tables (`broker_listings_owner`, `inquiry_recipients_owner`). They need traffic data before any change.
+
+### Local verification, 2026-10-28
+
+Rerun after the `broker-api.ts` mapping and the migration guard were added. Rows not marked 2026-10-28 were not rerun.
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `npm ci` | 0 | 2026-10-27; rolldown win32 binding present |
+| `npm run typecheck` | 0 | 2026-10-28 |
+| `npm run lint` | 0 | 2026-10-28 |
+| `npm run test:unit` | 0 | 2026-10-28: 13 files, 85 tests |
+| `npm run test:integration` | 0 | 2026-10-28: 10 files, 42 tests (TypeScript only) |
+| `npm run build` | 0 | 2026-10-28: 84 static pages; `out/owner` and `out/th/owner` generated |
+| `npx playwright test --config tests/frontend/broker.playwright.config.ts` | 0 | 2026-10-27 only: 17 tests, including owner pages at 360/390/1024/1440 px with no horizontal scroll. Not rerun |
+| `npm run test:deployment` | 0 | 2026-10-28: 6 tests |
+| `npm audit --omit=dev` | 0 | 2026-10-27: 0 vulnerabilities |
+| `npm audit` (full) | 1 | 2026-10-27: 4 high, dev-only (sharp/undici via wrangler/miniflare). Fix needs breaking `--force`; accepted, not applied |
+| `npm run production:check` | 1 | 2026-10-28: blocked by missing production environment variables (external gate) |
+
+Not verified:
+
+- SQL integration tests (`tests/integration/broker-owner.sql`, `broker-reports.sql`, `broker-contact.sql`) were not run: no Docker or psql locally, and no approval to run them against hosted.
+- Migration `202610270003_owner_approval_search_path.sql` was applied to hosted on 2026-10-28 and the security advisor rerun no longer reports the search_path WARN.
+- Stripe test-mode UAT for owners is not run. `BROKER_BILLING_ENABLED` stays off. Owner Checkout returns to the broker dashboard path (known limitation).
+- `first_response_at` is set only for leads changed after the trigger exists; no backfill.
+- `broker_report_leads` pages on `created_at` alone; leads with identical timestamps can be skipped across pages (accepted at current volume).
+- `content-automation.tsx` ignores `truncated` for POIs and events.
+- Edge functions `stripe-webhook`, `line-webhook`, `deliver-contact`, `deliver-outreach` and `sync-content` were not redeployed. They bundle `_shared` code, so compatibility with the changed shared files is unverified.

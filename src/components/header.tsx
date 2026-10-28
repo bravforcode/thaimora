@@ -37,6 +37,7 @@ export function Header() {
             <ArrowUpRight size={13} />
           </Link>
           <Link href="/broker/">{tr("For agents", "สำหรับนายหน้า")}</Link>
+        <Link href="/owner/">{tr("For owners", "สำหรับเจ้าของทรัพย์")}</Link>
         </nav>
         <div className="header-actions">
           <Link className="header-signin" href="/dashboard/">
@@ -93,10 +94,14 @@ export function Header() {
                   <option value="sqft">ft²</option>
                 </select>
               </label>
+              <Link href="/?transaction=sale">{tr("Buy", "ซื้อ")}</Link>
+              <Link href="/?transaction=rent">{tr("Rent", "เช่า")}</Link>
+              <Link href="/guide/">{tr("Explore Phuket", "สำรวจภูเก็ต")}</Link>
+              <Link href="/broker/">{tr("For agents", "สำหรับนายหน้า")}</Link>
+              <Link href="/owner/">{tr("For owners", "สำหรับเจ้าของทรัพย์")}</Link>
               <Link href="/admin/">
                 {tr("Staff preview", "ตัวอย่างสำหรับเจ้าหน้าที่")}
               </Link>
-              <Link href="/broker/">{tr("For agents", "สำหรับนายหน้า")}</Link>
             </div>
           </details>
         </div>
@@ -115,6 +120,7 @@ export function Footer() {
       </Link>
       <Link href="/guide/">{tr("Phuket guide", "คู่มือภูเก็ต")}</Link>
       <Link href="/broker/">{tr("For agents", "สำหรับนายหน้า")}</Link>
+      <Link href="/owner/">{tr("For owners", "สำหรับเจ้าของทรัพย์")}</Link>
     </footer>
   );
 }

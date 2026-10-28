@@ -149,7 +149,8 @@ export function Admin({
     > | null>(null),
     [rawCSV, setRawCSV] = useState(""),
     [filter, setFilter] = useState(""),
-    [stats, setStats] = useState<DailyStats[]>([]);
+    [stats, setStats] = useState<DailyStats[]>([]),
+    [truncated, setTruncated] = useState(false);
   const [duplicatePolicy, setDuplicatePolicy] =
       useState<DuplicatePolicy>("skip"),
     [importDone, setImportDone] = useState(false);
@@ -211,8 +212,12 @@ export function Admin({
     if (!liveMode || !token) return;
     setBusy(true);
     Promise.all([
-      api<{ items: AdminRecord[] }>("/v1/admin/properties", {}, token),
-      api<{ items: Record<string, unknown>[] }>(
+      api<{ items: AdminRecord[]; truncated?: boolean }>(
+        "/v1/admin/properties",
+        {},
+        token,
+      ),
+      api<{ items: Record<string, unknown>[]; truncated?: boolean }>(
         "/v1/admin/inquiries",
         {},
         token,
@@ -230,6 +235,7 @@ export function Admin({
         setRows(p.items.map((p) => propertySchema.parse(p)));
         setInquiries(i.items.map(normalizeInquiry));
         setStats(s.items);
+        setTruncated(p.truncated === true || i.truncated === true);
       })
       .catch((e) => setError(e.message))
       .finally(() => setBusy(false));
@@ -573,6 +579,91 @@ export function Admin({
     [images[i], images[i + offset]] = [images[i + offset], images[i]];
     change("images", images);
   }
+  async function login(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setError("");
+    const fields = Object.fromEntries(new FormData(event.currentTarget));
+    try {
+      if (
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      )
+        throw new Error(
+          tr(
+            "Staff authentication is not configured.",
+            "ยังไม่ได้ตั้งค่าการยืนยันตัวตนเจ้าหน้าที่",
+          ),
+        );
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify(fields),
+        },
+      );
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(result.msg || result.message || "Sign-in failed");
+      setToken(result.access_token);
+      sessionStorage.setItem("thaimora-staff-token", result.access_token);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sign-in failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (liveMode && !token)
+    return (
+      <main id="main" className="admin-login">
+        <h1>{tr("Welcome back.", "ยินดีต้อนรับกลับ")}</h1>
+        <p>
+          {tr(
+            "Sign in with your client-owned staff account.",
+            "ลงชื่อเข้าใช้บัญชีเจ้าหน้าที่ของลูกค้า",
+          )}
+        </p>
+        <form onSubmit={login}>
+          <label>
+            {tr("Email", "อีเมล")}
+            <input name="email" type="email" required autoComplete="username" />
+          </label>
+          <label>
+            {tr("Password", "รหัสผ่าน")}
+            <input
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+            />
+          </label>
+          {error && (
+            <p className="notice error" role="alert">
+              {error}
+            </p>
+          )}
+          <button className="button wide" disabled={busy}>
+            {busy
+              ? tr("Signing in…", "กำลังลงชื่อ…")
+              : tr("Sign in", "ลงชื่อเข้าใช้")}
+          </button>
+        </form>
+        <div style={{ marginTop: "16px", textAlign: "center" }}>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => setToken("preview-staff-token")}
+          >
+            {tr("Preview property desk (demo)", "ทดลองใช้โต๊ะจัดการ (ตัวอย่าง)")}
+          </button>
+        </div>
+      </main>
+    );
   return (
     <main id="main" className="admin-page">
       <div className="admin-heading">
@@ -601,6 +692,14 @@ export function Admin({
           </span>
         )}
       </div>
+      {truncated && (
+        <p className="notice" role="status">
+          {tr(
+            "Showing the first 1,000 records. Filter the list to find the rest.",
+            "แสดง 1,000 รายการแรก ใช้ตัวกรองเพื่อค้นหารายการที่เหลือ",
+          )}
+        </p>
+      )}
       {!liveMode && (
         <p className="notice">
           {tr(

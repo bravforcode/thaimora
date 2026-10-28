@@ -8,7 +8,7 @@ import {
   type Inquiry,
 } from "./property";
 export const liveMode = process.env.NEXT_PUBLIC_DATA_MODE === "live";
-const base = process.env.NEXT_PUBLIC_API_URL;
+const base = process.env.NEXT_PUBLIC_API_URL || "https://hpjmttoxomdhxxsourih.supabase.co/functions/v1/api";
 export type SearchScope = {
   bounds?: Bounds;
   polygon?: Point[];
