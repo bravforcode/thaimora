@@ -1,0 +1,11 @@
+{
+  "approved": true,
+  "privacy": {
+    "en": "Thaimora respects visitor privacy. This notice explains how data is handled for properties, contact inquiries, and analytics in accordance with Thailand PDPA and international privacy principles. All personal data submitted via inquiry relay is processed securely.",
+    "th": "ไทยโมราให้ความสำคัญกับความเป็นส่วนตัวของผู้เยี่ยมชม ประกาศนี้อธิบายถึงวิธีจัดการข้อมูลสำหรับอสังหาริมทรัพย์ การสอบถาม และการวิเคราะห์ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) ข้อมูลส่วนบุคคลทั้งหมดที่ส่งผ่านแบบฟอร์มจะได้รับการดูแลอย่างปลอดภัย"
+  },
+  "terms": {
+    "en": "Thaimora provides a property exploration platform. Information provided is for preview and inquiry purposes. Publication rights must be verified before properties are published to the public. Listings must comply with real estate regulations.",
+    "th": "ไทยโมราให้บริการแพลตฟอร์มสำรวจอสังหาริมทรัพย์ ข้อมูลที่ให้มีวัตถุประสงค์เพื่อการสำรวจและสอบถาม สิทธิ์ในการเผยแพร่ต้องได้รับการตรวจสอบก่อนการเผยแพร่ต่อสาธารณะ ประกาศทั้งหมดต้องเป็นไปตามกฎหมายอสังหาริมทรัพย์"
+  }
+}

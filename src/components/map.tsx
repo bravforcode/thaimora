@@ -401,6 +401,7 @@ export function PropertyMap({
     <div className="map-wrapper">
       <div
         ref={container}
+        role="region"
         className="map-canvas"
         aria-label={tr("Property map of Phuket", "แผนที่อสังหาริมทรัพย์ภูเก็ต")}
       />

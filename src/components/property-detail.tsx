@@ -189,7 +189,7 @@ export function PropertyDetail({
             </button>
           </div>
         </div>
-        <h2>{p.title[locale]}</h2>
+        {compact ? <h2>{p.title[locale]}</h2> : <h1>{p.title[locale]}</h1>}
         <p className="detail-location">
           <MapPin size={17} />
           {p.zone}, {p.province}, {tr("Thailand", "ประเทศไทย")}
