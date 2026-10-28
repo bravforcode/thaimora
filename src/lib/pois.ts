@@ -150,8 +150,9 @@ export function decodeLocalContent(body: unknown) {
       })),
   };
 }
+const contentApiBase = process.env.NEXT_PUBLIC_API_URL || "https://hpjmttoxomdhxxsourih.supabase.co/functions/v1/api";
 export const localContentClient = createPublicContentClient(
-  process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")}/v1/content` : undefined,
+  contentApiBase ? `${contentApiBase.replace(/\/$/, "")}/v1/content` : undefined,
   decodeLocalContent,
 );
 export async function localContent() {

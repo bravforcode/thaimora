@@ -6,11 +6,11 @@ const legalSchema = z.object({
   terms: z.object({ en: z.string().min(100), th: z.string().min(100) }),
 });
 export function approvedLegal(kind: "privacy" | "terms") {
-  if (process.env.NEXT_PUBLIC_DATA_MODE !== "live") return undefined;
   const path = process.env.THAIMORA_LEGAL_PATH;
-  if (!path)
-    throw new Error(
-      "THAIMORA_LEGAL_PATH with client-approved bilingual legal copy is required.",
-    );
-  return legalSchema.parse(JSON.parse(fs.readFileSync(path, "utf8")))[kind];
+  if (!path || !fs.existsSync(path)) return undefined;
+  try {
+    return legalSchema.parse(JSON.parse(fs.readFileSync(path, "utf8")))[kind];
+  } catch {
+    return undefined;
+  }
 }

@@ -3,7 +3,10 @@ const sessionKey="thaimora-broker-session";
 const sessionSchema=z.object({accessToken:z.string().min(1),expiresAt:z.number().positive()});
 export type BrokerSession=z.infer<typeof sessionSchema>;
 const authResult=z.object({access_token:z.string().optional(),expires_in:z.number().positive().optional(),expires_at:z.number().positive().optional()});
-export function authConfigured() {return process.env.NEXT_PUBLIC_DATA_MODE==="live" && Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);}
+export function authConfigured() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://hpjmttoxomdhxxsourih.supabase.co";
+  return Boolean(url && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
 export function readBrokerSession():BrokerSession|null {
   if(typeof window==="undefined") return null;
   try {const result=sessionSchema.safeParse(JSON.parse(sessionStorage.getItem(sessionKey)||"null"));if(result.success && result.data.expiresAt>Date.now()+15000) return result.data;}catch{}
@@ -18,7 +21,8 @@ function saveSession(value:unknown):BrokerSession|null {
 }
 async function authRequest(path:string, body?:unknown, token?:string, method=body===undefined?"GET":"POST") {
   if(!authConfigured()) throw new Error("Account authentication is not configured.");
-  const response=await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/${path}`,{method,cache:"no-store",redirect:"error",referrerPolicy:"no-referrer",signal:AbortSignal.timeout(15000),headers:{"Content-Type":"application/json",apikey:process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,...(token?{Authorization:`Bearer ${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://hpjmttoxomdhxxsourih.supabase.co";
+  const response=await fetch(`${supabaseUrl}/auth/v1/${path}`,{method,cache:"no-store",redirect:"error",referrerPolicy:"no-referrer",signal:AbortSignal.timeout(15000),headers:{"Content-Type":"application/json",apikey:process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,...(token?{Authorization:`Bearer ${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
   const value:unknown=response.status===204?{}:await response.json();
   if(!response.ok) { const parsed=z.object({msg:z.string().optional(),message:z.string().optional(),error_description:z.string().optional()}).safeParse(value);throw new Error(parsed.success?parsed.data.msg||parsed.data.message||parsed.data.error_description||"Authentication failed.":"Authentication failed.");}
   return value;

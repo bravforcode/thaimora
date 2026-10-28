@@ -166,15 +166,10 @@ export function Explorer({
         );
     } catch {}
     setComparisonLoaded(true);
-    if (!liveMode) {
-      try {
-        const local = localStorage.getItem("thaimora-properties");
-        if (local) setAll(JSON.parse(local));
-      } catch {}
-    } else {
-      setAll([]);
-      setSelectedId(null);
-    }
+    try {
+      const local = localStorage.getItem("thaimora-properties");
+      if (local) setAll(JSON.parse(local));
+    } catch {}
   }, []);
   useEffect(() => {
     if (comparisonLoaded)
@@ -206,7 +201,9 @@ export function Explorer({
           polygon,
           center: scopeCenter,
         })
-          .then(setAll)
+          .then((res) => {
+            if (res && res.length > 0) setAll(res);
+          })
           .catch((e) => {
             if (e.name !== "AbortError") setError(e.message);
           })

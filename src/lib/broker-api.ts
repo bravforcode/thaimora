@@ -46,7 +46,7 @@ export class BrokerApiError extends Error {
   constructor(public status:number, public code:string, message:string) {super(message);}
 }
 function brokerBase():string {
-  const base=process.env.NEXT_PUBLIC_API_URL;
+  const base=process.env.NEXT_PUBLIC_API_URL || "https://hpjmttoxomdhxxsourih.supabase.co/functions/v1/api";
   if(process.env.NEXT_PUBLIC_DATA_MODE!=="live" || !base) throw new BrokerApiError(503,"configuration_pending","Account services are not connected yet.");
   return base;
 }

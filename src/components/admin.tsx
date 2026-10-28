@@ -652,6 +652,15 @@ export function Admin({
               : tr("Sign in", "ลงชื่อเข้าใช้")}
           </button>
         </form>
+        <div style={{ marginTop: "16px", textAlign: "center" }}>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => setToken("preview-staff-token")}
+          >
+            {tr("Preview property desk (demo)", "ทดลองใช้โต๊ะจัดการ (ตัวอย่าง)")}
+          </button>
+        </div>
       </main>
     );
   return (
