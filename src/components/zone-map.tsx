@@ -6,7 +6,7 @@ import {
   type StyleSpecification,
 } from "maplibre-gl";
 import type { HomeListing } from "@/lib/listings";
-import { phuketCenter, zoneById, zoneLabel, zones } from "@/lib/zones";
+import { phuketCenter, zoneAnchor, zoneById, zoneLabel, zones } from "@/lib/zones";
 import { useSettings } from "./context";
 
 type Props = {
@@ -112,6 +112,7 @@ export function ZoneMap({
         minZoom: 9,
         maxZoom: 16,
         attributionControl: false,
+        cooperativeGestures: true,
       });
     } catch {
       setError(
@@ -247,7 +248,8 @@ export function ZoneMap({
         badge.textContent = `${n} ${locale === "th" ? "รายการ" : "listings"}`;
         el.append(name, badge);
         el.onclick = () => latest.current.onZone(z.id);
-        add(el, z.center[0], z.center[1]);
+        const [anchorLng, anchorLat] = zoneAnchor(z.id);
+        add(el, anchorLng, anchorLat);
       }
     } else {
       for (const l of listings) {

@@ -18,8 +18,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
   gap: 16px;
-  height: calc(100vh - 230px);
-  min-height: 560px;
+  height: min(calc(100dvh - 160px), 680px);
 }
 .home-map {
   position: relative;
@@ -629,7 +628,7 @@
     min-height: 0;
   }
   .home-map {
-    height: 62vh;
+    height: 420px;
     min-height: 420px;
   }
   .home-panel {

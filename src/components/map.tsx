@@ -52,6 +52,7 @@ export function PropertyMap({
     map = useRef<LibreMap | null>(null),
     props = useRef({ properties, selectedId, onSelect, onMove, onPolygon }),
     markers = useRef<maplibregl.Marker[]>([]),
+    plotMarkers = useRef<maplibregl.Marker[]>([]),
     drawingRef = useRef(false),
     pointsRef = useRef<Point[]>([]),
     [ready, setReady] = useState(false),
@@ -94,6 +95,7 @@ export function PropertyMap({
         maxZoom: 18,
         minZoom: 4,
         attributionControl: false,
+        cooperativeGestures: true,
       });
       map.current = m;
     } catch {
@@ -249,6 +251,8 @@ export function PropertyMap({
     });
     return () => {
       markers.current.forEach((marker) => marker.remove());
+      plotMarkers.current.forEach((marker) => marker.remove());
+      plotMarkers.current = [];
       m.remove();
       map.current = null;
     };
@@ -329,6 +333,143 @@ export function PropertyMap({
       });
     }
   }, [poi, ready, pois, locale]);
+  useEffect(() => {
+    if (!ready || !map.current) return;
+    const m = map.current;
+
+    function clearPlots() {
+      plotMarkers.current.forEach((marker) => marker.remove());
+      plotMarkers.current = [];
+      try {
+        if (m.getLayer("plots-line")) m.removeLayer("plots-line");
+        if (m.getLayer("plots-fill")) m.removeLayer("plots-fill");
+        if (m.getSource("plots")) m.removeSource("plots");
+      } catch {
+        // Map or style may be disposing
+      }
+    }
+
+    clearPlots();
+
+    if (!selectedId) return;
+    const selectedProp = properties.find((p) => p.id === selectedId);
+    const plots = selectedProp?.plots;
+    if (!plots || plots.length === 0) return;
+
+    m.addSource("plots", {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: plots.map((plot) => {
+          const ring: Point[] = [...plot.polygon];
+          if (
+            ring.length > 0 &&
+            (ring[0][0] !== ring[ring.length - 1][0] ||
+              ring[0][1] !== ring[ring.length - 1][1])
+          ) {
+            ring.push(ring[0]);
+          }
+          return {
+            type: "Feature" as const,
+            properties: {
+              no: plot.no,
+              status: plot.status,
+            },
+            geometry: {
+              type: "Polygon" as const,
+              coordinates: [ring],
+            },
+          };
+        }),
+      },
+    });
+
+    m.addLayer({
+      id: "plots-fill",
+      type: "fill",
+      source: "plots",
+      paint: {
+        "fill-color": [
+          "case",
+          ["==", ["get", "status"], "sold"],
+          "#B8961A",
+          "#F5C518",
+        ],
+        "fill-opacity": [
+          "case",
+          ["==", ["get", "status"], "sold"],
+          0.45,
+          0.55,
+        ],
+      },
+    });
+
+    m.addLayer({
+      id: "plots-line",
+      type: "line",
+      source: "plots",
+      paint: {
+        "line-color": "#3B2F00",
+        "line-width": 1.5,
+      },
+    });
+
+    for (const plot of plots) {
+      const points =
+        plot.polygon.length > 3 &&
+        plot.polygon[0][0] === plot.polygon[plot.polygon.length - 1][0] &&
+        plot.polygon[0][1] === plot.polygon[plot.polygon.length - 1][1]
+          ? plot.polygon.slice(0, -1)
+          : plot.polygon;
+      const avgLng = points.reduce((sum, p) => sum + p[0], 0) / points.length;
+      const avgLat = points.reduce((sum, p) => sum + p[1], 0) / points.length;
+      const centroid: Point = [avgLng, avgLat];
+
+      const badgeNode = document.createElement("div");
+      badgeNode.className = "plot-badge";
+      badgeNode.textContent = String(plot.no);
+      const badgeMarker = new maplibregl.Marker({
+        element: badgeNode,
+        offset: [0, -10],
+      })
+        .setLngLat(centroid)
+        .addTo(m);
+      plotMarkers.current.push(badgeMarker);
+
+      const tagNode = document.createElement("div");
+      tagNode.className =
+        plot.status === "sold" ? "plot-tag is-sold" : "plot-tag";
+      const baseArea = tr(plot.areaLabel.en, plot.areaLabel.th);
+      tagNode.textContent =
+        plot.status === "sold"
+          ? `${baseArea}${tr(" (SOLD)", " (ขายแล้ว)")}`
+          : baseArea;
+      const tagMarker = new maplibregl.Marker({
+        element: tagNode,
+        offset: [0, 14],
+      })
+        .setLngLat(centroid)
+        .addTo(m);
+      plotMarkers.current.push(tagMarker);
+    }
+
+    const onZoom = () => {
+      m.getContainer()?.classList.toggle(
+        "plot-tags-hidden",
+        m.getZoom() < 16,
+      );
+    };
+    m.on("zoom", onZoom);
+    onZoom();
+
+    return () => {
+      m.off("zoom", onZoom);
+      m.getContainer()?.classList.remove(
+        "plot-tags-hidden",
+      );
+      clearPlots();
+    };
+  }, [selectedId, properties, locale, ready, tr]);
   function renderArea(points: Point[]) {
     (map.current?.getSource("polygon") as GeoJSONSource | undefined)?.setData({
       type: "FeatureCollection",
