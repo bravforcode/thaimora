@@ -3,6 +3,20 @@ export const localizedSchema = z.object({
   en: z.string().min(1),
   th: z.string().min(1),
 });
+export const plotSchema = z.object({
+  no: z.number().int().positive(),
+  status: z.enum(["available", "sold"]),
+  areaLabel: localizedSchema,
+  polygon: z
+    .array(
+      z.tuple([
+        z.number().min(-180).max(180),
+        z.number().min(-90).max(90),
+      ]),
+    )
+    .min(3),
+});
+export type PropertyPlot = z.infer<typeof plotSchema>;
 export const propertySchema = z.object({
   id: z.uuid(),
   slug: z.string().regex(/^[a-z0-9-]+$/),
@@ -64,6 +78,7 @@ export const propertySchema = z.object({
     .nullish()
     .transform((v) => v ?? undefined)
     .optional(),
+  plots: z.array(plotSchema).optional(),
 });
 export function savedPropertyIds(value: unknown): string[] {
   return Array.isArray(value)
@@ -348,7 +363,7 @@ export const currencies = [
   "JPY",
 ] as const;
 export function priceLabel(
-  p: PublicProperty,
+  p: Pick<PublicProperty, "priceTHB">,
   locale: Locale,
   currency: string = "THB",
   rates: Record<string, number> = { THB: 1 },

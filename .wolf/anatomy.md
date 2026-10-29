@@ -247,6 +247,7 @@
 - `admin.tsx` — AdminMap — renders chart — uses useState, useEffect (~17440 tok)
 - `broker-admin.tsx` — membersSchema — renders form, table — uses useState, useEffect (~1586 tok)
 - `broker.tsx` — destinationSchema — renders form — uses useState, useRef, useCallback, useEffect (~9448 tok)
+- `broker-demo.tsx` — BrokerDemoDesk — renders sample listings and device-local inquiries; preview only — uses useState, useEffect (~1800 tok)
 - `content-automation.tsx` — ContentAutomation — renders table — uses useState, useEffect (~1407 tok)
 - `content-freshness.tsx` — ContentFreshness (~509 tok)
 - `content-page.tsx` — ContentPage — renders map — uses useState, useEffect (~3453 tok)
@@ -277,7 +278,9 @@
 - `preview.ts` — Exports previewFX, demoPlaces, demoPOIs (~398 tok)
 - `property.ts` — API routes: GET (1 endpoints) (~3113 tok)
 - `public-content-client.ts` — A tab-local cache for public editorial content only. Never use for offers or PII. (~2121 tok)
+- `published.ts` — Zod schema and converter for agent-posted demo listings in localStorage; usePublished hook merges them into the home map (~900 tok)
 - `snapshot.ts` — Exports snapshots (~187 tok)
+- `store.ts` — readStore / writeStore: guarded localStorage helpers for demo state (try/catch on every access) (~150 tok)
 - `source-health.ts` — Upstream freshness is independent of a successful read of our public API. (~254 tok)
 - `use-public-content.ts` — Expire events locally at their exclusive end time, including after a tab resumes. (~366 tok)
 

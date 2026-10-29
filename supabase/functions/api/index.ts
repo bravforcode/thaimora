@@ -1,6 +1,6 @@
 import { ApiError,publicProperty,parsePropertyQuery,text,sha256,importRows,parseCsv,safeCsvCell,coordinate } from "../_shared/domain.ts";
 import { serve,client,env,body,json,checkDb,admin,rate,fetchJson,fx } from "../_shared/runtime.ts";
-import {auditMutation,reportRange} from "../_shared/admin-input.ts";
+import {auditMutation,contentWriteFields,reportRange} from "../_shared/admin-input.ts";
 import {publicContentResponse} from "../_shared/public-content.ts";
 import {apiParts} from "../_shared/api-path.ts";
 import {brokerRoute,brokerAdminRoute,type BrokerDb} from "../_shared/broker-api.ts";
@@ -74,14 +74,15 @@ serve(async req=>{
     if(kind==="inquiries"&&req.method==="PATCH"&&id){const raw=await body(req);if(!["new","contacted","closed"].includes(raw.status))throw new ApiError(422,"invalid_status");return json({item:checkDb(await db.from("inquiries").update({status:raw.status}).eq("id",id).select().single())});}
     if(["pois","events","zones","settings"].includes(kind)&&["POST","PATCH","DELETE"].includes(req.method)){
       if(req.method==="DELETE"){checkDb(await db.from(tables[kind]).delete().eq("id",id));await auditMutation(db,userId,tables[kind],id,"DELETE",[]);return json({deleted:true});}
-      const raw=await body(req);delete raw.source_quarantine;
-      if(["pois","events"].includes(kind))raw.admin_override=true;
-      const item=checkDb(id?await db.from(tables[kind]).update(raw).eq("id",id).select().single():await db.from(tables[kind]).insert(raw).select().single());
-      await auditMutation(db,userId,tables[kind],String(item.id),id?"UPDATE":"INSERT",Object.keys(raw));return json({item});
+      const fields=contentWriteFields(kind,await body(req),id);
+      if(["pois","events"].includes(kind))fields.admin_override=true;
+      const item=checkDb(id?await db.from(tables[kind]).update(fields).eq("id",id).select().single():await db.from(tables[kind]).insert(fields).select().single());
+      await auditMutation(db,userId,tables[kind],String(item.id),id?"UPDATE":"INSERT",Object.keys(fields));return json({item});
     }
     throw new ApiError(405,"method_not_allowed");
   }
   if(req.method==="GET"&&parts[0]==="properties"){
+    await rate(req,db,"public-properties",120);
     if(!parts[1]){
       const filters=parsePropertyQuery(url),limit=filters.limit;
       const rows=checkDb(await db.rpc("search_properties_v2",{p_filters:{...filters,limit:limit+1}})),page=rows.slice(0,limit),last=page.at(-1);
@@ -94,14 +95,15 @@ serve(async req=>{
     return json(publicProperty(property));
   }
   if(req.method==="GET"&&parts[0]==="places"&&parts[1]==="autocomplete"){
+    await rate(req,db,"public-autocomplete",30);
     const q=text(url.searchParams.get("q"),2,100),locale=url.searchParams.get("locale")??"en";
     if(!["en","th"].includes(locale))throw new ApiError(422,"invalid_locale");
     if(!env("GEOAPIFY_API_KEY"))throw new ApiError(503,"autocomplete_not_configured");
     const data=await fetchJson("https://api.geoapify.com/v1/geocode/autocomplete?text="+encodeURIComponent(q)+"&lang="+locale+"&filter=countrycode:th&limit=8&apiKey="+env("GEOAPIFY_API_KEY"));
     return json({items:data.features.map((x:any)=>({id:x.properties.place_id,name:x.properties.formatted,location:{lat:x.properties.lat,lng:x.properties.lon}})),attribution:"Powered by Geoapify | © OpenStreetMap contributors"});
   }
-  if(req.method==="GET"&&parts[0]==="content")return publicContentResponse(req,db);
-  if(req.method==="GET"&&parts[0]==="fx")return json(await fx(db,url));
+  if(req.method==="GET"&&parts[0]==="content"){await rate(req,db,"public-content",60);return publicContentResponse(req,db);}
+  if(req.method==="GET"&&parts[0]==="fx"){await rate(req,db,"public-fx",30);return json(await fx(db,url));}
   if(req.method==="POST"&&parts[0]==="analytics"&&parts[1]==="events"){
     const raw=await body(req);
     if(raw.consented!==true||!["view","contact_click"].includes(raw.kind))throw new ApiError(422,"analytics_consent_required");
@@ -123,8 +125,8 @@ serve(async req=>{
     if(!check.success||check.action!=="inquiry"||!env("TURNSTILE_HOSTNAMES").split(",").includes(check.hostname))throw new ApiError(422,"turnstile_failed");
     const payload=await sha256(JSON.stringify({name,email,country,message,propertyId,consentToShare:true})),result=await db.rpc("submit_contact_inquiry",{p_property:propertyId,p_name:name,p_email:email,p_country:country,p_message:message,p_key:await sha256(key),p_payload:payload,p_share:true});
     if(result.error){if(result.error.message.includes("Idempotency conflict"))throw new ApiError(409,"idempotency_conflict");if(result.error.message.includes("Property unavailable"))throw new ApiError(422,"property_unavailable");throw new ApiError(503,"inquiry_not_saved");}
-    if(env("EMAIL_WORKER_SECRET"))await fetch(env("SUPABASE_URL")+"/functions/v1/deliver-email",{method:"POST",headers:{Authorization:"Bearer "+env("EMAIL_WORKER_SECRET")},signal:AbortSignal.timeout(2000)}).catch(()=>undefined);
-    if(env("CONTACT_DELIVERY_ENABLED")==="true"&&env("CONTACT_WORKER_SECRET"))await fetch(env("SUPABASE_URL")+"/functions/v1/deliver-contact",{method:"POST",headers:{Authorization:"Bearer "+env("CONTACT_WORKER_SECRET")},signal:AbortSignal.timeout(2000)}).catch(()=>undefined);
+    if(env("EMAIL_WORKER_SECRET"))await fetch(env("SUPABASE_URL")+"/functions/v1/deliver-email",{method:"POST",headers:{Authorization:"Bearer "+env("EMAIL_WORKER_SECRET")},signal:AbortSignal.timeout(2000)}).then(r=>{if(!r.ok)console.error("deliver-email dispatch failed",r.status)},e=>console.error("deliver-email dispatch failed",e.name));
+    if(env("CONTACT_DELIVERY_ENABLED")==="true"&&env("CONTACT_WORKER_SECRET"))await fetch(env("SUPABASE_URL")+"/functions/v1/deliver-contact",{method:"POST",headers:{Authorization:"Bearer "+env("CONTACT_WORKER_SECRET")},signal:AbortSignal.timeout(2000)}).then(r=>{if(!r.ok)console.error("deliver-contact dispatch failed",r.status)},e=>console.error("deliver-contact dispatch failed",e.name));
     return json({id:result.data.id,duplicate:result.data.duplicate,emailStatus:result.data.emailStatus,contactStatus:result.data.contactStatus},result.data.duplicate?200:202);
   }
   throw new ApiError(404,"not_found");

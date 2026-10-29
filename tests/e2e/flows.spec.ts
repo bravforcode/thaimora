@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/explore/");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
@@ -39,7 +39,7 @@ test("search, filtering, saved properties and comparison share the same data", a
 test("property deep link and preview inquiry are honest and persist locally", async ({
   page,
 }) => {
-  await page.goto("/property/villa-bang-tao-1/");
+  await page.goto("/property/villa-mai-khao-1/");
   await page.getByRole("button", { name: "Inquire about this home" }).click();
   await page.getByLabel("Full name").fill("Jane Preview");
   await page.getByLabel("Email", { exact: true }).fill("jane@example.com");

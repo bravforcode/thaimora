@@ -412,6 +412,138 @@
       "status": "fixed",
       "occurrences": 1,
       "last_seen": "2026-10-04T08:34:16Z"
+    },
+    {
+      "id": "TH-AUDIT-DEPS-NEXT-VITE",
+      "error": "Critical next 16.3.8 advisory GHSA-2464-fhr4-w9xw plus high vite and fast-glob advisories in the build toolchain",
+      "file": "package.json; package-lock.json",
+      "root_cause": "next, eslint-config-next and the transitive vite and fast-glob versions were vulnerable",
+      "fix": "next and eslint-config-next to ^16.4.2; overrides fast-glob 3.3.3 and vite 8.3.4 (vite 8.3.5 needs rolldown 1.2.14 and broke the native binding). Lockfile regenerated with npx --yes npm@latest install because npm 11.6.0 drops the @rolldown/binding-* optional entries. Residual: braces GHSA-vfj7-8cjw-p6xm has no patched release and affects dev and lint tooling only",
+      "tags": ["dependencies", "security", "lockfile"],
+      "evidence": "npm audit --omit=dev 0 vulnerabilities; typecheck, lint, test:unit 80/80, test:backend 39/39, build exit 0",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-CONTENT-MASS-ASSIGN",
+      "error": "Admin content writes passed the raw request body to the database, so any key could set admin_override or fetched_at, or rename a row on PATCH through its body id",
+      "file": "supabase/functions/_shared/admin-input.ts; supabase/functions/api/index.ts; tests/integration/review-contracts.test.ts",
+      "root_cause": "Only source_quarantine was stripped; every other body key was written",
+      "fix": "contentWriteFields keeps a per-table editorial allowlist and drops id on update; admin_override is still forced for pois and events. Red then green test added",
+      "tags": ["authorization", "mass-assignment", "admin"],
+      "evidence": "review-contracts 4/4; test:backend 39/39",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-RATE-LIMIT-IP",
+      "error": "Rate-limit key came from cf-connecting-ip or the first X-Forwarded-For hop, both client-controlled",
+      "file": "supabase/functions/_shared/http.ts; supabase/functions/_shared/runtime.ts; tests/integration/review-contracts.test.ts",
+      "root_cause": "A client can send any spoofed header value and get a fresh bucket on every request",
+      "fix": "clientIp uses the last X-Forwarded-For hop, which the gateway appends, and ignores cf-connecting-ip. Residual: if the hosted edge sits behind another proxy that appends its own address, all clients share one bucket; verify on the live project",
+      "tags": ["rate-limit", "spoofing", "edge-function"],
+      "evidence": "clientIp tests red then green; deno check runtime.ts exit 0",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-STATIC-HEADERS",
+      "error": "Static export served with no CSP, framing, MIME, referrer, HSTS or permissions headers",
+      "file": "vercel.json; tests/integration/static-headers.test.ts",
+      "root_cause": "vercel.json had no headers block",
+      "fix": "Catch-all headers rule: CSP without unsafe-eval, X-Frame-Options DENY, nosniff, strict-origin-when-cross-origin, HSTS, Permissions-Policy. Test red then green. Residual: CSP is not verified in a browser; MapLibre workers, Turnstile and GA4 need a Vercel preview check",
+      "tags": ["csp", "headers", "hosting"],
+      "evidence": "test:hosting 4/4; test:deployment 6/6",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-ACTION-PINS",
+      "error": "GitHub Actions referenced by mutable major tags",
+      "file": ".github/workflows/backup.yml; catalog.yml; content.yml; deploy-vercel.yml; export.yml; verify.yml",
+      "root_cause": "uses: lines pinned to actions/checkout@v4, setup-node@v4 and upload-artifact@v4, which can move",
+      "fix": "Pinned checkout v4.4.0, setup-node v4.4.0 and upload-artifact v4.6.2 to commit SHAs with version comments; all 13 uses lines pinned",
+      "tags": ["supply-chain", "github-actions"],
+      "evidence": "grep of uses: lines finds no tag-only pin",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-AUDIT-BACKUP-RETENTION",
+      "error": "Encrypted backup artifacts kept only 7 days",
+      "file": ".github/workflows/backup.yml",
+      "root_cause": "upload-artifact retention-days was 7",
+      "fix": "retention-days raised to 30. Off-site copy is still blocked on the user's storage credentials",
+      "tags": ["backup", "retention"],
+      "evidence": "backup.yml line 45 reads retention-days: 30",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-DEMO-BROKER-DEAD-END",
+      "error": "Broker dashboard in preview showed Account services are not connected yet. as a red error, with only a disabled create-account form",
+      "file": "src/components/broker.tsx; src/components/broker-demo.tsx; src/app/broker.css",
+      "root_cause": "Non-live brokerApi throws configuration_pending on mount and the component had no preview path, so the dashboard never rendered with demo data",
+      "fix": "Non-live mode skips account calls and renders a labeled demo dashboard with sample listings and inquiries saved on this device. No account, payment, publication or email. Live behaviour unchanged",
+      "tags": ["broker", "demo", "preview"],
+      "evidence": "tests/e2e/broker-demo.spec.ts passes on chromium and mobile; browser check at 375px shows no horizontal overflow",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "TH-INQUIRY-DONE-WRAP",
+      "error": "Done button in the preview inquiry confirmation wrapped to two lines at 1024px",
+      "file": "src/components/inquiry.tsx; src/app/globals.css",
+      "root_cause": "The result notice is a flex row with the text and Done button side by side, so the button label could break when the text took the free width",
+      "fix": "Result text is wrapped in a span and .inquiry-result .button keeps the label on one line (flex-shrink 0, nowrap)",
+      "tags": ["inquiry", "layout", "1024px"],
+      "evidence": "tests/e2e/inquiry-result.spec.ts fails at 63px tall without the rule and passes with it",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-23T00:00:00Z"
+    },
+    {
+      "id": "PHUKET-HEADER-OVERFLOW",
+      "error": "Home and explorer e2e failed on mobile: cookie Reject button covered by map canvas; scrollWidth 495 at 375px",
+      "file": "src/components/header.tsx; src/app/phuket.css",
+      "root_cause": "New header sign-in link made .header-actions 303px wide; layout viewport widened, so fixed cookie banner and map shifted off-target",
+      "fix": "Hide .header-signin at max-width 640px; home CTA card links to /dashboard/",
+      "tags": ["header", "mobile", "e2e"],
+      "evidence": "375px measurement: scrollWidth 495 before, 375 after on /, /explore/, /th/, /th/explore/; full e2e 30/30 pass",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-26T00:00:00Z"
+    },
+    {
+      "id": "TH-CI-PG-CRON-DB",
+      "error": "verify CI failed in scripts/test-database.sh: Docker pull of public.ecr.aws/supabase/postgres rate-limited on both runs; with a local pull, migration 202610040001_content_automation.sql failed: can only create extension in database postgres",
+      "file": "scripts/test-database.sh",
+      "root_cause": "pg_cron installs only in cron.database_name (default postgres) but migrations run in site_test. Passing postgres -c cron.database_name=site_test as container args skipped the image role setup, so create extension postgis then failed with permission denied",
+      "fix": "Start with the default command, create site_test, then ALTER SYSTEM cron.database_name as supabase_admin (PGPASSWORD) and restart; local run exit 0 through all migrations and managed-grants. Residual: the CI pull rate limit is external; scripts/test-database.ps1 has the same pg_cron gap and is unchanged",
+      "tags": ["ci", "postgres", "pg_cron", "test-harness"],
+      "evidence": "gh runs 40462997252 and 40463907936 verify step; local bash scripts/test-database.sh exit 0",
+      "status": "fixed",
+      "occurrences": 1,
+      "last_seen": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": "TH-CI-DOCKER-PULL-RATE-LIMIT",
+      "error": "verify run 40468254761 failed at docker pull of public.ecr.aws/supabase/postgres:15.8.1.085: toomanyrequests: Data limit exceeded; the same head e6e36b6 passed in run 40468253363",
+      "file": "scripts/test-database.sh; .github/workflows/verify.yml",
+      "root_cause": "Anonymous ECR Public pulls from shared GitHub runner IPs are rate limited and intermittent. The pull ran once with no retry",
+      "fix": "pull_image retries 4 times with backoff in scripts/test-database.sh. verify.yml restores the image from actions/cache (v6.1.0, key on the pinned tag); on a miss it pulls with retry and saves the image tar. Branches checked with a stub docker: miss 3 pulls then save, hit load only, always-fail exit 1 with no tar",
+      "tags": ["ci", "docker", "rate-limit", "cache"],
+      "evidence": "gh run 40468254761 log; gh run 40468253363 pass; stub docker runs in scratchpad. Not verified: GitHub cache save/restore timing and size, and a full local run of scripts/test-database.sh (Docker Desktop daemon returned HTTP 500 on _ping at that time)",
+      "status": "mitigated",
+      "occurrences": 1,
+      "last_seen": "2026-10-27T00:00:00Z"
     }
   ]
 }

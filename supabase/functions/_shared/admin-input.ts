@@ -16,6 +16,17 @@ export function homeSettings(value:any,eligibleIds:string[]):any{
 export function licensedContent(row:any):boolean{
  return row.demo===false&&row.rights_status==='approved'&&typeof row.source==='string'&&!!row.source.trim()&&typeof row.license==='string'&&!!row.license.trim()&&typeof row.source_url==='string'&&/^https:\/\/\S+$/.test(row.source_url);
 }
+const contentFields:Record<string,string[]>={
+ zones:['id','slug','name','description','location','geometry','image'],
+ pois:['id','name','description','category','location','zone_id','image','website','source','source_url','license','rights_status','rights_evidence','published','demo'],
+ events:['id','name','description','starts_at','ends_at','all_day','location','zone_id','image','source','source_url','license','rights_status','rights_evidence','published','demo'],
+ settings:['id','value'],
+};
+export function contentWriteFields(kind:string,raw:any,id?:string):any{
+ const fields=Object.fromEntries(Object.entries(raw).filter(([k])=>contentFields[kind].includes(k)));
+ if(id)delete fields.id;
+ return fields;
+}
 export async function auditMutation(db:any,actor:string,table:string,id:string,operation:string,fields:string[]):Promise<void>{
  const result=await db.rpc('record_admin_audit',{p_actor:actor,p_table:text(table,1,80),p_id:text(id,1,200),p_operation:operation,p_fields:fields});
  if(result.error)throw new ApiError(503,'audit_not_recorded');

@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "src/app/globals.css"
+        ],
+        "createdAt": "2026-10-26T07:29:33.681Z",
+        "reason": "Claude triage: L847 is .map-price:after, a zero-size border triangle used as the pointer tail of the pill price marker (intentional shape, not a rounded card). globals.css untouched this session (git status clean, last change 026656e)."
+      }
+    ]
+  }
+}

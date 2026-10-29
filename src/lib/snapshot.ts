@@ -1,5 +1,6 @@
 import fs from "node:fs";
-import { demoProperties } from "./demo";
+import { demoListings, demoProperties } from "./demo";
+import { type HomeListing, withDefaultChannel } from "./listings";
 import { propertySchema, publicSnapshot } from "./property";
 export function snapshots() {
   if (process.env.NEXT_PUBLIC_DATA_MODE !== "live") return demoProperties;
@@ -11,4 +12,9 @@ export function snapshots() {
   if (!Array.isArray(rows) || !rows.length)
     throw new Error("Public snapshot is empty.");
   return rows.map((p) => publicSnapshot(propertySchema.parse(p)));
+}
+
+export function homeListings(): HomeListing[] {
+  if (process.env.NEXT_PUBLIC_DATA_MODE !== "live") return demoListings;
+  return withDefaultChannel(snapshots());
 }

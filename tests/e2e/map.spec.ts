@@ -4,7 +4,7 @@ test("2,000 explicitly synthetic map points cluster into a bounded visible marke
 }) => {
   const failures: string[] = [];
   page.on("pageerror", (error) => failures.push(error.message));
-  await page.goto("/?perf=2000");
+  await page.goto("/explore/?perf=2000");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
@@ -27,12 +27,13 @@ test("2,000 explicitly synthetic map points cluster into a bounded visible marke
 test("Thai URLs render Thai content and language preference survives a return home", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/explore/");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
   await page.getByLabel("Language", { exact: true }).selectOption("th");
-  await expect(page).toHaveURL(/\/th\//);
+  // Dev server compiles /th/explore/ on first visit, which can pass the 5s default.
+  await expect(page).toHaveURL(/\/th\//, { timeout: 30000 });
   await expect(
     page.getByRole("heading", { name: "ค้นหาที่ที่ใช่ในประเทศไทย" }),
   ).toBeVisible();

@@ -20,28 +20,31 @@ export function Header() {
         {tr("Skip to content", "ข้ามไปยังเนื้อหา")}
       </a>
       <header className="header">
-        <Link className="brand" href="/" aria-label="Thaimora home">
+        <Link className="brand" href="/" aria-label="PhuketLens home">
           <span className="brand-mark">
             <MapPin weight="fill" size={24} />
           </span>
-          thaimora<span className="brand-dot">.</span>
+          PhuketLens<span className="brand-dot">.</span>
         </Link>
         <nav
           className="main-nav"
           aria-label={tr("Main navigation", "เมนูหลัก")}
         >
-          <Link href="/?transaction=sale">{tr("Buy", "ซื้อ")}</Link>
-          <Link href="/?transaction=rent">{tr("Rent", "เช่า")}</Link>
-        <Link href="/guide/">
+          <Link href="/explore/?transaction=sale">{tr("Buy", "ซื้อ")}</Link>
+          <Link href="/explore/?transaction=rent">{tr("Rent", "เช่า")}</Link>
+          <Link href="/guide/">
             {tr("Explore Phuket", "สำรวจภูเก็ต")}
             <ArrowUpRight size={13} />
-        </Link>
-        <Link href="/broker/">{tr("For agents", "สำหรับนายหน้า")}</Link>
+          </Link>
+          <Link href="/broker/">{tr("For agents", "สำหรับนายหน้า")}</Link>
         </nav>
         <div className="header-actions">
+          <Link className="header-signin" href="/dashboard/">
+            {tr("Owner / agent sign-in", "เข้าสู่ระบบเจ้าของ / นายหน้า")}
+          </Link>
           <Link
             className="saved-link"
-            href="/?favorites=1"
+            href="/explore/?favorites=1"
             aria-label={tr("Saved properties", "รายการโปรด")}
           >
             <Heart size={20} />
@@ -105,7 +108,7 @@ export function Footer() {
   const { tr } = useSettings();
   return (
     <footer className="footer">
-      <span>© 2026 Thaimora</span>
+      <span>© 2026 PhuketLens</span>
       <Link href="/privacy/">{tr("Privacy", "ความเป็นส่วนตัว")}</Link>
       <Link href="/terms/">
         {tr("Terms & property disclaimer", "ข้อกำหนดและข้อจำกัด")}

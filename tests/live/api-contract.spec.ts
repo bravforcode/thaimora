@@ -58,7 +58,7 @@ test("live discovery follows every cursor and commits geometry without map-searc
     if (new URL(r.url()).pathname.endsWith("/v1/properties"))
       urls.push(r.url());
   });
-  await page.goto("/");
+  await page.goto("/explore/");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
@@ -169,7 +169,7 @@ test("actual geocoder fields create usable bilingual location suggestions", asyn
       },
     }),
   );
-  await page.goto("/");
+  await page.goto("/explore/");
   await page
     .getByRole("button", { name: "Reject optional", exact: true })
     .click();
