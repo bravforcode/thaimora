@@ -5,7 +5,7 @@ import {
   toHomeListing,
   type PublishedListing,
 } from "../../src/lib/published";
-import { countByZone } from "../../src/lib/zones";
+import { countByZone, zoneAnchor } from "../../src/lib/zones";
 
 const row: PublishedListing = {
   id: "pub-1",
@@ -43,8 +43,9 @@ describe("published agent listings", () => {
       agency: "",
     });
     expect(listing.location.accuracy).toBe("approximate");
-    expect(Math.abs(listing.location.lat - 7.896)).toBeLessThan(0.01);
-    expect(Math.abs(listing.location.lng - 98.296)).toBeLessThan(0.01);
+    const [anchorLng, anchorLat] = zoneAnchor("patong");
+    expect(Math.abs(listing.location.lat - anchorLat)).toBeLessThan(0.01);
+    expect(Math.abs(listing.location.lng - anchorLng)).toBeLessThan(0.01);
   });
 
   it("spreads pins in one zone so they do not stack", () => {

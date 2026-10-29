@@ -31,6 +31,22 @@ export function zoneById(id: string | null | undefined) {
   return zones.find((z) => z.id === id);
 }
 
+// Anchors are interior points of public/data/phuket-zones.geojson polygons.
+const zoneAnchors: Record<string, [number, number]> = {
+  "mai-khao": [98.3213, 8.1364],
+  "bang-tao": [98.3066, 8.0029],
+  "cherng-talay": [98.3024, 7.9752],
+  "patong": [98.305, 7.8862],
+  "karon": [98.3047, 7.8415],
+  "kata": [98.3077, 7.8193],
+  "chalong": [98.3367, 7.8444],
+  "rawai": [98.3168, 7.7881],
+};
+
+export function zoneAnchor(id: string): [number, number] {
+  return zoneAnchors[id] ?? zoneById(id)?.center ?? phuketCenter;
+}
+
 export function zoneIdFor(zoneName: string) {
   return zones.find((z) => z.en === zoneName)?.id;
 }

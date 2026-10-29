@@ -3,7 +3,7 @@ import { z } from "zod";
 import { illustrativeImages } from "./demo";
 import { type HomeListing } from "./listings";
 import { readStore, writeStore } from "./store";
-import { phuketCenter, zoneById, zoneIdFor } from "./zones";
+import { zoneAnchor, zoneIdFor } from "./zones";
 
 export const PUBLISHED_KEY = "phuketlens.demo.published";
 
@@ -39,9 +39,9 @@ export function readPublished(raw: unknown): PublishedListing[] {
 
 // Pins in one zone sit on a small golden-angle spiral so they do not stack.
 export function toHomeListing(p: PublishedListing, index: number): HomeListing {
-  const [lng, lat] = zoneById(zoneIdFor(p.zone))?.center ?? phuketCenter;
+  const [lng, lat] = zoneAnchor(zoneIdFor(p.zone) ?? "");
   const angle = index * 2.39996;
-  const radius = 0.0015 * Math.sqrt(index + 1);
+  const radius = Math.min(0.0015 * Math.sqrt(index + 1), 0.006);
   return {
     id: p.id,
     slug: p.id,

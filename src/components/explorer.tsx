@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo, useRef, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import {
-  MagnifyingGlass,
   MapPin,
   SlidersHorizontal,
   ArrowDown,
@@ -14,7 +13,7 @@ import {
   Scales,
   ArrowCounterClockwise,
 } from "@phosphor-icons/react";
-import { demoPlaces, previewFX } from "@/lib/preview";
+import { previewFX } from "@/lib/preview";
 import {
   defaultFilters,
   filterProperties,
@@ -28,13 +27,7 @@ import {
   filtersToParams,
   validatePolygon,
 } from "@/lib/property";
-import {
-  api,
-  getProperties,
-  liveMode,
-  normalizePlace,
-  type Place,
-} from "@/lib/api";
+import { api, getProperties, liveMode } from "@/lib/api";
 import { useSettings } from "./context";
 import { PropertyCard } from "./property-card";
 import { PropertyDetail } from "./property-detail";
@@ -48,7 +41,6 @@ function QuerySync({
   setAll,
   setPerformance,
   initialProperties,
-  setQuery,
   setHydrated,
   setBounds,
   setPolygon,
@@ -57,7 +49,6 @@ function QuerySync({
   setAll: React.Dispatch<React.SetStateAction<PublicProperty[]>>;
   setPerformance: React.Dispatch<React.SetStateAction<boolean>>;
   initialProperties: PublicProperty[];
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
   setHydrated: React.Dispatch<React.SetStateAction<boolean>>;
   setBounds: React.Dispatch<React.SetStateAction<Bounds | undefined>>;
   setPolygon: React.Dispatch<React.SetStateAction<Point[]>>;
@@ -66,7 +57,6 @@ function QuerySync({
   useEffect(() => {
     const next = filtersFromParams(new URLSearchParams(params.toString()));
     setFilters((f) => (JSON.stringify(f) === JSON.stringify(next) ? f : next));
-    setQuery(next.q);
     const box = params.get("bbox")?.split(",").map(Number);
     setBounds((current) => {
       const value =
@@ -98,7 +88,6 @@ function QuerySync({
     setAll,
     setPerformance,
     initialProperties,
-    setQuery,
     setHydrated,
     setBounds,
     setPolygon,
@@ -122,18 +111,13 @@ export function Explorer({
     [mobileView, setMobileView] = useState("map"),
     [mobileDetail, setMobileDetail] = useState(false),
     [filtersOpen, setFiltersOpen] = useState(false),
-    [query, setQuery] = useState(""),
-    [suggestions, setSuggestions] = useState<Place[]>([]),
-    [focus, setFocus] = useState(false),
     [compare, setCompare] = useState<string[]>([]),
     [compareOpen, setCompareOpen] = useState(false),
     [bounds, setBounds] = useState<Bounds>(),
-    [pendingBounds, setPendingBounds] = useState<Bounds>(),
-    [center, setCenter] = useState<Point>(),
+    [center] = useState<Point>(),
     [sortCenter, setSortCenter] = useState<Point>([98.33, 7.94]),
     [scopeCenter, setScopeCenter] = useState<Point>([98.33, 7.94]),
     [polygon, setPolygon] = useState<Point[]>([]),
-    [dirty, setDirty] = useState(false),
     [poi, setPoi] = useState(false),
     [loading, setLoading] = useState(false),
     [error, setError] = useState(""),
@@ -141,13 +125,7 @@ export function Explorer({
       liveMode ? { date: "unavailable", rates: { THB: 1 } } : previewFX,
     );
   const cards = useRef<HTMLDivElement>(null),
-    placeRequest = useRef(0),
     compareDialog = useRef<HTMLDialogElement>(null);
-  const [placeStatus, setPlaceStatus] = useState<
-      "idle" | "loading" | "ready" | "empty" | "error"
-    >("idle"),
-    [placeError, setPlaceError] = useState(""),
-    [placeRetry, setPlaceRetry] = useState(0);
   useEffect(() => {
     try {
       const ids: unknown = JSON.parse(
@@ -225,67 +203,6 @@ export function Explorer({
       .then((r) => setFx({ ...r, rates: { THB: 1, ...r.rates } }))
       .catch(() => setFx({ date: "unavailable", rates: { THB: 1 } }));
   }, []);
-  useEffect(() => {
-    if (!focus) return;
-    const request = ++placeRequest.current;
-    let active = true;
-    setSuggestions([]);
-    setPlaceError("");
-    if (liveMode && query.trim().length < 2) {
-      setPlaceStatus("idle");
-      return;
-    }
-    setPlaceStatus("loading");
-    const controller = new AbortController(),
-      timer = setTimeout(() => {
-        if (liveMode) {
-          api<{ items: unknown[] }>(
-            `/v1/places/autocomplete?q=${encodeURIComponent(query)}&locale=${locale}`,
-            { signal: controller.signal },
-          )
-            .then((r) => {
-              if (!active || request !== placeRequest.current) return;
-              const places = r.items.map((p) => normalizePlace(p, locale));
-              setSuggestions(places);
-              setPlaceStatus(places.length ? "ready" : "empty");
-            })
-            .catch((e) => {
-              if (
-                active &&
-                request === placeRequest.current &&
-                e.name !== "AbortError"
-              ) {
-                setPlaceStatus("error");
-                setPlaceError(e.message);
-              }
-            });
-        } else {
-          setSuggestions(
-            demoPlaces
-              .filter(
-                (p) =>
-                  p.label.en.toLowerCase().includes(query.toLowerCase()) ||
-                  p.label.th.includes(query),
-              )
-              .map((p) => ({ ...p, label: p.label[locale] })),
-          );
-          setPlaceStatus(
-            demoPlaces.some(
-              (p) =>
-                p.label.en.toLowerCase().includes(query.toLowerCase()) ||
-                p.label.th.includes(query),
-            )
-              ? "ready"
-              : "empty",
-          );
-        }
-      }, 180);
-    return () => {
-      controller.abort();
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [query, locale, focus, placeRetry]);
   const rows = useMemo(
     () =>
       filterProperties(all, filters, favorites, bounds, polygon, sortCenter),
@@ -313,18 +230,8 @@ export function Explorer({
   }
   function reset() {
     setFilters(defaultFilters);
-    setQuery("");
     setBounds(undefined);
     setPolygon([]);
-    setDirty(false);
-  }
-  function search(e: React.FormEvent) {
-    e.preventDefault();
-    filter(
-      "q",
-      query === "Phuket, Thailand" || query === "ภูเก็ต ประเทศไทย" ? "" : query,
-    );
-    setFocus(false);
   }
   const activeFilters = Object.entries(filters).filter(
     ([k, v]) =>
@@ -388,7 +295,6 @@ export function Explorer({
           setAll={setAll}
           setPerformance={setPerformance}
           initialProperties={initialProperties}
-          setQuery={setQuery}
           setHydrated={setHydrated}
           setBounds={setBounds}
           setPolygon={setPolygon}
@@ -424,104 +330,6 @@ export function Explorer({
         className="search-controls"
         aria-label={tr("Property search", "ค้นหาอสังหาริมทรัพย์")}
       >
-        <form className="location-search" onSubmit={search}>
-          <MapPin size={21} />
-          <label className="visually-hidden" htmlFor="location-search">
-            {tr(
-              "Search location or property",
-              "ค้นหาพื้นที่หรืออสังหาริมทรัพย์",
-            )}
-          </label>
-          <input
-            id="location-search"
-            value={query}
-            placeholder={tr(
-              "Where would you like to live?",
-              "คุณอยากอยู่ที่ไหน?",
-            )}
-            autoComplete="off"
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setFocus(true);
-            }}
-            onFocus={() => setFocus(true)}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") setFocus(false);
-            }}
-            aria-expanded={focus && placeStatus !== "idle"}
-            role="combobox"
-            aria-autocomplete="list"
-            aria-haspopup="listbox"
-            aria-controls="location-suggestions"
-          />
-          <button
-            className="search-submit"
-            aria-label={tr("Search properties", "ค้นหาอสังหาริมทรัพย์")}
-          >
-            <MagnifyingGlass size={22} />
-          </button>
-          {focus && placeStatus !== "idle" && (
-            <div className="autocomplete">
-              {placeStatus === "loading" && (
-                <p role="status">
-                  {tr("Searching places…", "กำลังค้นหาสถานที่…")}
-                </p>
-              )}
-              {placeStatus === "empty" && (
-                <p role="status">
-                  {tr(
-                    "No places found. Try another spelling or area.",
-                    "ไม่พบสถานที่ ลองสะกดใหม่หรือเปลี่ยนพื้นที่",
-                  )}
-                </p>
-              )}
-              {placeStatus === "error" && (
-                <div>
-                  <p role="alert">
-                    {tr(
-                      "Place search is unavailable.",
-                      "การค้นหาสถานที่ไม่พร้อมใช้งาน",
-                    )}{" "}
-                    {placeError}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setPlaceRetry((retry) => retry + 1)}
-                  >
-                    {tr("Retry place search", "ลองค้นหาสถานที่อีกครั้ง")}
-                  </button>
-                </div>
-              )}
-              <div
-                id="location-suggestions"
-                role="listbox"
-                aria-label={tr("Suggested locations", "พื้นที่แนะนำ")}
-              >
-                {suggestions.map((s) => (
-                  <button
-                    type="button"
-                    key={s.id}
-                    role="option"
-                    aria-selected={query === s.label}
-                    onClick={() => {
-                      setQuery(s.label);
-                      filter(
-                        "q",
-                        s.id === "phuket" ? "" : s.label.split(",")[0],
-                      );
-                      setCenter([s.lng, s.lat]);
-                      setFocus(false);
-                      setBounds(undefined);
-                    }}
-                  >
-                    <MapPin size={18} />
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </form>
         <label className="filter-select">
           <span className="visually-hidden">
             {tr("Buy or rent", "ซื้อหรือเช่า")}
@@ -759,24 +567,11 @@ export function Explorer({
             areaPoints={polygon}
             poi={poi}
             onMove={(b, c) => {
-              setPendingBounds(b);
+              setBounds(b);
+              setScopeCenter(c);
               setSortCenter(c);
-              setDirty(true);
             }}
           />
-          {dirty && (
-            <button
-              className="search-area-button button"
-              onClick={() => {
-                setBounds(pendingBounds);
-                setScopeCenter(sortCenter);
-                setDirty(false);
-              }}
-            >
-              <MagnifyingGlass size={18} />
-              {tr("Search this area", "ค้นหาในพื้นที่นี้")}
-            </button>
-          )}
           <div className="map-caption">
             <span className="pulse-dot" />
             {tr(

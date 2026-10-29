@@ -519,34 +519,6 @@ small {
   padding-bottom: 19px;
   border-bottom: 1px solid var(--line);
 }
-.location-search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1;
-  gap: 9px;
-  border: 1px solid #cad6df;
-  border-radius: 9px;
-  background: #fff;
-  padding-left: 15px;
-  min-height: 52px;
-  max-width: 620px;
-}
-.location-search > svg {
-  color: var(--blue);
-  flex-shrink: 0;
-}
-.location-search input {
-  border: 0;
-  min-width: 0;
-  background: transparent;
-  margin: 0;
-  padding-left: 0;
-  font-size: 13px;
-}
-.location-search input:focus {
-  outline: none;
-}
 .search-submit {
   background: var(--blue);
   color: #fff;
@@ -897,17 +869,6 @@ small {
   font-size: 11px;
   max-width: 270px;
 }
-.search-area-button {
-  position: absolute;
-  left: 50%;
-  top: 20px;
-  transform: translateX(-50%);
-  border-radius: 24px;
-  box-shadow: 0 3px 12px #082b4624;
-  font-size: 11px;
-  padding: 9px 14px;
-  z-index: 3;
-}
 .map-caption {
   position: absolute;
   bottom: 0;
@@ -928,6 +889,42 @@ small {
   height: 5px;
   background: #71d4b8;
   border-radius: 50%;
+}
+.plot-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  color: #3b2f00;
+  border: 1.5px solid #3B2F00;
+  box-shadow: 0 1px 2px rgba(0,0,0,.35);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+.plot-tag {
+  background: #F5C518;
+  color: #1F1A00;
+  border: 1px solid #3B2F00;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+.plot-tag.is-sold {
+  background: #B8961A;
+  color: #fff;
+}
+.plot-tags-hidden .plot-tag {
+  display: none;
 }
 .selected-panel {
   grid-column: 2;
@@ -1216,13 +1213,10 @@ small {
   color: var(--muted);
 }
 .property-cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
   padding: 2px 2px 12px;
-  scrollbar-width: thin;
-  scrollbar-color: #cad5dd transparent;
 }
 .property-card {
   position: relative;
@@ -2006,14 +2000,6 @@ dialog::backdrop {
     gap: 8px;
     padding-bottom: 14px;
   }
-  .location-search {
-    grid-column: 1 / -1;
-    width: 100%;
-    min-height: 50px;
-  }
-  .location-search input {
-    font-size: 16px;
-  }
   .filter-select {
     width: auto;
     min-width: 0;
@@ -2117,10 +2103,6 @@ dialog::backdrop {
     padding: 6px;
     min-height: 32px;
   }
-  .search-area-button {
-    top: 70px;
-    font-size: 10px;
-  }
   .selected-panel {
     display: none;
   }
@@ -2153,6 +2135,7 @@ dialog::backdrop {
     display: none;
   }
   .property-cards {
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
   .property-card {
@@ -2163,7 +2146,7 @@ dialog::backdrop {
   }
   .mobile-list .property-cards {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     overflow: visible;
   }
   .mobile-list .property-card {
